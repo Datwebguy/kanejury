@@ -4,7 +4,7 @@
 
 Independent project built for the Kane CLI Online Hackathon. Not affiliated with TestMu AI.
 
-> **Status: early.** KaneJury has not yet read a real Kane evidence pack. Everything below that says "tested" was tested on labelled test screenshots, not on Kane output. See [docs/STATUS.md](docs/STATUS.md) for every feature and its state.
+> **Status: early, with a first real measurement.** We ran 25 real Kane CLI runs on public test sites and compared Kane alone with KaneJury ([bench/README.md](bench/README.md)). The honest result: the vision jury did **not** beat Kane (21 of 24 correct against Kane's 23 of 24). What did hold up on real runs: a plain-code check that tells an infrastructure failure from a real one (it caught the one browser crash in 25 runs with no false alarms), and signed receipts. See [docs/STATUS.md](docs/STATUS.md) for every feature and its state.
 
 ## Why
 
@@ -25,7 +25,10 @@ export NEAR_AI_API_KEY=...              # your NEAR AI Cloud key
 node src/cli.js calibrate               # check the jurors
 node src/cli.js judge --claim "Price shown at checkout matches the advertised Pro price." --image examples/evidence-fail.png
 node src/cli.js verify examples/receipt-fail.json --image examples/evidence-fail.png
+node src/cli.js judge-pack <run.evidence> --claim "..."   # judge a real Kane evidence pack (last step screenshot)
 ```
+
+`judge-pack` first checks, with plain code, whether Kane's failure was really infrastructure (a browser crash, exhausted credits). If so it calls no model and exits 4, so a gate does not send the agent after a bug that is not there.
 
 Exit codes: `0` pass, `1` fail, `4` inconclusive or no quorum, `2` could not run.
 
@@ -48,7 +51,7 @@ Exit codes: `0` pass, `1` fail, `4` inconclusive or no quorum, `2` could not run
 ## Test
 
 ```bash
-npm test      # 9 unit tests of the decision logic, no network
+npm test      # unit tests of the decision logic, the evidence reader, and the failure classifier; no network
 ```
 
 MIT licensed.

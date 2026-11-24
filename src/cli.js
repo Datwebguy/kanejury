@@ -6,12 +6,14 @@ import { calibrate } from './calibrate.js';
 import { aggregate, EXIT } from './aggregate.js';
 import { buildReceipt, verifyReceipt } from './receipt.js';
 import { sha256 } from './near.js';
+import { loadPack, pickScreenshot, classifyFailure } from './evidence.js';
 
 const argv = process.argv.slice(2);
 const cmd = argv.shift();
 const flag = (n, d) => { const i = argv.indexOf('--' + n); return i < 0 ? d : (argv[i + 1]?.startsWith('--') || argv[i + 1] === undefined ? true : argv[i + 1]); };
 const log = (...a) => console.error(...a);
 const usage = () => { log(`kanejury judge --claim "<text>" --image <png> [--policy cautious|majority] [--out receipt.json] [--json]
+kanejury judge-pack <run.evidence> --claim "<text>" [--step last|<n>] [--policy ...] [--out receipt.json]
 kanejury calibrate [--force]
 kanejury verify <receipt.json> [--image <png>] [--online]
 Exit codes: 0 pass, 1 fail, 4 inconclusive or no quorum, 2 could not run. Needs NEAR_AI_API_KEY.`); process.exit(2); };
@@ -22,11 +24,22 @@ async function main() {
     for (const [id, j] of Object.entries(c.jurors)) log(`${j.eligible ? 'ELIGIBLE  ' : 'EXCLUDED  '} ${id.padEnd(10)} ${j.model}  true->${j.onTrue ?? j.error}  false->${j.onFalse ?? ''}`);
     log(c.cached ? '(cached calibration)' : '(fresh calibration)'); return;
   }
-  if (cmd === 'judge') {
-    const claim = flag('claim'), imagePath = flag('image');
-    if (!claim || !imagePath || claim === true || imagePath === true) usage();
-    const policy = flag('policy', 'cautious'), image = fs.readFileSync(imagePath);
-    const mime = /\.jpe?g$/i.test(imagePath) ? 'image/jpeg' : 'image/png';
+  if (cmd === 'judge' || cmd === 'judge-pack') {
+    const claim = flag('claim');
+    let imagePath, image, mime, evName;
+    if (cmd === 'judge-pack') {
+      const packFile = argv.find((a) => a.endsWith('.evidence')); if (!claim || claim === true || !packFile) usage();
+      const pack = loadPack(packFile);
+      const cf = classifyFailure(pack);
+      if (cf.kind === 'infrastructure') { log(`KANE FAILURE IS INFRASTRUCTURE, NOT A VERDICT ON THE CLAIM: ${cf.why}\nNo model was called. Re-run Kane; do not send this to the coding agent.`); if (flag('json', false)) console.log(JSON.stringify({ verdict: 'no_evidence', reason: cf.why })); process.exit(4); }
+      let pick; try { pick = pickScreenshot(pack, 0, flag('step', 'last')); } catch (e) { log(`NO USABLE EVIDENCE: ${e.message}`); process.exit(4); }
+      image = pick.image; mime = pick.mime; imagePath = `${path.basename(packFile)}#step${pick.step}.jpg`; evName = imagePath;
+      log(`pack: "${pack.title}" kane status=${pack.tests[0]?.status}; judging step ${pick.step} of ${pick.total} screenshots`);
+    } else {
+      imagePath = flag('image'); if (!claim || !imagePath || claim === true || imagePath === true) usage();
+      image = fs.readFileSync(imagePath); mime = /\.jpe?g$/i.test(imagePath) ? 'image/jpeg' : 'image/png'; evName = path.basename(imagePath);
+    }
+    const policy = flag('policy', 'cautious');
     const cal = await calibrate(DEFAULT_JURORS, {});
     log(`calibration (${cal.cached ? 'cached' : 'fresh'}, ${cal.takenAt}): ` + Object.entries(cal.jurors).map(([k, j]) => `${k}=${j.eligible ? 'ok' : 'EXCLUDED'}`).join(' '));
     const votes = await Promise.all(DEFAULT_JURORS.map(async (j) => {
@@ -34,7 +47,7 @@ async function main() {
       catch (e) { return { juror: j.id, model: j.model, verdict: 'error', quote: e.message.slice(0, 120), eligible: !!cal.jurors[j.id]?.eligible }; }
     }));
     const result = aggregate(votes.map(({ juror, verdict, eligible }) => ({ juror, verdict, eligible })), { policy });
-    const receipt = buildReceipt({ claim, evidence: [{ name: path.basename(imagePath), sha256: sha256(image), mime }], policy, calibration: cal, votes, result });
+    const receipt = buildReceipt({ claim, evidence: [{ name: evName, sha256: sha256(image), mime }], policy, calibration: cal, votes, result });
     const out = flag('out', 'receipt.json'); fs.writeFileSync(out, JSON.stringify(receipt, null, 2));
     if (flag('json', false)) console.log(JSON.stringify(result));
     for (const v of votes) log(`  ${v.eligible ? ' ' : 'x'} ${v.juror.padEnd(10)} ${String(v.verdict).padEnd(13)} ${v.quote ? '"' + v.quote.slice(0, 70) + '"' : ''}`);

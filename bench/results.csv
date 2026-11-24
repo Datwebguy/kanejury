@@ -1,0 +1,26 @@
+id,site,claim,truth,kane,kane_credits,kane_seconds,jury,jury_votes,note
+T3,demo.playwright.dev,The counter says 2 items left.,pass,pass,6.1,45,pass,qwen3-vl:pass glm-flash:pass qwen3.8:pass,
+T4,demo.playwright.dev,The counter says 3 items left.,fail,fail,16.8,54,fail,qwen3-vl:fail glm-flash:fail qwen3.8:fail,
+T5,demo.playwright.dev,The counter says 0 items left.,pass,pass,19.2,43,pass,qwen3-vl:pass glm-flash:pass qwen3.8:pass,
+T6,demo.playwright.dev,The counter says 1 item left.,fail,fail,22.4,48,fail,qwen3-vl:pass glm-flash:fail qwen3.8:fail,one vision juror said pass; the other two said fail (quorum overruled the error)
+T7,demo.playwright.dev,The list shows an item called x.,pass,pass,20.6,44,fail,qwen3-vl:inconclusive glm-flash:fail qwen3.8:fail,"FALSE RED by the jury: the completed item is a faint struck-through ""x"" that vision models could not read; Kane read it from the page"
+T8,demo.playwright.dev,The list shows an item called x.,fail,fail,23.0,46,inconclusive,qwen3-vl:inconclusive glm-flash:fail qwen3.8:error,jury undecided (inconclusive); Kane correct
+T9,demo.playwright.dev,The todo list is empty.,pass,pass,18.8,52,pass,qwen3-vl:pass glm-flash:pass qwen3.8:pass,
+T10,demo.playwright.dev,The todo list is empty.,fail,pass,24.1,62,pass,qwen3-vl:pass glm-flash:pass qwen3.8:pass,"FALSE GREEN by Kane: it marked x as completed on its own before clicking Clear completed; the final screenshot really was an empty list, so the jury agreed. Only the step trail shows the improvisation"
+H1,the-internet.herokuapp.com,The page shows exactly two checkboxes.,pass,pass,14.4,20,pass,qwen3-vl:pass glm-flash:pass qwen3.8:pass,
+H2,the-internet.herokuapp.com,The page shows exactly three checkboxes.,fail,fail,12.7,26,fail,qwen3-vl:fail glm-flash:fail qwen3.8:fail,
+H3,the-internet.herokuapp.com,The dropdown shows Option 2.,pass,pass,16.3,26,pass,qwen3-vl:pass glm-flash:pass qwen3.8:pass,
+H4,the-internet.herokuapp.com,All images on the page are displayed correctly.,fail,fail,13.7,33,fail,qwen3-vl:fail glm-flash:fail qwen3.8:fail,
+H5,the-internet.herokuapp.com,A Delete button is visible.,pass,pass,15.2,21,pass,qwen3-vl:pass glm-flash:pass qwen3.8:pass,
+H6,the-internet.herokuapp.com,Two Delete buttons are visible.,fail,fail,19.8,42,fail,qwen3-vl:fail glm-flash:fail qwen3.8:fail,
+H7,the-internet.herokuapp.com,The page says it returned a 404 status code.,pass,pass,14.0,16,pass,qwen3-vl:pass glm-flash:pass qwen3.8:pass,
+H8,the-internet.herokuapp.com,The page says it returned a 404 status code.,fail,fail,9.0,24,fail,qwen3-vl:fail glm-flash:fail qwen3.8:fail,
+H9,the-internet.herokuapp.com,The page shows Hello World!,pass,pass,16.5,34,pass,qwen3-vl:pass glm-flash:pass qwen3.8:pass,
+H10,the-internet.herokuapp.com,The page shows Hello World!,fail,fail,12.5,26,fail,qwen3-vl:fail glm-flash:fail qwen3.8:fail,
+S1,www.saucedemo.com,The inventory page shows 6 products.,pass,pass,18.3,45,pass,qwen3-vl:pass glm-flash:pass qwen3.8:pass,
+S2,www.saucedemo.com,The inventory page shows 8 products.,fail,fail,7.0,54,no_evidence,,"Kane said fail because the browser crashed (TargetClosedError) and left no screenshots; label matches the truth only by coincidence. KaneJury classifies it as infrastructure, not a verdict"
+S3,www.saucedemo.com,The cart badge shows 1.,pass,pass,19.6,44,pass,qwen3-vl:pass glm-flash:pass qwen3.8:pass,
+S4,www.saucedemo.com,Each product on the page shows its own distinct image.,fail,fail,22.4,45,fail,qwen3-vl:fail glm-flash:fail qwen3.8:fail,
+S5,www.saucedemo.com,The first product listed is Sauce Labs Onesie.,pass,pass,18.8,45,pass,qwen3-vl:pass glm-flash:pass qwen3.8:pass,
+S6,www.saucedemo.com,The first product listed is Sauce Labs Fleece Jacket.,fail,fail,23.1,57,fail,qwen3-vl:fail glm-flash:fail qwen3.8:fail,
+S7,www.saucedemo.com,The first product listed is Sauce Labs Onesie.,fail,fail,44.7,144,fail,qwen3-vl:fail glm-flash:fail qwen3.8:fail,

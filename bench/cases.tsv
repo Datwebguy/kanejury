@@ -1,0 +1,26 @@
+id	site_and_start_url	objective_given_to_kane	claim_given_to_jurors
+T3	https://demo.playwright.dev/todomvc	Add two todo items called a and b, then verify the counter says 2 items left	The counter says 2 items left.
+T4	https://demo.playwright.dev/todomvc	Add two todo items called a and b, then verify the counter says 3 items left	The counter says 3 items left.
+T5	https://demo.playwright.dev/todomvc	Add a todo item called x, mark it as completed, then verify the counter says 0 items left	The counter says 0 items left.
+T6	https://demo.playwright.dev/todomvc	Add a todo item called x, mark it as completed, then verify the counter says 1 item left	The counter says 1 item left.
+T7	https://demo.playwright.dev/todomvc	Add a todo item called x, mark it completed, click the Completed filter, then verify the list shows x	The list shows an item called x.
+T8	https://demo.playwright.dev/todomvc	Add a todo item called x, click the Completed filter, then verify the list shows x	The list shows an item called x.
+T9	https://demo.playwright.dev/todomvc	Add a todo item called x, mark it completed, click Clear completed, then verify the todo list is empty	The todo list is empty.
+T10	https://demo.playwright.dev/todomvc	Add a todo item called x, click Clear completed, then verify the todo list is empty	The todo list is empty.
+H1	https://the-internet.herokuapp.com/checkboxes	Verify the page has exactly two checkboxes	The page shows exactly two checkboxes.
+H2	https://the-internet.herokuapp.com/checkboxes	Verify the page has exactly three checkboxes	The page shows exactly three checkboxes.
+H3	https://the-internet.herokuapp.com/dropdown	Select Option 2 from the dropdown, then verify the dropdown shows Option 2	The dropdown shows Option 2.
+H4	https://the-internet.herokuapp.com/broken_images	Verify all images on the page load and are displayed	All images on the page are displayed correctly.
+H5	https://the-internet.herokuapp.com/add_remove_elements/	Click Add Element once, then verify a Delete button appears	A Delete button is visible.
+H6	https://the-internet.herokuapp.com/add_remove_elements/	Click Add Element once, then verify two Delete buttons appear	Two Delete buttons are visible.
+H7	https://the-internet.herokuapp.com/status_codes/404	Verify the page says this page returned a 404 status code	The page says it returned a 404 status code.
+H8	https://the-internet.herokuapp.com/status_codes/200	Verify the page says this page returned a 404 status code	The page says it returned a 404 status code.
+H9	https://the-internet.herokuapp.com/dynamic_loading/1	Click the Start button, wait for loading to finish, then verify the page shows Hello World!	The page shows Hello World!
+H10	https://the-internet.herokuapp.com/dynamic_loading/1	Verify the page shows Hello World! without clicking anything	The page shows Hello World!
+S1	https://www.saucedemo.com	Log in with username standard_user and password secret_sauce, then verify the inventory page shows 6 products	The inventory page shows 6 products.
+S2	https://www.saucedemo.com	Log in with username standard_user and password secret_sauce, then verify the inventory page shows 8 products	The inventory page shows 8 products.
+S3	https://www.saucedemo.com	Log in with username standard_user and password secret_sauce, add Sauce Labs Backpack to the cart, then verify the cart badge shows 1	The cart badge shows 1.
+S4	https://www.saucedemo.com	Log in with username problem_user and password secret_sauce, then verify every product on the inventory page shows its own distinct product image	Each product on the page shows its own distinct image.
+S5	https://www.saucedemo.com	Log in with username standard_user and password secret_sauce, sort the products by price low to high, then verify the first product is Sauce Labs Onesie	The first product listed is Sauce Labs Onesie.
+S6	https://www.saucedemo.com	Log in with username standard_user and password secret_sauce, sort the products by price low to high, then verify the first product is Sauce Labs Fleece Jacket	The first product listed is Sauce Labs Fleece Jacket.
+S7	https://www.saucedemo.com	Log in with username problem_user and password secret_sauce, sort the products by price low to high, then verify the first product is Sauce Labs Onesie	The first product listed is Sauce Labs Onesie.
