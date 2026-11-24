@@ -2,262 +2,781 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>KaneJury</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>KaneJury · Know when to trust a Kane verdict</title>
 <meta name="description" content="KaneJury reads the evidence behind a Kane CLI run and tells your pipeline what to do next: ship it, fix it, run it again, or look closer. Every decision comes with a receipt anyone can verify.">
+<meta property="og:title" content="KaneJury">
+<meta property="og:description" content="Know when to trust a Kane verdict. Evidence checks, a gate for your pipeline, and receipts anyone can verify.">
+<link rel="icon" type="image/svg+xml" href="assets/logo.svg">
+<meta name="theme-color" content="#FBF5EC" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#15110E" media="(prefers-color-scheme: dark)">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script>try{var t=localStorage.getItem('kj-theme');if(t==='light'||t==='dark')document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <style>
 :root{
-  --bg:#f6f7f9; --surface:#ffffff; --ink:#111827; --muted:#5b6472; --line:#dfe3e8;
-  --accent:#0b7a75; --accent-ink:#ffffff; --accent-soft:#e3f4f2;
-  --good:#17803d; --good-soft:#e6f5ec; --warn:#a15c07; --warn-soft:#fdf1dc; --bad:#b42318; --bad-soft:#fde8e6;
-  --code:#0f1720; --code-ink:#e6edf3; --radius:12px;
-  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --bg:#FBF5EC; --bg-2:#F5ECDD; --surface:#FFFFFF; --surface-2:#FFF9F1;
+  --ink:#1F1712; --ink-2:#3B2F27; --muted:#76665A; --line:#EADFCF; --line-2:#DCCDB8;
+  --accent:#E8590C; --accent-2:#F59E0B; --accent-ink:#B7400A; --accent-soft:#FFEBD9; --on-accent:#FFFFFF;
+  --pass:#0F6E8C; --pass-soft:#E0F1F6; --fail:#C92A2A; --fail-soft:#FDE6E4; --warn:#A45A00; --warn-soft:#FFF1D6;
+  --code-bg:#1E1712; --code-ink:#F6EBDD; --code-muted:#B9A795;
+  --shadow:0 1px 2px rgba(60,35,15,.06),0 8px 24px -12px rgba(60,35,15,.18);
+  --shadow-lg:0 2px 4px rgba(60,35,15,.06),0 24px 60px -24px rgba(110,50,10,.35);
+  --glow-1:rgba(245,158,11,.30); --glow-2:rgba(232,89,12,.22);
+  --r:16px; --r-sm:10px;
+  --display:"Fraunces",Georgia,"Times New Roman",serif;
+  --sans:"Inter",system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  color-scheme:light;
 }
 @media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
-  --bg:#0c1117; --surface:#141b24; --ink:#e8edf3; --muted:#9aa5b4; --line:#263140;
-  --accent:#3dc9bf; --accent-ink:#06201e; --accent-soft:#12312f;
-  --good:#4cd07d; --good-soft:#13301f; --warn:#f0b34a; --warn-soft:#35280e; --bad:#ff8a80; --bad-soft:#3a1714;
-  --code:#0a0f15; color-scheme:dark}}
-:root[data-theme="dark"]{--bg:#0c1117; --surface:#141b24; --ink:#e8edf3; --muted:#9aa5b4; --line:#263140; --accent:#3dc9bf; --accent-ink:#06201e; --accent-soft:#12312f; --good:#4cd07d; --good-soft:#13301f; --warn:#f0b34a; --warn-soft:#35280e; --bad:#ff8a80; --bad-soft:#3a1714; --code:#0a0f15; color-scheme:dark}
-*{box-sizing:border-box}
-html{scroll-behavior:smooth}
-body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--sans);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
-a{color:var(--accent)}
-.wrap{max-width:1040px;margin:0 auto}
-header.top{display:flex;justify-content:space-between;align-items:center;padding:18px 0;gap:12px;flex-wrap:wrap}
-.brand{font-weight:700;letter-spacing:.01em;font-size:18px}
-.brand span{color:var(--accent)}
-nav a{margin-left:18px;text-decoration:none;color:var(--muted);font-size:15px}
-nav a:hover{color:var(--ink)}
-.hero{padding:44px 0 36px}
-.hero h1{font-size:clamp(34px,6vw,56px);line-height:1.08;margin:0 0 16px;letter-spacing:-.02em;max-width:16em;text-wrap:balance}
-.hero p.lead{font-size:clamp(17px,2.2vw,20px);color:var(--muted);max-width:40em;margin:0 0 26px}
-.btns{display:flex;gap:12px;flex-wrap:wrap}
-.btn{display:inline-block;padding:11px 20px;border-radius:10px;text-decoration:none;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
-.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.btn:focus-visible,button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
-section{padding:40px 0}
-section>h2{font-size:clamp(24px,3.4vw,32px);line-height:1.2;margin:0 0 8px;letter-spacing:-.01em;text-wrap:balance}
-section>p.sub{color:var(--muted);margin:0 0 24px;max-width:46em}
-.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
-.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;min-width:0}
-.card h3{margin:0 0 8px;font-size:18px}
-.card p{margin:0;color:var(--muted)}
-.tag{display:inline-block;font:600 12px var(--mono);padding:3px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);margin-bottom:10px;letter-spacing:.02em}
-.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;counter-reset:s}
-.step{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;position:relative;min-width:0}
-.step b{display:block;margin-bottom:4px}
-.step span{color:var(--muted);font-size:14px}
-.outcomes{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
-.chip{font:600 13px var(--mono);padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
-.chip.allow{background:var(--good-soft);color:var(--good);border-color:transparent}
-.chip.fix,.chip.bad{background:var(--bad-soft);color:var(--bad);border-color:transparent}
-.chip.recheck,.chip.review,.chip.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
-.chip.rerun{background:var(--accent-soft);color:var(--accent);border-color:transparent}
-.timeline{display:grid;gap:12px}
-.round{display:grid;grid-template-columns:90px 1fr;gap:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
-.round .n{font:700 13px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
-.round p{margin:6px 0 0;color:var(--muted);font-size:15px}
-.round .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
-@media (max-width:560px){.round{grid-template-columns:1fr;gap:6px}}
-pre{background:var(--code);color:var(--code-ink);padding:16px;border-radius:var(--radius);overflow:auto;font:13.5px/1.55 var(--mono);margin:12px 0 0;max-width:100%}
-code{font-family:var(--mono);font-size:.92em}
-.diff .del{color:#ff8a80}.diff .add{color:#7ee2a4}
-.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:22px}
-.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
-.stat .v{font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
-.stat .l{color:var(--muted);font-size:14px;margin-top:4px}
-.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
-.filters button{font:600 14px var(--sans);padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
-.filters button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
-.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
-table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:720px}
-th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
-th{font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--bg)}
-tr:last-child td{border-bottom:0}
-td.mono{font-family:var(--mono)}
-td.note{color:var(--muted);font-size:13.5px;min-width:260px}
-.v-pass{color:var(--good);font-weight:600}.v-fail{color:var(--bad);font-weight:600}.v-other{color:var(--warn);font-weight:600}
-.verify{display:grid;grid-template-columns:1.1fr 1fr;gap:18px;align-items:start}
-@media (max-width:820px){.verify{grid-template-columns:1fr}}
-textarea{width:100%;min-height:260px;background:var(--code);color:var(--code-ink);border:1px solid var(--line);border-radius:var(--radius);padding:12px;font:12px/1.45 var(--mono);resize:vertical}
-.vbtns{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
-button.act{font:600 15px var(--sans);padding:10px 18px;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer}
-button.act.alt{background:var(--surface);color:var(--ink);border-color:var(--line)}
-.checks{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:14px}
-.checks li{display:grid;grid-template-columns:22px 1fr;gap:8px;padding:8px 10px;border-radius:8px;background:var(--surface);border:1px solid var(--line);min-width:0;overflow-wrap:anywhere}
-.checks li.ok .m{color:var(--good)}.checks li.no{background:var(--bad-soft)}.checks li.no .m{color:var(--bad)}
-.result{font-weight:700;margin:8px 0}
-.result.ok{color:var(--good)}.result.no{color:var(--bad)}
-.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
-.tabs button{font:600 14px var(--sans);padding:8px 14px;border-radius:10px 10px 0 0;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
-.tabs button[aria-selected="true"]{color:var(--ink);background:var(--bg);border-bottom-color:var(--bg)}
-.panel[hidden]{display:none}
-footer{padding:36px 0 48px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);margin-top:20px}
-.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+  --bg:#15110E; --bg-2:#1B1612; --surface:#211A15; --surface-2:#261E18;
+  --ink:#F7EEE3; --ink-2:#E5D8C8; --muted:#B3A291; --line:#33291F; --line-2:#44372B;
+  --accent:#FF8A4C; --accent-2:#FBBF24; --accent-ink:#FFA571; --accent-soft:#3A2416; --on-accent:#1B0E05;
+  --pass:#5CC4E0; --pass-soft:#12303A; --fail:#FF8E85; --fail-soft:#3D1A17; --warn:#F7C266; --warn-soft:#3A2A10;
+  --code-bg:#0F0C0A; --code-ink:#F6EBDD; --code-muted:#9C8B7A;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
+  --shadow-lg:0 2px 4px rgba(0,0,0,.4),0 24px 60px -24px rgba(0,0,0,.8);
+  --glow-1:rgba(251,191,36,.12); --glow-2:rgba(255,138,76,.14);
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15110E; --bg-2:#1B1612; --surface:#211A15; --surface-2:#261E18;
+  --ink:#F7EEE3; --ink-2:#E5D8C8; --muted:#B3A291; --line:#33291F; --line-2:#44372B;
+  --accent:#FF8A4C; --accent-2:#FBBF24; --accent-ink:#FFA571; --accent-soft:#3A2416; --on-accent:#1B0E05;
+  --pass:#5CC4E0; --pass-soft:#12303A; --fail:#FF8E85; --fail-soft:#3D1A17; --warn:#F7C266; --warn-soft:#3A2A10;
+  --code-bg:#0F0C0A; --code-ink:#F6EBDD; --code-muted:#9C8B7A;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 8px 24px -12px rgba(0,0,0,.6);
+  --shadow-lg:0 2px 4px rgba(0,0,0,.4),0 24px 60px -24px rgba(0,0,0,.8);
+  --glow-1:rgba(251,191,36,.12); --glow-2:rgba(255,138,76,.14);
+  color-scheme:dark}
+
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden;transition:background-color .3s,color .3s}
+img,svg{display:block;max-width:100%}
+a{color:var(--accent-ink);text-underline-offset:3px}
+:focus-visible{outline:3px solid var(--accent);outline-offset:3px;border-radius:6px}
+.wrap{width:100%;max-width:1160px;margin:0 auto;padding:0 max(20px,env(safe-area-inset-left,0px))}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+
+/* background */
+.bg-glow{position:absolute;inset:0 0 auto 0;height:900px;pointer-events:none;z-index:0;overflow:hidden}
+.bg-glow::before,.bg-glow::after{content:"";position:absolute;border-radius:50%;filter:blur(80px)}
+.bg-glow::before{width:620px;height:620px;left:-160px;top:-220px;background:var(--glow-1)}
+.bg-glow::after{width:560px;height:560px;right:-140px;top:60px;background:var(--glow-2)}
+.grain{position:absolute;inset:0;height:900px;pointer-events:none;z-index:0;background-image:radial-gradient(var(--line) 1px,transparent 1px);background-size:22px 22px;mask-image:linear-gradient(to bottom,rgba(0,0,0,.55),transparent 75%);-webkit-mask-image:linear-gradient(to bottom,rgba(0,0,0,.55),transparent 75%)}
+
+/* header */
+.top{position:sticky;top:0;z-index:50;backdrop-filter:saturate(1.4) blur(14px);-webkit-backdrop-filter:saturate(1.4) blur(14px);background:color-mix(in srgb,var(--bg) 78%,transparent);border-bottom:1px solid transparent;transition:border-color .3s}
+.top.scrolled{border-bottom-color:var(--line)}
+.top .wrap{display:flex;align-items:center;justify-content:space-between;height:68px;gap:16px}
+.brand{display:flex;align-items:center;gap:10px;text-decoration:none;color:var(--ink);font:700 19px/1 var(--display);letter-spacing:-.01em}
+.brand svg{width:34px;height:34px}
+.nav{display:flex;align-items:center;gap:4px}
+.nav a{color:var(--muted);text-decoration:none;font-weight:500;font-size:14.5px;padding:8px 12px;border-radius:999px;transition:color .2s,background .2s}
+.nav a:hover{color:var(--ink);background:var(--surface)}
+.actions{display:flex;align-items:center;gap:8px}
+.icon-btn{width:40px;height:40px;display:grid;place-items:center;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer;transition:transform .2s,border-color .2s}
+.icon-btn:hover{border-color:var(--line-2);transform:translateY(-1px)}
+.icon-btn svg{width:18px;height:18px}
+.theme-btn .moon{display:none}
+:root[data-theme="dark"] .theme-btn .sun{display:none}
+:root[data-theme="dark"] .theme-btn .moon{display:block}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .theme-btn .sun{display:none}:root:not([data-theme="light"]) .theme-btn .moon{display:block}}
+.gh-btn{display:inline-flex;align-items:center;gap:8px;height:40px;padding:0 16px;border-radius:999px;background:var(--ink);color:var(--bg);text-decoration:none;font-weight:600;font-size:14px;transition:transform .2s}
+.gh-btn:hover{transform:translateY(-1px)}
+.gh-btn svg{width:16px;height:16px}
+@media (max-width:900px){.nav{display:none}}
+@media (max-width:420px){.gh-btn span{display:none}.gh-btn{padding:0 12px}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;height:50px;padding:0 24px;border-radius:999px;font:600 15.5px var(--sans);text-decoration:none;border:1px solid var(--line-2);background:var(--surface);color:var(--ink);cursor:pointer;transition:transform .2s,box-shadow .2s,background .2s}
+.btn:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.btn.primary{border:0;color:#fff;background:linear-gradient(135deg,#F28C28 0%,#E8590C 45%,#C2410C 100%);box-shadow:0 10px 30px -10px rgba(232,89,12,.7)}
+.btn.primary:hover{box-shadow:0 16px 40px -12px rgba(232,89,12,.8)}
+.btn svg{width:18px;height:18px}
+
+/* hero */
+.hero{position:relative;z-index:1;padding:72px 0 40px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+.eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 14px 6px 8px;border-radius:999px;background:var(--surface);border:1px solid var(--line);font-size:13.5px;font-weight:500;color:var(--ink-2);box-shadow:var(--shadow)}
+.eyebrow .dot{width:20px;height:20px;border-radius:999px;background:linear-gradient(135deg,#FFB347,#E8590C);display:grid;place-items:center}
+.eyebrow .dot::after{content:"";width:6px;height:6px;border-radius:999px;background:#fff}
+h1{font:700 clamp(40px,6.2vw,72px)/1.02 var(--display);letter-spacing:-.025em;margin:22px 0 20px;text-wrap:balance}
+h1 .grad{background:linear-gradient(100deg,#F59E0B 0%,#E8590C 55%,#B7400A 100%);-webkit-background-clip:text;background-clip:text;color:transparent}
+.lead{font-size:clamp(17px,1.6vw,19.5px);color:var(--muted);max-width:34em;margin:0 0 32px}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.trust{display:flex;flex-wrap:wrap;gap:8px 20px;margin-top:28px;color:var(--muted);font-size:14px}
+.trust span{display:inline-flex;align-items:center;gap:8px}
+.trust svg{width:16px;height:16px;color:var(--accent)}
+
+/* hero console */
+.console{position:relative;border-radius:22px;background:var(--code-bg);color:var(--code-ink);box-shadow:var(--shadow-lg);overflow:hidden;border:1px solid rgba(255,255,255,.06)}
+.console::before{content:"";position:absolute;inset:-1px;border-radius:22px;padding:1px;background:linear-gradient(140deg,rgba(255,179,71,.6),transparent 40%,transparent 60%,rgba(232,89,12,.5));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;pointer-events:none}
+.console-bar{display:flex;align-items:center;gap:8px;padding:14px 18px;border-bottom:1px solid rgba(255,255,255,.07);font:500 12.5px var(--mono);color:var(--code-muted)}
+.console-bar i{width:11px;height:11px;border-radius:50%;background:#3A2E25}
+.console-bar i:nth-child(1){background:#F87171}.console-bar i:nth-child(2){background:#FBBF24}.console-bar i:nth-child(3){background:#FB923C}
+.console-bar b{margin-left:8px;font-weight:500}
+.console-body{font-variant-ligatures:none;padding:20px 22px 24px;font:13.5px/1.75 var(--mono);min-height:340px}
+.ln{opacity:0;transform:translateY(6px);transition:opacity .5s,transform .5s}
+.ln.on{opacity:1;transform:none}
+.ln .p{color:#FB923C}.ln .c{color:var(--code-muted)}
+.verdict{display:flex;gap:12px;align-items:flex-start;margin:12px 0;padding:12px 14px;border-radius:12px;background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.06);font-family:var(--sans);font-size:14px;line-height:1.5}
+.verdict .tag{flex:none;font:600 11.5px var(--mono);text-transform:uppercase;letter-spacing:.06em;padding:4px 9px;border-radius:999px}
+.tag-pass{background:rgba(92,196,224,.14);color:#7DD3EA}
+.tag-recheck{background:rgba(251,191,36,.16);color:#FCD34D}
+.tag-fail{background:rgba(248,113,113,.15);color:#FCA5A5}
+.tag-allow{background:rgba(251,146,60,.18);color:#FDBA74}
+.verdict small{display:block;color:var(--code-muted);font-size:12.5px;margin-top:2px}
+
+/* stat strip */
+.strip{position:relative;z-index:1;margin:56px 0 0;display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:var(--r);background:var(--surface);box-shadow:var(--shadow);overflow:hidden}
+.strip div{padding:22px 24px;border-right:1px solid var(--line)}
+.strip div:last-child{border-right:0}
+.strip b{display:block;font:700 clamp(26px,3vw,34px)/1.1 var(--display);letter-spacing:-.02em}
+.strip span{color:var(--muted);font-size:14px}
+@media (max-width:820px){.strip{grid-template-columns:1fr 1fr}.strip div:nth-child(2){border-right:0}.strip div:nth-child(-n+2){border-bottom:1px solid var(--line)}}
+
+/* sections */
+section{position:relative;z-index:1;padding:110px 0 0}
+.kicker{display:inline-block;font:600 12.5px var(--mono);letter-spacing:.12em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:14px}
+h2{font:700 clamp(30px,4vw,46px)/1.1 var(--display);letter-spacing:-.02em;margin:0 0 16px;text-wrap:balance;max-width:18em}
+.sub{color:var(--muted);font-size:17.5px;max-width:42em;margin:0 0 44px}
+.head-row{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;flex-wrap:wrap}
+.head-row .sub{margin-bottom:44px}
+
+/* problem cards */
+.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+@media (max-width:900px){.cards3{grid-template-columns:1fr}}
+.card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:28px;box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s,border-color .3s;min-width:0}
+.card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--line-2)}
+.card .ic{width:48px;height:48px;border-radius:14px;display:grid;place-items:center;background:var(--accent-soft);color:var(--accent-ink);margin-bottom:20px}
+.card .ic svg{width:24px;height:24px}
+.card h3{font:600 21px/1.3 var(--display);margin:0 0 10px;letter-spacing:-.01em}
+.card p{margin:0;color:var(--muted);font-size:15.5px}
+.card .fix{margin-top:18px;padding-top:16px;border-top:1px dashed var(--line-2);font-size:14px;color:var(--ink-2)}
+.card .fix b{color:var(--accent-ink);font-weight:600}
+
+/* pipeline */
+.pipe{position:relative;display:grid;grid-template-columns:repeat(5,1fr);gap:16px}
+.pipe::before{content:"";position:absolute;left:10%;right:10%;top:31px;height:2px;background:linear-gradient(90deg,var(--line-2),var(--accent) 50%,var(--line-2));opacity:.7}
+.pipe .runner{position:absolute;top:26px;left:10%;width:12px;height:12px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 6px color-mix(in srgb,var(--accent) 22%,transparent);animation:run 6s cubic-bezier(.6,0,.4,1) infinite}
+@keyframes run{0%{left:10%}100%{left:calc(90% - 12px)}}
+.node{position:relative;text-align:center;padding:0 6px}
+.node .num{width:64px;height:64px;margin:0 auto 18px;border-radius:20px;display:grid;place-items:center;background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);color:var(--accent-ink);position:relative;z-index:1}
+.node .num svg{width:26px;height:26px}
+.node h4{margin:0 0 6px;font:600 16.5px/1.3 var(--sans)}
+.node p{margin:0;color:var(--muted);font-size:14.5px}
+@media (max-width:900px){
+  .pipe{grid-template-columns:1fr;gap:0}
+  .pipe::before{left:31px;right:auto;top:32px;bottom:32px;width:2px;height:auto;background:linear-gradient(180deg,var(--line-2),var(--accent),var(--line-2))}
+  .pipe .runner{display:none}
+  .node{display:grid;grid-template-columns:64px 1fr;gap:18px;text-align:left;padding:0 0 26px}
+  .node .num{margin:0}
+}
+
+.decisions{margin-top:56px;display:grid;grid-template-columns:repeat(5,1fr);gap:12px}
+@media (max-width:1000px){.decisions{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.decisions{grid-template-columns:1fr}}
+.dec{padding:18px;border-radius:var(--r-sm);background:var(--surface);border:1px solid var(--line);min-width:0}
+.dec .pill{display:inline-flex;align-items:center;gap:6px;font:600 13px var(--mono);padding:4px 10px;border-radius:999px;margin-bottom:10px}
+.dec .pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.dec p{margin:0;font-size:14px;color:var(--muted);line-height:1.5}
+.dec p code{display:table}
+.dec code{display:inline-block;margin-top:8px;font-size:12px;color:var(--ink-2);background:var(--bg-2);padding:2px 8px;border-radius:6px}
+.p-allow{background:var(--pass-soft);color:var(--pass)}
+.p-fix{background:var(--fail-soft);color:var(--fail)}
+.p-rerun{background:var(--accent-soft);color:var(--accent-ink)}
+.p-recheck,.p-review{background:var(--warn-soft);color:var(--warn)}
+
+/* live run */
+.run-grid{display:grid;grid-template-columns:1.1fr .9fr;gap:32px;align-items:start}
+@media (max-width:960px){.run-grid{grid-template-columns:1fr}}
+.timeline{position:relative;padding-left:40px}
+.timeline::before{content:"";position:absolute;left:15px;top:10px;bottom:10px;width:2px;background:linear-gradient(180deg,var(--accent-2),var(--accent),var(--line-2))}
+.tl{position:relative;margin-bottom:18px;padding:20px 22px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+.tl::before{content:"";position:absolute;left:-32px;top:24px;width:16px;height:16px;border-radius:50%;background:var(--surface);border:3px solid var(--accent)}
+.tl.agent::before{border-color:var(--accent-2);background:var(--accent-2)}
+.tl .row{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-bottom:10px}
+.tl .rn{font:600 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin-right:4px}
+.chip{display:inline-flex;align-items:center;gap:6px;font:600 12.5px var(--mono);padding:4px 10px;border-radius:999px;background:var(--bg-2);color:var(--ink-2)}
+.chip.k-pass{background:var(--pass-soft);color:var(--pass)}
+.chip.k-fail{background:var(--fail-soft);color:var(--fail)}
+.tl p{margin:0;color:var(--ink-2);font-size:15px}
+.tl q{display:block;margin-top:8px;color:var(--muted);font-size:14px;font-style:italic;quotes:none}
+.side{position:sticky;top:96px;display:grid;gap:16px}
+.sum{padding:24px;border-radius:var(--r);background:linear-gradient(150deg,#FFB347 0%,#F26A1B 55%,#C2410C 100%);color:#fff;box-shadow:0 20px 50px -20px rgba(194,65,12,.7)}
+.sum h3{margin:0 0 4px;font:600 15px var(--sans);opacity:.9}
+.sum .big{font:700 40px/1.05 var(--display);letter-spacing:-.02em}
+.sum .row3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:18px;padding-top:16px;border-top:1px solid rgba(255,255,255,.3)}
+.sum .row3 b{display:block;font:700 22px var(--display)}
+.sum .row3 span{font-size:13px;opacity:.9}
+
+pre{font-variant-ligatures:none;margin:0;background:var(--code-bg);color:var(--code-ink);border-radius:var(--r);padding:18px 20px;overflow:auto;font:13px/1.7 var(--mono);border:1px solid rgba(255,255,255,.05)}
+.code-card{border-radius:var(--r);overflow:hidden;box-shadow:var(--shadow)}
+.code-head{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 16px;background:#2A2019;color:var(--code-muted);font:500 12.5px var(--mono)}
+.code-card pre{border-radius:0;border:0}
+.diff{white-space:pre-wrap;word-break:break-word}
+.diff .del{display:block;color:#FCA5A5;background:rgba(248,113,113,.1);margin:0 -20px;padding:0 20px}
+.diff .add{display:block;color:#FDBA74;background:rgba(251,146,60,.12);margin:0 -20px;padding:0 20px}
+.copy{border:1px solid rgba(255,255,255,.12);background:transparent;color:var(--code-ink);font:500 12px var(--sans);padding:5px 10px;border-radius:8px;cursor:pointer}
+.copy:hover{background:rgba(255,255,255,.08)}
+
+/* runs */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:28px}
+@media (max-width:900px){.stats{grid-template-columns:1fr 1fr}}
+.stat{padding:22px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+.stat b{display:block;font:700 34px/1.1 var(--display);letter-spacing:-.02em;color:var(--ink)}
+.stat span{display:block;margin-top:6px;color:var(--muted);font-size:14px;line-height:1.45}
+.stat .bar{margin-top:14px;height:6px;border-radius:999px;background:var(--bg-2);overflow:hidden}
+.stat .bar i{display:block;height:100%;width:0;border-radius:999px;background:linear-gradient(90deg,var(--accent-2),var(--accent));transition:width 1.2s cubic-bezier(.2,.8,.2,1)}
+.seg{display:inline-flex;padding:4px;border-radius:999px;background:var(--surface);border:1px solid var(--line);margin-bottom:16px;gap:2px;flex-wrap:wrap}
+.seg button{border:0;background:transparent;color:var(--muted);font:600 14px var(--sans);padding:8px 16px;border-radius:999px;cursor:pointer;transition:background .2s,color .2s}
+.seg button[aria-pressed="true"]{background:var(--ink);color:var(--bg)}
+.more-wrap{display:flex;justify-content:center;margin-top:16px}
+.more-wrap .btn[hidden]{display:none}
+.tablewrap{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);overflow:hidden;box-shadow:var(--shadow)}
+table{width:100%;border-collapse:collapse;font-size:14.5px}
+th,td{text-align:left;padding:14px 16px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font:600 12px var(--mono);letter-spacing:.08em;text-transform:uppercase;color:var(--muted);background:var(--surface-2)}
+tbody tr{transition:background .2s}
+tbody tr:hover{background:var(--surface-2)}
+tbody tr:last-child td{border-bottom:0}
+td.id{font:600 13px var(--mono);color:var(--ink-2);white-space:nowrap}
+td.id .site{font:400 12.5px var(--sans);color:var(--muted);margin-top:2px}
+td.claim{min-width:220px;color:var(--ink-2)}
+.vb{display:inline-block;font:600 12px var(--mono);padding:3px 9px;border-radius:999px;white-space:nowrap}
+.vb.pass{background:var(--pass-soft);color:var(--pass)}
+.vb.fail{background:var(--fail-soft);color:var(--fail)}
+.vb.other{background:var(--warn-soft);color:var(--warn)}
+.vb.miss{outline:2px solid var(--fail);outline-offset:1px}
+td.note{color:var(--muted);font-size:14px;min-width:240px}
+td.note .flag{display:inline-block;font:600 11px var(--mono);letter-spacing:.04em;text-transform:uppercase;padding:2px 8px;border-radius:6px;background:var(--accent-soft);color:var(--accent-ink);margin-right:6px}
+@media (max-width:760px){
+  table,thead,tbody,tr,td{display:block}
+  thead{display:none}
+  tbody tr{display:grid;grid-template-columns:repeat(3,1fr);gap:6px 10px;padding:16px;border-bottom:1px solid var(--line)}
+  td.id,td.claim,td.note{grid-column:1/-1}
+  tbody tr:last-child{border-bottom:0}
+  td{border:0;padding:3px 0}
+  td.id{font-size:14px;margin-bottom:4px}
+  td[data-l]{display:flex;flex-direction:column;align-items:flex-start;gap:4px}
+  td[data-l]::before{content:attr(data-l);font:600 10.5px var(--mono);letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+  td.claim{font-weight:500;min-width:0}
+  td.id{display:flex;align-items:baseline;gap:10px}
+  .seg{display:flex;flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none}
+  .seg button{flex:none;padding:8px 13px;font-size:13.5px}
+  td.note{min-width:0;margin-top:8px}
+}
+
+/* verify */
+.verify{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+@media (max-width:960px){.verify{grid-template-columns:1fr}}
+.panel-card{border-radius:var(--r);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden}
+.panel-card .ph{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line);font:600 13px var(--mono);color:var(--muted)}
+.evidence{display:grid;grid-template-columns:120px 1fr;gap:16px;padding:16px 18px;border-bottom:1px solid var(--line);align-items:center}
+.evidence img{width:120px;height:auto;border-radius:10px;border:1px solid var(--line)}
+.evidence p{margin:0;font-size:14px;color:var(--muted)}
+.evidence p b{color:var(--ink);font-weight:600}
+textarea{display:block;width:100%;min-height:230px;border:0;resize:vertical;background:var(--code-bg);color:var(--code-ink);padding:16px 18px;font:12px/1.55 var(--mono)}
+.vbtns{display:flex;flex-wrap:wrap;gap:10px;padding:16px 18px}
+.vbtns .btn{height:44px;font-size:14.5px}
+.result{padding:22px 22px 6px;display:flex;align-items:center;gap:14px}
+.seal{flex:none;width:52px;height:52px;border-radius:16px;display:grid;place-items:center;background:var(--bg-2);color:var(--muted);transition:background .3s,color .3s}
+.seal svg{width:26px;height:26px}
+.result.ok .seal{background:var(--pass-soft);color:var(--pass)}
+.result.no .seal{background:var(--fail-soft);color:var(--fail)}
+.result h3{margin:0;font:600 19px/1.3 var(--display)}
+.result p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.checks{list-style:none;margin:0;padding:12px 18px 20px;display:grid;gap:6px}
+.checks li{display:grid;grid-template-columns:22px 1fr;gap:10px;align-items:start;padding:9px 12px;border-radius:10px;background:var(--surface-2);font-size:13.5px;line-height:1.45;overflow-wrap:anywhere;opacity:0;transform:translateX(-6px);animation:in .35s forwards}
+.checks li .m{font-weight:700;color:var(--pass)}
+.checks li.no{background:var(--fail-soft)}
+.checks li.no .m{color:var(--fail)}
+@keyframes in{to{opacity:1;transform:none}}
+
+/* use */
+.tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:18px}
+.tabs button{display:inline-flex;align-items:center;gap:8px;border:1px solid var(--line);background:var(--surface);color:var(--ink-2);font:600 14.5px var(--sans);padding:10px 18px;border-radius:999px;cursor:pointer;transition:all .2s}
+.tabs button svg{width:16px;height:16px}
+.tabs button[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.use-grid{display:grid;grid-template-columns:1.3fr .7fr;gap:24px;align-items:start}
+@media (max-width:900px){.use-grid{grid-template-columns:1fr}}
+.tabpanel[hidden]{display:none}
+.tabpanel .note-card{padding:22px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line)}
+.tabpanel .note-card h4{margin:0 0 8px;font:600 18px var(--display)}
+.tabpanel .note-card p,.tabpanel .note-card li{color:var(--muted);font-size:14.5px}
+.tabpanel .note-card ul{margin:0;padding-left:18px}
+
+/* closing */
+.closing{margin:120px 0 0;padding:64px 40px;border-radius:28px;text-align:center;position:relative;overflow:hidden;background:radial-gradient(120% 140% at 0% 0%,#FFE2BF 0%,transparent 55%),radial-gradient(120% 140% at 100% 100%,#FFC59A 0%,transparent 55%),var(--surface);border:1px solid var(--line)}
+:root[data-theme="dark"] .closing{background:radial-gradient(120% 140% at 0% 0%,#3A2414 0%,transparent 55%),radial-gradient(120% 140% at 100% 100%,#4A2610 0%,transparent 55%),var(--surface)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]) .closing{background:radial-gradient(120% 140% at 0% 0%,#3A2414 0%,transparent 55%),radial-gradient(120% 140% at 100% 100%,#4A2610 0%,transparent 55%),var(--surface)}}
+.closing svg.logo{width:64px;height:64px;margin:0 auto 20px}
+.closing h2{margin:0 auto 14px}
+.closing .sub{margin:0 auto 30px}
+.closing .cta{justify-content:center}
+footer{padding:56px 0 48px;color:var(--muted);font-size:14px}
+footer .wrap{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap}
+footer .links{display:flex;gap:20px;flex-wrap:wrap}
+footer a{color:var(--muted);text-decoration:none}
+footer a:hover{color:var(--ink)}
+
+/* reveal */
+.rv{opacity:0;transform:translateY(24px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
+.rv.in{opacity:1;transform:none}
+.rv.d1{transition-delay:.08s}.rv.d2{transition-delay:.16s}.rv.d3{transition-delay:.24s}
+.float{animation:float 7s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.brand svg circle{transform-origin:24px 24px;animation:breathe 5s ease-in-out infinite}
+.brand svg circle:nth-of-type(2){animation-delay:.4s}.brand svg circle:nth-of-type(3){animation-delay:.8s}
+@keyframes breathe{50%{opacity:.7}}
+@media (prefers-reduced-motion:reduce){
+  html{scroll-behavior:auto}
+  .rv{opacity:1;transform:none;transition:none}
+  .float,.pipe .runner,.brand svg circle{animation:none}
+  .ln{opacity:1;transform:none;transition:none}
+  .checks li{animation:none;opacity:1;transform:none}
+}
+@media (max-width:960px){
+  .hero{padding:48px 0 24px}
+  .hero-grid{grid-template-columns:1fr;gap:40px}
+  section{padding-top:84px}
+  .side{position:static}
+  .closing{padding:48px 22px}
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-<header class="top">
-  <div class="brand">Kane<span>Jury</span></div>
-  <nav aria-label="Sections"><a href="#problem">Why</a><a href="#how">How it works</a><a href="#run">A real run</a><a href="#runs">25 runs</a><a href="#verify">Verify</a><a href="#use">Use it</a><a href="https://github.com/Datwebguy/kanejury">GitHub</a></nav>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFB347"/><stop offset="1" stop-color="#F26A1B"/></linearGradient>
+    <linearGradient id="g2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7894A"/><stop offset="1" stop-color="#C2410C"/></linearGradient>
+    <linearGradient id="g3" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#FFD39A"/><stop offset="1" stop-color="#E8590C"/></linearGradient>
+    <symbol id="logo" viewBox="0 0 48 48">
+      <circle cx="24" cy="16" r="12" fill="url(#g1)" opacity=".92"/>
+      <circle cx="15" cy="31" r="12" fill="url(#g2)" opacity=".88"/>
+      <circle cx="33" cy="31" r="12" fill="url(#g3)" opacity=".88"/>
+      <path d="M18.5 25.5l4 4 7.5-8.5" fill="none" stroke="#FFF8EE" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+    </symbol>
+  </defs>
+</svg>
+
+<div class="bg-glow" aria-hidden="true"></div>
+<div class="grain" aria-hidden="true"></div>
+
+<header class="top" id="top">
+  <div class="wrap">
+    <a class="brand" href="#" aria-label="KaneJury home">
+      <svg viewBox="0 0 48 48" aria-hidden="true">
+        <circle cx="24" cy="16" r="12" fill="url(#g1)" opacity=".92"/>
+        <circle cx="15" cy="31" r="12" fill="url(#g2)" opacity=".88"/>
+        <circle cx="33" cy="31" r="12" fill="url(#g3)" opacity=".88"/>
+        <path d="M18.5 25.5l4 4 7.5-8.5" fill="none" stroke="#FFF8EE" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      KaneJury
+    </a>
+    <nav class="nav" aria-label="Sections">
+      <a href="#problem">Why</a><a href="#how">How it works</a><a href="#run">Live run</a><a href="#runs">Results</a><a href="#verify">Verify</a><a href="#use">Integrations</a>
+    </nav>
+    <div class="actions">
+      <button class="icon-btn theme-btn" id="theme" type="button" aria-label="Switch between light and dark theme">
+        <svg class="sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.9 4.9l1.4 1.4M17.7 17.7l1.4 1.4M2 12h2M20 12h2M4.9 19.1l1.4-1.4M17.7 6.3l1.4-1.4"/></svg>
+        <svg class="moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/></svg>
+      </button>
+      <a class="gh-btn" href="https://github.com/Datwebguy/kanejury">
+        <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 .5C5.7.5.5 5.7.5 12a11.5 11.5 0 0 0 7.9 10.9c.6.1.8-.3.8-.6v-2c-3.2.7-3.9-1.5-3.9-1.5-.5-1.3-1.3-1.7-1.3-1.7-1-.7.1-.7.1-.7 1.2.1 1.8 1.2 1.8 1.2 1 1.8 2.8 1.3 3.5 1 .1-.8.4-1.3.7-1.6-2.6-.3-5.3-1.3-5.3-5.7 0-1.3.5-2.3 1.2-3.1-.1-.3-.5-1.5.1-3.1 0 0 1-.3 3.3 1.2a11.4 11.4 0 0 1 6 0C17.4 4.6 18.4 5 18.4 5c.6 1.6.2 2.8.1 3.1.8.8 1.2 1.8 1.2 3.1 0 4.4-2.7 5.4-5.3 5.7.4.4.8 1.1.8 2.2v3.2c0 .3.2.7.8.6A11.5 11.5 0 0 0 23.5 12C23.5 5.7 18.3.5 12 .5z"/></svg>
+        <span>GitHub</span>
+      </a>
+    </div>
+  </div>
 </header>
 
 <main>
-<div class="hero">
-  <h1>Know when to trust a Kane verdict.</h1>
-  <p class="lead">KaneJury reads the evidence behind a Kane CLI run and tells your pipeline what to do next: ship it, fix it, run it again, or look closer. Every decision comes with a receipt anyone can verify.</p>
-  <div class="btns"><a class="btn primary" href="#verify">Verify a real receipt</a><a class="btn" href="#run">See a real run</a></div>
-</div>
-
-<section id="problem">
-  <h2>Three ways a pass or a fail can mislead</h2>
-  <p class="sub">A browser agent gives you one word. The evidence behind it tells you whether to believe it.</p>
-  <div class="grid3">
-    <div class="card"><span class="tag">REPAIRED TO PASS</span><h3>The page was fixed by the tester</h3><p>The list came back empty, so Kane typed the missing item again and reported success. The bug stayed hidden. The step list shows it.</p></div>
-    <div class="card"><span class="tag">WRONG KIND OF FAILURE</span><h3>The browser crashed, not the app</h3><p>A run that dies on a browser crash is labelled "fail". Sent to a coding agent, it sends the agent after a bug that does not exist.</p></div>
-    <div class="card"><span class="tag">STORY VS STEPS</span><h3>The summary claims a click that never happened</h3><p>The write-up says the Clear button was pressed. The recorded steps have no such click. KaneJury compares the two.</p></div>
-  </div>
-</section>
-
-<section id="how">
-  <h2>How a decision is made</h2>
-  <p class="sub">KaneJury opens the sealed evidence pack Kane writes for every run. Plain-code checks do most of the work; three attested vision models add a second look at what is on screen.</p>
-  <div class="flow">
-    <div class="step"><b>1. Kane runs</b><span>Your objective, in a real browser. Kane seals an evidence pack: steps, screenshots, network and console logs.</span></div>
-    <div class="step"><b>2. Checks read it</b><span>Infrastructure or real failure? Every requested click present? Any typing after the last requested action?</span></div>
-    <div class="step"><b>3. A visual jury looks</b><span>Three models hosted in hardware enclaves read the screenshot. A juror that fails today's calibration is left out.</span></div>
-    <div class="step"><b>4. The gate decides</b><span>One of five actions, so a pipeline can branch without guessing.</span></div>
-    <div class="step"><b>5. A receipt is signed</b><span>Hashes, signatures and responses you can re-check without trusting anyone.</span></div>
-  </div>
-  <div class="outcomes" aria-label="The five decisions">
-    <span class="chip allow">allow: safe to go on</span><span class="chip fix">fix: send to the coding agent</span><span class="chip rerun">rerun: infrastructure, leave the agent out</span><span class="chip recheck">recheck: passed, but may have repaired the page</span><span class="chip review">review: a person should look</span>
-  </div>
-</section>
-
-<section id="run">
-  <h2>One real run, start to finish</h2>
-  <p class="sub">A small todo app with one planted bug: "Clear completed" removes every item. A real coding model fixes it. Every number below comes from the run log in the repository.</p>
-  <div class="timeline" id="timeline" aria-live="polite"></div>
-  <p class="sub" style="margin-top:16px">The patch below is the model's own work, written from Kane's failure report and not prepared in advance.</p>
-  <pre class="diff" id="patch" aria-label="The patch written by the coding agent"></pre>
-</section>
-
-<section id="runs">
-  <h2>25 real Kane runs on public test sites</h2>
-  <p class="sub">Each run has a known right answer, from how the page is built. The table shows Kane's verdict, the visual jury's, and what the plain-code checks found.</p>
-  <div class="stats" id="stats"></div>
-  <div class="filters" role="group" aria-label="Filter runs"><button data-f="all" aria-pressed="true">All 25</button><button data-f="attention" aria-pressed="false">Needs attention</button><button data-f="agree" aria-pressed="false">Everyone agrees</button></div>
-  <div class="tablewrap"><table><thead><tr><th>Run</th><th>Claim</th><th>Known answer</th><th>Kane</th><th>Visual jury</th><th>What KaneJury noticed</th></tr></thead><tbody id="rows"></tbody></table></div>
-</section>
-
-<section id="verify">
-  <h2>Verify a receipt in your browser</h2>
-  <p class="sub">This receipt is real: three attested models judged the screenshot on the right. Nothing is sent anywhere. Your browser recomputes the hashes, recovers each signer from its signature, and re-reads every verdict from the signed response.</p>
-  <div class="verify">
-    <div>
-      <label for="receipt" class="visually-hidden">Receipt JSON</label>
-      <textarea id="receipt" spellcheck="false" aria-label="Receipt JSON"></textarea>
-      <div class="vbtns"><button class="act" id="vbtn">Verify this receipt</button><button class="act alt" id="tbtn">Tamper with it, then verify</button></div>
-    </div>
-    <div>
-      <div class="result" id="vresult" role="status">Press a button to run the checks.</div>
-      <ul class="checks" id="checks"></ul>
+  <div class="wrap">
+    <div class="hero">
+      <div class="hero-grid">
+        <div>
+          <span class="eyebrow rv"><span class="dot"></span>A trust layer for Kane CLI</span>
+          <h1 class="rv d1">Know when to <span class="grad">trust</span> a Kane verdict.</h1>
+          <p class="lead rv d2">KaneJury reads the evidence behind every Kane CLI run and tells your pipeline what to do next: ship it, fix it, run it again, or look closer. Each decision comes with a receipt anyone can verify.</p>
+          <div class="cta rv d3">
+            <a class="btn primary" href="#run">See a real run
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+            <a class="btn" href="#verify">Verify a receipt</a>
+          </div>
+          <div class="trust rv d3">
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>Real Kane runs, real evidence</span>
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>Open source, MIT</span>
+            <span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M20 6 9 17l-5-5"/></svg>CLI · MCP · GitHub Action</span>
+          </div>
+        </div>
+        <div class="rv d2">
+          <div class="console float" aria-label="A recorded KaneJury run">
+            <div class="console-bar"><i></i><i></i><i></i><b>kanejury loop · demo todo app</b></div>
+            <div class="console-body" id="console"></div>
+          </div>
+        </div>
+      </div>
+      <div class="strip rv" id="strip"></div>
     </div>
   </div>
-  <p class="sub" style="margin-top:16px">The claim was "Price shown at checkout matches the advertised Pro price." on <a href="assets/evidence-fail.png">this screenshot</a>, where the pricing box says $19 and the checkout box says $29.</p>
-</section>
 
-<section id="use">
-  <h2>Use it where you already work</h2>
-  <p class="sub">One decision engine, four doors.</p>
-  <div class="tabs" role="tablist" aria-label="Ways to use KaneJury">
-    <button role="tab" aria-selected="true" data-t="cli">Command line</button><button role="tab" aria-selected="false" data-t="mcp">MCP</button><button role="tab" aria-selected="false" data-t="action">GitHub Action</button><button role="tab" aria-selected="false" data-t="hook">Claude Code</button>
-  </div>
-  <div class="panel" data-p="cli"><pre>npm install
-node src/cli.js gate run.evidence                 # allow | fix | rerun | recheck | review
+  <section id="problem">
+    <div class="wrap">
+      <span class="kicker rv">Why it exists</span>
+      <h2 class="rv">One word decides what ships. The evidence tells the full story.</h2>
+      <p class="sub rv">A browser agent answers "passed" or "failed", and your pipeline acts on it. KaneJury looks at what actually happened in the run before that word is trusted.</p>
+      <div class="cards3">
+        <article class="card rv">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18v3h3l6.3-6.3a4 4 0 0 0 5.4-5.4l-2.5 2.5-2.4-.6-.6-2.4z"/></svg></div>
+          <h3>Repaired to pass</h3>
+          <p>The list came back empty, so the agent typed the missing item again and reported success. The bug stays hidden behind a green tick.</p>
+          <div class="fix"><b>KaneJury:</b> spots typing after the last requested action and asks for a strict re-run.</div>
+        </article>
+        <article class="card rv d1">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="m9 9 6 6M15 9l-6 6M8 21h8"/></svg></div>
+          <h3>A crash labelled as a failure</h3>
+          <p>The browser died mid-run and the result says "failed". Handed to a coding agent, it sends the agent after a bug that does not exist.</p>
+          <div class="fix"><b>KaneJury:</b> recognises infrastructure trouble and routes it to a re-run, never to the agent.</div>
+        </article>
+        <article class="card rv d2">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3 8-8"/><path d="M20 12v6a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h9"/></svg></div>
+          <h3>Steps that don't match the story</h3>
+          <p>The summary says a button was pressed. The recorded steps have no such click. The verdict rests on an action that never happened.</p>
+          <div class="fix"><b>KaneJury:</b> checks every action the objective names against the recorded steps.</div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="how">
+    <div class="wrap">
+      <span class="kicker rv">How it works</span>
+      <h2 class="rv">From a sealed evidence pack to a clear next step.</h2>
+      <p class="sub rv">Plain, deterministic code does most of the work. Three attested vision models add a second look at the screen. The gate turns it all into one action your pipeline can branch on.</p>
+      <div class="pipe rv">
+        <span class="runner" aria-hidden="true"></span>
+        <div class="node"><div class="num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/></svg></div><div><h4>Kane runs</h4><p>Your objective in a real browser, sealed into an evidence pack.</p></div></div>
+        <div class="node"><div class="num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 8v13H3V8M1 3h22v5H1zM10 12h4"/></svg></div><div><h4>Pack is read</h4><p>Steps, screenshots, console and network logs, failure records.</p></div></div>
+        <div class="node"><div class="num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 11 3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg></div><div><h4>Checks run</h4><p>Crash or real failure? Every click present? Any repair after the last one?</p></div></div>
+        <div class="node"><div class="num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></div><div><h4>Jury looks</h4><p>Three calibrated models in hardware enclaves read the screenshot.</p></div></div>
+        <div class="node"><div class="num"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/></svg></div><div><h4>Gate decides</h4><p>One action, with reasons and a signed receipt.</p></div></div>
+      </div>
+      <div class="decisions">
+        <div class="dec rv"><span class="pill p-allow">allow</span><p>Passed, and nothing looked wrong. <code>exit 0</code></p></div>
+        <div class="dec rv d1"><span class="pill p-fix">fix</span><p>A confirmed failure goes to the coding agent. <code>exit 1</code></p></div>
+        <div class="dec rv d2"><span class="pill p-rerun">rerun</span><p>Infrastructure trouble. The agent stays out of it. <code>exit 4</code></p></div>
+        <div class="dec rv d3"><span class="pill p-recheck">recheck</span><p>Passed, but may have repaired the page. Re-run strict. <code>exit 5</code></p></div>
+        <div class="dec rv d3"><span class="pill p-review">review</span><p>The evidence disagrees with itself. A person looks. <code>exit 5</code></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="run">
+    <div class="wrap">
+      <span class="kicker rv">Live run</span>
+      <h2 class="rv">A planted bug, caught and fixed end to end.</h2>
+      <p class="sub rv">A small todo app where "Clear completed" removes every item. KaneJury runs Kane, gates each result, and calls a real coding model only once the failure is confirmed. Every line below comes from the recorded run log.</p>
+      <div class="run-grid">
+        <div class="timeline" id="timeline"></div>
+        <div class="side">
+          <div class="sum rv" id="sum"></div>
+          <div class="code-card rv d1">
+            <div class="code-head"><span>todo-app/index.html · patch by the agent</span></div>
+            <pre class="diff" id="patch"></pre>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="runs">
+    <div class="wrap">
+      <span class="kicker rv">Results</span>
+      <h2 class="rv">25 real Kane runs on public test sites.</h2>
+      <p class="sub rv">Each run has a known right answer from how the page is built. Here is what Kane said, what the vision jury said, and what KaneJury's checks noticed.</p>
+      <div class="stats" id="stats"></div>
+      <div class="seg rv" role="group" aria-label="Filter runs">
+        <button type="button" data-f="all" aria-pressed="true">All runs</button>
+        <button type="button" data-f="attention" aria-pressed="false">Worth a look</button>
+        <button type="button" data-f="agree" aria-pressed="false">Everyone agrees</button>
+      </div>
+      <div class="tablewrap rv">
+        <table>
+          <thead><tr><th>Run</th><th>Claim</th><th>Known</th><th>Kane</th><th>Jury</th><th>What KaneJury noticed</th></tr></thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div class="more-wrap"><button class="btn" id="more" type="button" hidden>Show all runs</button></div>
+    </div>
+  </section>
+
+  <section id="verify">
+    <div class="wrap">
+      <span class="kicker rv">Verifiable receipts</span>
+      <h2 class="rv">Don't trust us. Check the receipt yourself.</h2>
+      <p class="sub rv">This receipt is real: three attested models judged the screenshot below. Your browser recomputes every hash, recovers each signer from its signature and re-reads each verdict from the signed response. Nothing leaves this page.</p>
+      <div class="verify">
+        <div class="panel-card rv">
+          <div class="ph"><span>receipt-fail.json</span><span id="rsize"></span></div>
+          <div class="evidence">
+            <a href="assets/evidence-fail.png"><img src="assets/evidence-fail.png" alt="Evidence screenshot: the pricing box shows $19 and the checkout shows $29" loading="lazy" width="120" height="90"></a>
+            <p><b>Claim:</b> "Price shown at checkout matches the advertised Pro price." The pricing box says $19, checkout says $29. The jury said fail.</p>
+          </div>
+          <label for="receipt" class="sr">Receipt JSON</label>
+          <textarea id="receipt" spellcheck="false"></textarea>
+          <div class="vbtns">
+            <button class="btn primary" id="vbtn" type="button">Verify receipt</button>
+            <button class="btn" id="tbtn" type="button">Flip the verdicts, then verify</button>
+          </div>
+        </div>
+        <div class="panel-card rv d1" aria-live="polite">
+          <div class="result" id="vresult">
+            <div class="seal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <div><h3>Ready to check</h3><p>Press a button to run every check in your browser.</p></div>
+          </div>
+          <ul class="checks" id="checks"></ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="use">
+    <div class="wrap">
+      <span class="kicker rv">Integrations</span>
+      <h2 class="rv">Use it where you already work.</h2>
+      <p class="sub rv">One decision engine behind four doors, so every surface gives the same answer.</p>
+      <div class="tabs rv" role="tablist" aria-label="Ways to use KaneJury">
+        <button role="tab" type="button" aria-selected="true" data-t="cli"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m4 17 6-6-6-6M12 19h8"/></svg>Command line</button>
+        <button role="tab" type="button" aria-selected="false" data-t="mcp"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><path d="M9 6h6a3 3 0 0 1 3 3v6"/></svg>MCP server</button>
+        <button role="tab" type="button" aria-selected="false" data-t="action"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="m10 8 6 4-6 4z"/></svg>GitHub Action</button>
+        <button role="tab" type="button" aria-selected="false" data-t="hook"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 1 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/></svg>Agent stop hook</button>
+      </div>
+      <div class="tabpanel" data-p="cli"><div class="use-grid">
+        <div class="code-card"><div class="code-head"><span>terminal</span><button class="copy" type="button">Copy</button></div><pre>git clone https://github.com/Datwebguy/kanejury && cd kanejury
+npm install
+
+# decide what to do with a Kane run
+node src/cli.js gate run.evidence
+
+# add the vision jury for a claim
 node src/cli.js judge-pack run.evidence --claim "The cart badge shows 1."
+
+# the whole loop: Kane, gate, agent, Kane again
 node src/cli.js loop --objective "..." --url http://localhost:3000 --agent "node agent.mjs"
+
+# check any receipt offline
 node src/cli.js verify receipt.json --image evidence.png</pre></div>
-  <div class="panel" data-p="mcp" hidden><pre>{
+        <div class="note-card"><h4>Exit codes your CI understands</h4><ul><li><code>0</code> allow</li><li><code>1</code> fix</li><li><code>4</code> rerun</li><li><code>5</code> recheck or review</li></ul></div>
+      </div></div>
+      <div class="tabpanel" data-p="mcp" hidden><div class="use-grid">
+        <div class="code-card"><div class="code-head"><span>mcp config</span><button class="copy" type="button">Copy</button></div><pre>{
   "mcpServers": {
-    "kanejury": { "command": "node", "args": ["/path/to/kanejury/src/mcp.js"] }
+    "kanejury": {
+      "command": "node",
+      "args": ["/path/to/kanejury/src/mcp.js"]
+    }
   }
-}</pre><p class="sub">Tools: kanejury_inspect_pack, kanejury_gate, kanejury_judge_pack, kanejury_verify_receipt.</p></div>
-  <div class="panel" data-p="action" hidden><pre>- uses: Datwebguy/kanejury@main
+}</pre></div>
+        <div class="note-card"><h4>Four tools for any MCP client</h4><ul><li><code>kanejury_inspect_pack</code></li><li><code>kanejury_gate</code></li><li><code>kanejury_judge_pack</code></li><li><code>kanejury_verify_receipt</code></li></ul></div>
+      </div></div>
+      <div class="tabpanel" data-p="action" hidden><div class="use-grid">
+        <div class="code-card"><div class="code-head"><span>.github/workflows/e2e.yml</span><button class="copy" type="button">Copy</button></div><pre>- uses: Datwebguy/kanejury@main
   with:
-    pack: .testmuai/evidence        # a .evidence file or a folder of them
+    pack: .testmuai/evidence     # a file or a folder
     fail-on: fix,recheck,review</pre></div>
-  <div class="panel" data-p="hook" hidden><pre>{ "hooks": { "Stop": [ { "hooks": [ { "type": "command",
-  "command": "KANEJURY_OBJECTIVE='...' KANEJURY_URL=http://localhost:3000 node /path/to/kanejury/hooks/claude-code-stop.mjs" } ] } ] } }</pre></div>
-</section>
+        <div class="note-card"><h4>Gate every pull request</h4><p>Reads each evidence pack, writes a job summary with the reasons, and fails the build on the actions you choose.</p></div>
+      </div></div>
+      <div class="tabpanel" data-p="hook" hidden><div class="use-grid">
+        <div class="code-card"><div class="code-head"><span>.claude/settings.json</span><button class="copy" type="button">Copy</button></div><pre>{ "hooks": { "Stop": [ { "hooks": [ {
+  "type": "command",
+  "command": "KANEJURY_OBJECTIVE='...' KANEJURY_URL=http://localhost:3000 node /path/to/kanejury/hooks/claude-code-stop.mjs"
+} ] } ] } }</pre></div>
+        <div class="note-card"><h4>Close the loop for coding agents</h4><p>After each turn, Kane tests the change, the gate decides, and the reasons go straight back to the agent. After three attempts it hands over to a person.</p></div>
+      </div></div>
+
+      <div class="closing rv">
+        <svg class="logo" viewBox="0 0 48 48" aria-hidden="true"><use href="#logo"/></svg>
+        <h2>Ship what really passed.</h2>
+        <p class="sub">Open source, runs on your machine, and every decision is checkable.</p>
+        <div class="cta">
+          <a class="btn primary" href="https://github.com/Datwebguy/kanejury">Get started on GitHub</a>
+          <a class="btn" href="https://github.com/Datwebguy/kanejury/blob/main/docs/evaluation.md">Read the evaluation</a>
+        </div>
+      </div>
+    </div>
+  </section>
 </main>
 
 <footer>
-  <div>KaneJury is an independent open-source project, built on <a href="https://www.testmuai.com/kane-cli/">Kane CLI</a> and <a href="https://near.ai/">NEAR AI Cloud</a>. MIT licensed. <a href="https://github.com/Datwebguy/kanejury">Source and documentation</a>.</div>
+  <div class="wrap">
+    <span>KaneJury · built on <a href="https://www.testmuai.com/kane-cli/">Kane CLI</a> and <a href="https://near.ai/">NEAR AI Cloud</a> · MIT licensed</span>
+    <div class="links"><a href="https://github.com/Datwebguy/kanejury">GitHub</a><a href="https://github.com/Datwebguy/kanejury/blob/main/docs/integrations.md">Docs</a><a href="https://github.com/Datwebguy/kanejury/blob/main/docs/receipts.md">Receipts</a></div>
+  </div>
 </footer>
-</div>
 
 <script type="module">
 import { RUNS, LOOP, PATCH } from './assets/data.js';
 import { verifyOffline } from './assets/verify.js';
 
+const $ = (s) => document.querySelector(s);
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const fmt = (n) => Number(n).toLocaleString('en-US', { maximumFractionDigits: 1 });
 
-// --- the real loop ---
-const labels = { allow: 'allow', fix: 'fix', rerun: 'rerun', recheck: 'recheck', review: 'review' };
-const blurb = [
-  'Kane passed. Its steps show it typed the missing item again after "Clear completed". The gate flags it and asks for a strict re-run.',
-  'Kane, in its strict mode, fails honestly: the list is empty. The gate sends this confirmed failure to the coding agent.',
-  'Kane passes with nothing suspicious in its steps. The gate allows it.'];
-document.getElementById('timeline').innerHTML = LOOP.rounds.map((r, i) =>
-  `<div class="round"><div class="n">Round ${r.round}</div><div><div class="row"><span class="chip ${r.kane === 'passed' ? 'allow' : 'bad'}">Kane ${esc(r.kane)}</span><span class="chip ${esc(r.decision)}">gate: ${esc(labels[r.decision] || r.decision)}</span><span class="chip">${r.credits} credits, ${r.seconds}s</span></div><p>${esc(blurb[i] || '')}</p><p><i>Kane said:</i> ${esc(r.kaneSummary)}</p></div></div>`).join('');
-document.getElementById('patch').innerHTML = esc(PATCH).split('\n').map((l) => l.startsWith('<') ? `<span class="del">${l}</span>` : l.startsWith('>') ? `<span class="add">${l}</span>` : l).join('\n');
+/* theme */
+$('#theme').addEventListener('click', () => {
+  const cur = document.documentElement.getAttribute('data-theme') || (matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  try { localStorage.setItem('kj-theme', next); } catch (e) {}
+});
+addEventListener('scroll', () => $('#top').classList.toggle('scrolled', scrollY > 8), { passive: true });
 
-// --- the 25 runs ---
+/* numbers from the data */
+const rounds = LOOP.rounds;
+const totalCredits = rounds.reduce((a, r) => a + Number(r.credits || 0), 0);
+const withShot = RUNS.filter((r) => r.jury !== 'no_evidence');
+const kaneRight = withShot.filter((r) => r.kane === r.truth).length;
+const juryRight = withShot.filter((r) => r.jury === r.truth).length;
+
+/* hero console: the real first and last rounds */
+const r1 = rounds[0], rl = rounds[rounds.length - 1];
+const lines = [
+  `<span class="p">$</span> kane-cli run "…verify b remains" --agent`,
+  `<div class="verdict"><span class="tag tag-pass">Kane: passed</span><div>${esc(r1.kaneSummary)}</div></div>`,
+  `<span class="p">$</span> kanejury gate run.evidence`,
+  `<div class="verdict"><span class="tag tag-recheck">recheck</span><div>${esc(r1.reasons[0])}</div></div>`,
+  `<span class="c"># strict re-run fails honestly → agent patches → Kane again</span>`,
+  `<div class="verdict"><span class="tag tag-allow">allow</span><div>Bug fixed and verified.<small>${rounds.length} Kane runs · ${fmt(totalCredits)} credits</small></div></div>`,
+];
+const con = $('#console');
+con.innerHTML = lines.map((l) => `<div class="ln">${l}</div>`).join('');
+const lns = [...con.querySelectorAll('.ln')];
+if (reduce) lns.forEach((l) => l.classList.add('on'));
+else lns.forEach((l, i) => setTimeout(() => l.classList.add('on'), 350 + i * 650));
+
+/* strip */
+$('#strip').innerHTML = [
+  [RUNS.length, 'real Kane runs, known answers'],
+  [`${kaneRight}/${withShot.length}`, 'Kane verdicts matched'],
+  ['1/1', 'browser crash caught, 0 false alarms'],
+  [`${fmt(totalCredits)}`, 'credits for a full find-and-fix loop'],
+].map(([b, s]) => `<div><b>${esc(b)}</b><span>${esc(s)}</span></div>`).join('');
+
+/* timeline */
+const describe = (r, i) => {
+  if (r.decision === 'recheck') return 'Kane passed, but its steps show it typed the missing item again after "Clear completed". The gate asks for a strict re-run.';
+  if (r.decision === 'fix') return 'In strict mode (--mode action) Kane fails honestly: the list is empty. This confirmed failure goes to the coding agent.';
+  if (r.decision === 'allow') return 'Kane passes and nothing in its steps looks off. The gate allows it.';
+  return (r.reasons || []).join(' ');
+};
+const tl = [];
+rounds.forEach((r, i) => {
+  tl.push(`<div class="tl rv"><div class="row"><span class="rn">Round ${r.round}</span><span class="chip ${r.kane === 'passed' ? 'k-pass' : 'k-fail'}">Kane ${esc(r.kane)}</span><span class="pill p-${esc(r.decision)}" style="font:600 12.5px var(--mono);padding:4px 10px;border-radius:999px">${esc(r.decision)}</span><span class="chip">${fmt(r.credits)} cr · ${r.seconds}s</span></div><p>${esc(describe(r, i))}</p><q>Kane: “${esc(r.kaneSummary)}”</q></div>`);
+  if (r.decision === 'fix') tl.push(`<div class="tl agent rv"><div class="row"><span class="rn">Agent</span><span class="chip">coding model</span></div><p>Reads Kane's failure report and the source file, then writes the patch shown with the outcome. Nothing was prepared in advance.</p></div>`);
+});
+$('#timeline').innerHTML = tl.join('');
+$('#sum').innerHTML = `<h3>Outcome</h3><div class="big">Bug found, fixed, verified.</div><div class="row3"><div><b>${rounds.length}</b><span>Kane runs</span></div><div><b>${fmt(totalCredits)}</b><span>credits</span></div><div><b>1</b><span>real patch</span></div></div>`;
+$('#patch').innerHTML = esc(PATCH).split('\n').filter((l) => l.trim()).filter((l) => l.startsWith('&lt;') || l.startsWith('&gt;')).map((l) =>
+  l.startsWith('&lt;') ? `<span class="del">- ${l.slice(5).trim()}</span>` : l.startsWith('&gt;') ? `<span class="add">+ ${l.slice(5).trim()}</span>` : `<span style="color:var(--code-muted)">${l}</span>`).join('');
+
+/* stats */
+const pct = (a, b) => Math.round((a / b) * 100);
+$('#stats').innerHTML = [
+  [`${kaneRight}/${withShot.length}`, 'Kane verdicts matched the known answer', pct(kaneRight, withShot.length)],
+  [`${juryRight}/${withShot.length}`, 'vision jury matched on the last screenshot alone', pct(juryRight, withShot.length)],
+  ['1/1', 'browser crash told apart from a real failure', 100],
+  ['0', 'false alarms from the crash classifier in 25 packs', 100],
+].map(([b, s, w], i) => `<div class="stat rv ${['', 'd1', 'd2', 'd3'][i]}"><b>${esc(b)}</b><span>${esc(s)}</span><div class="bar"><i data-w="${w}"></i></div></div>`).join('');
+
+/* table */
 const flagged = { T9: 'Coverage check: an action named in the objective is missing from the recorded steps.' };
-const attention = new Set(RUNS.filter((r) => r.note || flagged[r.id]).map((r) => r.id));
-const verdictClass = (v) => (v === 'pass' ? 'v-pass' : v === 'fail' ? 'v-fail' : 'v-other');
-const total = RUNS.length, withShot = RUNS.filter((r) => r.jury !== 'no_evidence').length, kaneRight = RUNS.filter((r) => r.jury !== 'no_evidence' && r.kane === r.truth).length;
-document.getElementById('stats').innerHTML = [
-  [String(total), 'real Kane runs, each with a known right answer'],
-  [`${kaneRight} of ${withShot}`, 'Kane verdicts that matched the known answer'],
-  ['1 of 1', 'browser crashes told apart from a real failure'],
-  ['0', 'false alarms from the crash classifier across the 25 runs'],
-].map(([v, l]) => `<div class="stat"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div></div>`).join('');
-const tbody = document.getElementById('rows');
+const attention = new Set(RUNS.filter((r) => r.note || flagged[r.id] || r.kane !== r.truth || r.jury !== r.truth).map((r) => r.id));
+const vb = (v, truth) => {
+  const label = v === 'no_evidence' ? 'no screenshot' : v;
+  const cls = v === 'pass' ? 'pass' : v === 'fail' ? 'fail' : 'other';
+  const miss = truth && (v === 'pass' || v === 'fail') && v !== truth ? ' miss' : '';
+  return `<span class="vb ${cls}${miss}">${esc(label)}</span>`;
+};
+const noteHtml = (r) => {
+  const n = flagged[r.id] || r.note;
+  if (!n) return 'All agree.';
+  const m = n.match(/^(FALSE (?:RED|GREEN))(?: by [^:]+)?:\s*(.*)$/);
+  if (m) return `<span class="flag">${esc(m[1].toLowerCase())}</span>${esc(m[2].charAt(0).toUpperCase() + m[2].slice(1))}`;
+  return esc(n.charAt(0).toUpperCase() + n.slice(1));
+};
+let expanded = false;
+const compact = matchMedia('(max-width: 760px)');
 function draw(f) {
-  tbody.innerHTML = RUNS.filter((r) => f === 'all' || (f === 'attention') === attention.has(r.id)).map((r) =>
-    `<tr><td class="mono">${esc(r.id)}</td><td>${esc(r.claim)}</td><td class="${verdictClass(r.truth)}">${esc(r.truth)}</td><td class="${verdictClass(r.kane)}">${esc(r.kane)}</td><td class="${verdictClass(r.jury)}">${esc(r.jury === 'no_evidence' ? 'no screenshot' : r.jury)}</td><td class="note">${esc(flagged[r.id] || r.note || 'Everyone agrees.')}</td></tr>`).join('');
+  let list = RUNS.filter((r) => f === 'all' || (f === 'attention') === attention.has(r.id));
+  const cut = compact.matches && !expanded && list.length > 8;
+  $('#more').hidden = !cut;
+  $('#more').textContent = `Show all ${list.length} runs`;
+  if (cut) list = list.slice(0, 8);
+  $('#rows').innerHTML = list.map((r) =>
+    `<tr><td class="id">${esc(r.id)}<div class="site">${esc(r.site)}</div></td><td class="claim">${esc(r.claim)}</td><td data-l="Known">${vb(r.truth)}</td><td data-l="Kane">${vb(r.kane, r.truth)}</td><td data-l="Jury">${vb(r.jury, r.truth)}</td><td class="note">${noteHtml(r)}</td></tr>`).join('');
 }
+let current = 'all';
 draw('all');
-document.querySelectorAll('.filters button').forEach((b) => b.addEventListener('click', () => { document.querySelectorAll('.filters button').forEach((x) => x.setAttribute('aria-pressed', x === b)); draw(b.dataset.f); }));
+$('#more').addEventListener('click', () => { expanded = true; draw(current); });
+compact.addEventListener?.('change', () => draw(current));
+document.querySelectorAll('.seg button').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('.seg button').forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  current = b.dataset.f; draw(current);
+}));
 
-// --- verify in the browser ---
-const ta = document.getElementById('receipt'), list = document.getElementById('checks'), res = document.getElementById('vresult');
+/* verify */
+const ta = $('#receipt'), list = $('#checks'), res = $('#vresult');
 let original = '';
-fetch('./assets/receipt-fail.json').then((r) => r.text()).then((t) => { original = t; ta.value = t; }).catch(() => { ta.value = 'Could not load the example receipt. Serve this page over http(s).'; });
-async function runVerify(text, tampered) {
-  list.innerHTML = ''; res.className = 'result'; res.textContent = 'Checking…';
+fetch('./assets/receipt-fail.json').then((r) => r.text()).then((t) => { original = t; ta.value = t; $('#rsize').textContent = (t.length / 1024).toFixed(1) + ' KB'; })
+  .catch(() => { ta.value = 'Could not load the example receipt.'; });
+const icon = { ok: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m9 12 2 2 4-4"/>', no: '<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="m10 10 4 4M14 10l-4 4"/>' };
+function setResult(state, title, text) {
+  res.className = 'result ' + state;
+  res.innerHTML = `<div class="seal"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${icon[state] || icon.ok}</svg></div><div><h3>${esc(title)}</h3><p>${esc(text)}</p></div>`;
+}
+async function runVerify(text, tamper) {
+  list.innerHTML = '';
+  setResult('', 'Checking…', 'Recomputing hashes and recovering signers.');
   try {
     const r = JSON.parse(text);
-    if (tampered) { for (const v of r.votes) v.verdict = 'pass'; r.result.verdict = 'pass'; }
+    if (tamper) { for (const v of r.votes) v.verdict = 'pass'; r.result.verdict = 'pass'; ta.value = JSON.stringify(r, null, 2); }
     const out = await verifyOffline(r);
-    list.innerHTML = out.checks.map((c) => `<li class="${c.ok ? 'ok' : 'no'}"><span class="m" aria-hidden="true">${c.ok ? '✓' : '✗'}</span><span>${esc(c.what)}</span></li>`).join('');
-    res.className = 'result ' + (out.ok ? 'ok' : 'no');
-    res.textContent = out.ok ? `Receipt verified: ${out.checks.length} checks passed.` : `Receipt rejected: ${out.checks.filter((c) => !c.ok).length} of ${out.checks.length} checks failed.`;
-  } catch (e) { res.className = 'result no'; res.textContent = 'That is not a readable receipt: ' + e.message; }
+    list.innerHTML = out.checks.map((c, i) => `<li class="${c.ok ? 'ok' : 'no'}" style="animation-delay:${reduce ? 0 : i * 45}ms"><span class="m" aria-hidden="true">${c.ok ? '✓' : '✗'}</span><span>${esc(c.what)}</span></li>`).join('');
+    const failed = out.checks.filter((c) => !c.ok).length;
+    if (out.ok) setResult('ok', 'Receipt verified', `All ${out.checks.length} checks passed. The verdicts are exactly what the signed models said.`);
+    else setResult('no', 'Receipt rejected', `${failed} of ${out.checks.length} checks failed. The edited verdicts don't match the signed responses.`);
+  } catch (e) { setResult('no', 'Not a readable receipt', e.message); }
 }
-document.getElementById('vbtn').addEventListener('click', () => runVerify(ta.value, false));
-document.getElementById('tbtn').addEventListener('click', () => { ta.value = original || ta.value; runVerify(ta.value, true); });
+$('#vbtn').addEventListener('click', () => runVerify(ta.value, false));
+$('#tbtn').addEventListener('click', () => runVerify(original || ta.value, true));
 
-// --- tabs ---
-document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('click', () => {
-  document.querySelectorAll('.tabs button').forEach((x) => x.setAttribute('aria-selected', x === b));
-  document.querySelectorAll('.panel').forEach((p) => (p.hidden = p.dataset.p !== b.dataset.t));
+/* tabs */
+const tabs = [...document.querySelectorAll('.tabs button')];
+tabs.forEach((b) => b.addEventListener('click', () => {
+  tabs.forEach((x) => x.setAttribute('aria-selected', String(x === b)));
+  document.querySelectorAll('.tabpanel').forEach((p) => (p.hidden = p.dataset.p !== b.dataset.t));
 }));
+document.querySelectorAll('.copy').forEach((b) => b.addEventListener('click', async () => {
+  const text = b.closest('.code-card').querySelector('pre').innerText;
+  try { await navigator.clipboard.writeText(text); b.textContent = 'Copied'; } catch (e) { b.textContent = 'Select to copy'; }
+  setTimeout(() => (b.textContent = 'Copy'), 1600);
+}));
+
+/* reveal on scroll */
+const io = 'IntersectionObserver' in window && !reduce ? new IntersectionObserver((es) => es.forEach((e) => {
+  if (!e.isIntersecting) return;
+  e.target.classList.add('in');
+  e.target.querySelectorAll?.('.bar i').forEach((i) => (i.style.width = i.dataset.w + '%'));
+  io.unobserve(e.target);
+}), { rootMargin: '0px 0px -8% 0px', threshold: 0.08 }) : null;
+document.querySelectorAll('.rv').forEach((el) => {
+  if (io) io.observe(el);
+  else { el.classList.add('in'); el.querySelectorAll('.bar i').forEach((i) => (i.style.width = i.dataset.w + '%')); }
+});
 </script>
 </body>
 </html>

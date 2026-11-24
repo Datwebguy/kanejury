@@ -1,10 +1,12 @@
+<p align="center"><img src="docs/assets/logo.svg" width="72" height="72" alt=""></p>
+
 # KaneJury
 
 **Know when to trust a Kane verdict.**
 
 KaneJury reads the evidence behind a [Kane CLI](https://www.testmuai.com/kane-cli/) run and tells your pipeline what to do next: **ship it, fix it, run it again, or look closer.** Every decision can come with a signed receipt that anyone can verify, in a terminal or in a browser tab.
 
-[Proof page and live receipt verifier](https://datwebguy.github.io/kanejury/) · [Evaluation](docs/evaluation.md) · [Integrations](docs/integrations.md) · [Receipts](docs/receipts.md)
+[Proof page and live receipt verifier](https://kanejury.vercel.app) · [Evaluation](docs/evaluation.md) · [Integrations](docs/integrations.md) · [Receipts](docs/receipts.md)
 
 KaneJury is an independent open-source project built on Kane CLI and NEAR AI Cloud. It is not an official TestMu AI product.
 
@@ -92,7 +94,7 @@ To run the whole loop (Kane, gate, coding agent, Kane again), see [demo/](demo/)
 | **MCP server** | `node src/mcp.js` exposes `kanejury_inspect_pack`, `kanejury_gate`, `kanejury_judge_pack`, `kanejury_verify_receipt` to any MCP client |
 | **GitHub Action** | `uses: Datwebguy/kanejury@main` reads evidence packs in CI, writes a job summary, fails the build on the actions you choose |
 | **Claude Code** | A Stop hook runs Kane after each turn and feeds the gate's reasons back to the agent, with three attempts before it hands over to a person |
-| **Browser** | The [proof page](https://datwebguy.github.io/kanejury/) verifies a receipt entirely client-side |
+| **Browser** | The [proof page](https://kanejury.vercel.app) verifies a receipt entirely client-side |
 
 Setup for each is in [docs/integrations.md](docs/integrations.md).
 
@@ -117,7 +119,7 @@ A receipt records, for every juror: the model, the exact request and response ha
 - with `--image`, the request rebuilt from the claim and your evidence file matches the signed request hash;
 - with `--online`, the signing address appears in a live attestation report that echoes a fresh nonce.
 
-The same checks run in the browser on the [proof page](https://datwebguy.github.io/kanejury/): paste a receipt, press a button, and try changing a verdict to watch it get rejected. Details are in [docs/receipts.md](docs/receipts.md).
+The same checks run in the browser on the [proof page](https://kanejury.vercel.app): paste a receipt, press a button, and try changing a verdict to watch it get rejected. Details are in [docs/receipts.md](docs/receipts.md).
 
 ## Repository layout
 
