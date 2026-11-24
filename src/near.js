@@ -10,13 +10,11 @@ const headers = () => {
 };
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-export const MAX_TOKENS = 1500;
-// Exact request bytes. A receipt can rebuild these from the claim and the evidence file to check the signed request hash.
-export const requestBytes = (model, content, maxTokens = MAX_TOKENS) =>
-  Buffer.from(JSON.stringify({ model, max_tokens: maxTokens, temperature: 0, messages: [{ role: 'user', content }] }));
+import { MAX_TOKENS, requestBytes } from './request.js';
+export { MAX_TOKENS, requestBytes };
 
 export async function chat(model, content, { maxTokens = MAX_TOKENS } = {}) {
-  const reqBytes = requestBytes(model, content, maxTokens);
+  const reqBytes = Buffer.from(requestBytes(model, content, maxTokens));
   const res = await fetch(`${BASE}/v1/chat/completions`, { method: 'POST', headers: headers(), body: reqBytes });
   const resBytes = Buffer.from(await res.arrayBuffer());
   if (!res.ok) throw new Error(`NEAR AI ${res.status} for ${model}: ${resBytes.toString().slice(0, 160)}`);

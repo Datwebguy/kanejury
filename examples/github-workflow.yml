@@ -1,0 +1,19 @@
+# Run Kane on a preview, then let KaneJury decide what the result means.
+name: verify
+on: pull_request
+jobs:
+  kane:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: npm install -g @testmuai/kane-cli
+      - name: Run Kane
+        run: kane-cli run "Add a todo called a, then verify the list shows a" --url "$PREVIEW_URL" --agent --headless --name smoke
+        env:
+          PREVIEW_URL: ${{ vars.PREVIEW_URL }}
+          LT_USERNAME: ${{ secrets.LT_USERNAME }}
+          LT_ACCESS_KEY: ${{ secrets.LT_ACCESS_KEY }}
+      - name: Decide what the result means
+        uses: Datwebguy/kanejury@main
+        with:
+          pack: .testmuai/evidence

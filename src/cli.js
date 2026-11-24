@@ -7,7 +7,7 @@ import { aggregate, EXIT } from './aggregate.js';
 import { buildReceipt, verifyReceipt } from './receipt.js';
 import { sha256 } from './near.js';
 import { loadPack, pickScreenshot, classifyFailure, coverageGaps } from './evidence.js';
-import { decide } from './gate.js';
+import { gatePack, EXIT as GATE_EXIT } from './gate-pack.js';
 import { loop } from './loop.js';
 import { runJury } from './judge.js';
 
@@ -68,14 +68,11 @@ async function main() {
   }
   if (cmd === 'gate') {
     const packFile = argv.find((a) => a.endsWith('.evidence')); if (!packFile) usage();
-    const pack = loadPack(packFile); const t = pack.tests[0];
-    const failure = classifyFailure(pack), gaps = coverageGaps(pack); let jury = null;
     const claim = flag('claim');
-    if (typeof claim === 'string' && failure.kind !== 'infrastructure') { const pick = pickScreenshot(pack, 0, 'last'); jury = (await runJury({ claim, image: pick.image, mime: pick.mime, evidenceName: `step${pick.step}.jpg`, cacheFile: '.kanejury/calibration.json' })).result; }
-    const d = decide({ kaneStatus: t?.status, failure, gaps, jury });
-    if (flag('json', false)) console.log(JSON.stringify({ ...d, kane: t?.status, jury: jury?.verdict ?? null }));
-    log(`KANE ${String(t?.status).toUpperCase()} -> ${d.action.toUpperCase()}\n  ${d.reasons.join('\n  ')}`);
-    process.exit({ allow: 0, fix: 1, rerun: 4, review: 5 }[d.action]);
+    const g = await gatePack(packFile, { claim: typeof claim === 'string' ? claim : undefined, cacheFile: '.kanejury/calibration.json' });
+    if (flag('json', false)) console.log(JSON.stringify(g));
+    log(`KANE ${String(g.kane_status).toUpperCase()} -> ${g.action.toUpperCase()}\n  ${g.reasons.join('\n  ')}`);
+    process.exit(GATE_EXIT[g.action]);
   }
   if (cmd === 'loop') {
     const objective = flag('objective'), url = flag('url'), agent = flag('agent');

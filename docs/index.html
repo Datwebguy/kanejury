@@ -1,0 +1,263 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>KaneJury</title>
+<meta name="description" content="KaneJury reads the evidence behind a Kane CLI run and tells your pipeline what to do next: ship it, fix it, run it again, or look closer. Every decision comes with a receipt anyone can verify.">
+<style>
+:root{
+  --bg:#f6f7f9; --surface:#ffffff; --ink:#111827; --muted:#5b6472; --line:#dfe3e8;
+  --accent:#0b7a75; --accent-ink:#ffffff; --accent-soft:#e3f4f2;
+  --good:#17803d; --good-soft:#e6f5ec; --warn:#a15c07; --warn-soft:#fdf1dc; --bad:#b42318; --bad-soft:#fde8e6;
+  --code:#0f1720; --code-ink:#e6edf3; --radius:12px;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace; --sans:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0c1117; --surface:#141b24; --ink:#e8edf3; --muted:#9aa5b4; --line:#263140;
+  --accent:#3dc9bf; --accent-ink:#06201e; --accent-soft:#12312f;
+  --good:#4cd07d; --good-soft:#13301f; --warn:#f0b34a; --warn-soft:#35280e; --bad:#ff8a80; --bad-soft:#3a1714;
+  --code:#0a0f15; color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0c1117; --surface:#141b24; --ink:#e8edf3; --muted:#9aa5b4; --line:#263140; --accent:#3dc9bf; --accent-ink:#06201e; --accent-soft:#12312f; --good:#4cd07d; --good-soft:#13301f; --warn:#f0b34a; --warn-soft:#35280e; --bad:#ff8a80; --bad-soft:#3a1714; --code:#0a0f15; color-scheme:dark}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.6 var(--sans);padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+a{color:var(--accent)}
+.wrap{max-width:1040px;margin:0 auto}
+header.top{display:flex;justify-content:space-between;align-items:center;padding:18px 0;gap:12px;flex-wrap:wrap}
+.brand{font-weight:700;letter-spacing:.01em;font-size:18px}
+.brand span{color:var(--accent)}
+nav a{margin-left:18px;text-decoration:none;color:var(--muted);font-size:15px}
+nav a:hover{color:var(--ink)}
+.hero{padding:44px 0 36px}
+.hero h1{font-size:clamp(34px,6vw,56px);line-height:1.08;margin:0 0 16px;letter-spacing:-.02em;max-width:16em;text-wrap:balance}
+.hero p.lead{font-size:clamp(17px,2.2vw,20px);color:var(--muted);max-width:40em;margin:0 0 26px}
+.btns{display:flex;gap:12px;flex-wrap:wrap}
+.btn{display:inline-block;padding:11px 20px;border-radius:10px;text-decoration:none;font-weight:600;border:1px solid var(--line);background:var(--surface);color:var(--ink)}
+.btn.primary{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.btn:focus-visible,button:focus-visible,a:focus-visible,textarea:focus-visible,input:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+section{padding:40px 0}
+section>h2{font-size:clamp(24px,3.4vw,32px);line-height:1.2;margin:0 0 8px;letter-spacing:-.01em;text-wrap:balance}
+section>p.sub{color:var(--muted);margin:0 0 24px;max-width:46em}
+.grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:20px;min-width:0}
+.card h3{margin:0 0 8px;font-size:18px}
+.card p{margin:0;color:var(--muted)}
+.tag{display:inline-block;font:600 12px var(--mono);padding:3px 8px;border-radius:999px;background:var(--accent-soft);color:var(--accent);margin-bottom:10px;letter-spacing:.02em}
+.flow{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:10px;counter-reset:s}
+.step{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px;position:relative;min-width:0}
+.step b{display:block;margin-bottom:4px}
+.step span{color:var(--muted);font-size:14px}
+.outcomes{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px}
+.chip{font:600 13px var(--mono);padding:5px 11px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+.chip.allow{background:var(--good-soft);color:var(--good);border-color:transparent}
+.chip.fix,.chip.bad{background:var(--bad-soft);color:var(--bad);border-color:transparent}
+.chip.recheck,.chip.review,.chip.warn{background:var(--warn-soft);color:var(--warn);border-color:transparent}
+.chip.rerun{background:var(--accent-soft);color:var(--accent);border-color:transparent}
+.timeline{display:grid;gap:12px}
+.round{display:grid;grid-template-columns:90px 1fr;gap:16px;background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px 18px}
+.round .n{font:700 13px var(--mono);color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.round p{margin:6px 0 0;color:var(--muted);font-size:15px}
+.round .row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+@media (max-width:560px){.round{grid-template-columns:1fr;gap:6px}}
+pre{background:var(--code);color:var(--code-ink);padding:16px;border-radius:var(--radius);overflow:auto;font:13.5px/1.55 var(--mono);margin:12px 0 0;max-width:100%}
+code{font-family:var(--mono);font-size:.92em}
+.diff .del{color:#ff8a80}.diff .add{color:#7ee2a4}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin-bottom:22px}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:var(--radius);padding:16px}
+.stat .v{font-size:34px;font-weight:700;letter-spacing:-.02em;line-height:1.1}
+.stat .l{color:var(--muted);font-size:14px;margin-top:4px}
+.filters{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.filters button{font:600 14px var(--sans);padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--ink);cursor:pointer}
+.filters button[aria-pressed="true"]{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:var(--radius);background:var(--surface)}
+table{border-collapse:collapse;width:100%;font-size:14.5px;min-width:720px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:top}
+th{font-size:12.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);background:var(--bg)}
+tr:last-child td{border-bottom:0}
+td.mono{font-family:var(--mono)}
+td.note{color:var(--muted);font-size:13.5px;min-width:260px}
+.v-pass{color:var(--good);font-weight:600}.v-fail{color:var(--bad);font-weight:600}.v-other{color:var(--warn);font-weight:600}
+.verify{display:grid;grid-template-columns:1.1fr 1fr;gap:18px;align-items:start}
+@media (max-width:820px){.verify{grid-template-columns:1fr}}
+textarea{width:100%;min-height:260px;background:var(--code);color:var(--code-ink);border:1px solid var(--line);border-radius:var(--radius);padding:12px;font:12px/1.45 var(--mono);resize:vertical}
+.vbtns{display:flex;gap:10px;flex-wrap:wrap;margin:12px 0}
+button.act{font:600 15px var(--sans);padding:10px 18px;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:var(--accent-ink);cursor:pointer}
+button.act.alt{background:var(--surface);color:var(--ink);border-color:var(--line)}
+.checks{list-style:none;margin:0;padding:0;display:grid;gap:6px;font-size:14px}
+.checks li{display:grid;grid-template-columns:22px 1fr;gap:8px;padding:8px 10px;border-radius:8px;background:var(--surface);border:1px solid var(--line);min-width:0;overflow-wrap:anywhere}
+.checks li.ok .m{color:var(--good)}.checks li.no{background:var(--bad-soft)}.checks li.no .m{color:var(--bad)}
+.result{font-weight:700;margin:8px 0}
+.result.ok{color:var(--good)}.result.no{color:var(--bad)}
+.tabs{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:6px}
+.tabs button{font:600 14px var(--sans);padding:8px 14px;border-radius:10px 10px 0 0;border:1px solid var(--line);background:var(--surface);color:var(--muted);cursor:pointer}
+.tabs button[aria-selected="true"]{color:var(--ink);background:var(--bg);border-bottom-color:var(--bg)}
+.panel[hidden]{display:none}
+footer{padding:36px 0 48px;color:var(--muted);font-size:14px;border-top:1px solid var(--line);margin-top:20px}
+.visually-hidden{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header class="top">
+  <div class="brand">Kane<span>Jury</span></div>
+  <nav aria-label="Sections"><a href="#problem">Why</a><a href="#how">How it works</a><a href="#run">A real run</a><a href="#runs">25 runs</a><a href="#verify">Verify</a><a href="#use">Use it</a><a href="https://github.com/Datwebguy/kanejury">GitHub</a></nav>
+</header>
+
+<main>
+<div class="hero">
+  <h1>Know when to trust a Kane verdict.</h1>
+  <p class="lead">KaneJury reads the evidence behind a Kane CLI run and tells your pipeline what to do next: ship it, fix it, run it again, or look closer. Every decision comes with a receipt anyone can verify.</p>
+  <div class="btns"><a class="btn primary" href="#verify">Verify a real receipt</a><a class="btn" href="#run">See a real run</a></div>
+</div>
+
+<section id="problem">
+  <h2>Three ways a pass or a fail can mislead</h2>
+  <p class="sub">A browser agent gives you one word. The evidence behind it tells you whether to believe it.</p>
+  <div class="grid3">
+    <div class="card"><span class="tag">REPAIRED TO PASS</span><h3>The page was fixed by the tester</h3><p>The list came back empty, so Kane typed the missing item again and reported success. The bug stayed hidden. The step list shows it.</p></div>
+    <div class="card"><span class="tag">WRONG KIND OF FAILURE</span><h3>The browser crashed, not the app</h3><p>A run that dies on a browser crash is labelled "fail". Sent to a coding agent, it sends the agent after a bug that does not exist.</p></div>
+    <div class="card"><span class="tag">STORY VS STEPS</span><h3>The summary claims a click that never happened</h3><p>The write-up says the Clear button was pressed. The recorded steps have no such click. KaneJury compares the two.</p></div>
+  </div>
+</section>
+
+<section id="how">
+  <h2>How a decision is made</h2>
+  <p class="sub">KaneJury opens the sealed evidence pack Kane writes for every run. Plain-code checks do most of the work; three attested vision models add a second look at what is on screen.</p>
+  <div class="flow">
+    <div class="step"><b>1. Kane runs</b><span>Your objective, in a real browser. Kane seals an evidence pack: steps, screenshots, network and console logs.</span></div>
+    <div class="step"><b>2. Checks read it</b><span>Infrastructure or real failure? Every requested click present? Any typing after the last requested action?</span></div>
+    <div class="step"><b>3. A visual jury looks</b><span>Three models hosted in hardware enclaves read the screenshot. A juror that fails today's calibration is left out.</span></div>
+    <div class="step"><b>4. The gate decides</b><span>One of five actions, so a pipeline can branch without guessing.</span></div>
+    <div class="step"><b>5. A receipt is signed</b><span>Hashes, signatures and responses you can re-check without trusting anyone.</span></div>
+  </div>
+  <div class="outcomes" aria-label="The five decisions">
+    <span class="chip allow">allow: safe to go on</span><span class="chip fix">fix: send to the coding agent</span><span class="chip rerun">rerun: infrastructure, leave the agent out</span><span class="chip recheck">recheck: passed, but may have repaired the page</span><span class="chip review">review: a person should look</span>
+  </div>
+</section>
+
+<section id="run">
+  <h2>One real run, start to finish</h2>
+  <p class="sub">A small todo app with one planted bug: "Clear completed" removes every item. A real coding model fixes it. Every number below comes from the run log in the repository.</p>
+  <div class="timeline" id="timeline" aria-live="polite"></div>
+  <p class="sub" style="margin-top:16px">The patch below is the model's own work, written from Kane's failure report and not prepared in advance.</p>
+  <pre class="diff" id="patch" aria-label="The patch written by the coding agent"></pre>
+</section>
+
+<section id="runs">
+  <h2>25 real Kane runs on public test sites</h2>
+  <p class="sub">Each run has a known right answer, from how the page is built. The table shows Kane's verdict, the visual jury's, and what the plain-code checks found.</p>
+  <div class="stats" id="stats"></div>
+  <div class="filters" role="group" aria-label="Filter runs"><button data-f="all" aria-pressed="true">All 25</button><button data-f="attention" aria-pressed="false">Needs attention</button><button data-f="agree" aria-pressed="false">Everyone agrees</button></div>
+  <div class="tablewrap"><table><thead><tr><th>Run</th><th>Claim</th><th>Known answer</th><th>Kane</th><th>Visual jury</th><th>What KaneJury noticed</th></tr></thead><tbody id="rows"></tbody></table></div>
+</section>
+
+<section id="verify">
+  <h2>Verify a receipt in your browser</h2>
+  <p class="sub">This receipt is real: three attested models judged the screenshot on the right. Nothing is sent anywhere. Your browser recomputes the hashes, recovers each signer from its signature, and re-reads every verdict from the signed response.</p>
+  <div class="verify">
+    <div>
+      <label for="receipt" class="visually-hidden">Receipt JSON</label>
+      <textarea id="receipt" spellcheck="false" aria-label="Receipt JSON"></textarea>
+      <div class="vbtns"><button class="act" id="vbtn">Verify this receipt</button><button class="act alt" id="tbtn">Tamper with it, then verify</button></div>
+    </div>
+    <div>
+      <div class="result" id="vresult" role="status">Press a button to run the checks.</div>
+      <ul class="checks" id="checks"></ul>
+    </div>
+  </div>
+  <p class="sub" style="margin-top:16px">The claim was "Price shown at checkout matches the advertised Pro price." on <a href="assets/evidence-fail.png">this screenshot</a>, where the pricing box says $19 and the checkout box says $29.</p>
+</section>
+
+<section id="use">
+  <h2>Use it where you already work</h2>
+  <p class="sub">One decision engine, four doors.</p>
+  <div class="tabs" role="tablist" aria-label="Ways to use KaneJury">
+    <button role="tab" aria-selected="true" data-t="cli">Command line</button><button role="tab" aria-selected="false" data-t="mcp">MCP</button><button role="tab" aria-selected="false" data-t="action">GitHub Action</button><button role="tab" aria-selected="false" data-t="hook">Claude Code</button>
+  </div>
+  <div class="panel" data-p="cli"><pre>npm install
+node src/cli.js gate run.evidence                 # allow | fix | rerun | recheck | review
+node src/cli.js judge-pack run.evidence --claim "The cart badge shows 1."
+node src/cli.js loop --objective "..." --url http://localhost:3000 --agent "node agent.mjs"
+node src/cli.js verify receipt.json --image evidence.png</pre></div>
+  <div class="panel" data-p="mcp" hidden><pre>{
+  "mcpServers": {
+    "kanejury": { "command": "node", "args": ["/path/to/kanejury/src/mcp.js"] }
+  }
+}</pre><p class="sub">Tools: kanejury_inspect_pack, kanejury_gate, kanejury_judge_pack, kanejury_verify_receipt.</p></div>
+  <div class="panel" data-p="action" hidden><pre>- uses: Datwebguy/kanejury@main
+  with:
+    pack: .testmuai/evidence        # a .evidence file or a folder of them
+    fail-on: fix,recheck,review</pre></div>
+  <div class="panel" data-p="hook" hidden><pre>{ "hooks": { "Stop": [ { "hooks": [ { "type": "command",
+  "command": "KANEJURY_OBJECTIVE='...' KANEJURY_URL=http://localhost:3000 node /path/to/kanejury/hooks/claude-code-stop.mjs" } ] } ] } }</pre></div>
+</section>
+</main>
+
+<footer>
+  <div>KaneJury is an independent open-source project, built on <a href="https://www.testmuai.com/kane-cli/">Kane CLI</a> and <a href="https://near.ai/">NEAR AI Cloud</a>. MIT licensed. <a href="https://github.com/Datwebguy/kanejury">Source and documentation</a>.</div>
+</footer>
+</div>
+
+<script type="module">
+import { RUNS, LOOP, PATCH } from './assets/data.js';
+import { verifyOffline } from './assets/verify.js';
+
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+
+// --- the real loop ---
+const labels = { allow: 'allow', fix: 'fix', rerun: 'rerun', recheck: 'recheck', review: 'review' };
+const blurb = [
+  'Kane passed. Its steps show it typed the missing item again after "Clear completed". The gate flags it and asks for a strict re-run.',
+  'Kane, in its strict mode, fails honestly: the list is empty. The gate sends this confirmed failure to the coding agent.',
+  'Kane passes with nothing suspicious in its steps. The gate allows it.'];
+document.getElementById('timeline').innerHTML = LOOP.rounds.map((r, i) =>
+  `<div class="round"><div class="n">Round ${r.round}</div><div><div class="row"><span class="chip ${r.kane === 'passed' ? 'allow' : 'bad'}">Kane ${esc(r.kane)}</span><span class="chip ${esc(r.decision)}">gate: ${esc(labels[r.decision] || r.decision)}</span><span class="chip">${r.credits} credits, ${r.seconds}s</span></div><p>${esc(blurb[i] || '')}</p><p><i>Kane said:</i> ${esc(r.kaneSummary)}</p></div></div>`).join('');
+document.getElementById('patch').innerHTML = esc(PATCH).split('\n').map((l) => l.startsWith('<') ? `<span class="del">${l}</span>` : l.startsWith('>') ? `<span class="add">${l}</span>` : l).join('\n');
+
+// --- the 25 runs ---
+const flagged = { T9: 'Coverage check: an action named in the objective is missing from the recorded steps.' };
+const attention = new Set(RUNS.filter((r) => r.note || flagged[r.id]).map((r) => r.id));
+const verdictClass = (v) => (v === 'pass' ? 'v-pass' : v === 'fail' ? 'v-fail' : 'v-other');
+const total = RUNS.length, withShot = RUNS.filter((r) => r.jury !== 'no_evidence').length, kaneRight = RUNS.filter((r) => r.jury !== 'no_evidence' && r.kane === r.truth).length;
+document.getElementById('stats').innerHTML = [
+  [String(total), 'real Kane runs, each with a known right answer'],
+  [`${kaneRight} of ${withShot}`, 'Kane verdicts that matched the known answer'],
+  ['1 of 1', 'browser crashes told apart from a real failure'],
+  ['0', 'false alarms from the crash classifier across the 25 runs'],
+].map(([v, l]) => `<div class="stat"><div class="v">${esc(v)}</div><div class="l">${esc(l)}</div></div>`).join('');
+const tbody = document.getElementById('rows');
+function draw(f) {
+  tbody.innerHTML = RUNS.filter((r) => f === 'all' || (f === 'attention') === attention.has(r.id)).map((r) =>
+    `<tr><td class="mono">${esc(r.id)}</td><td>${esc(r.claim)}</td><td class="${verdictClass(r.truth)}">${esc(r.truth)}</td><td class="${verdictClass(r.kane)}">${esc(r.kane)}</td><td class="${verdictClass(r.jury)}">${esc(r.jury === 'no_evidence' ? 'no screenshot' : r.jury)}</td><td class="note">${esc(flagged[r.id] || r.note || 'Everyone agrees.')}</td></tr>`).join('');
+}
+draw('all');
+document.querySelectorAll('.filters button').forEach((b) => b.addEventListener('click', () => { document.querySelectorAll('.filters button').forEach((x) => x.setAttribute('aria-pressed', x === b)); draw(b.dataset.f); }));
+
+// --- verify in the browser ---
+const ta = document.getElementById('receipt'), list = document.getElementById('checks'), res = document.getElementById('vresult');
+let original = '';
+fetch('./assets/receipt-fail.json').then((r) => r.text()).then((t) => { original = t; ta.value = t; }).catch(() => { ta.value = 'Could not load the example receipt. Serve this page over http(s).'; });
+async function runVerify(text, tampered) {
+  list.innerHTML = ''; res.className = 'result'; res.textContent = 'Checking…';
+  try {
+    const r = JSON.parse(text);
+    if (tampered) { for (const v of r.votes) v.verdict = 'pass'; r.result.verdict = 'pass'; }
+    const out = await verifyOffline(r);
+    list.innerHTML = out.checks.map((c) => `<li class="${c.ok ? 'ok' : 'no'}"><span class="m" aria-hidden="true">${c.ok ? '✓' : '✗'}</span><span>${esc(c.what)}</span></li>`).join('');
+    res.className = 'result ' + (out.ok ? 'ok' : 'no');
+    res.textContent = out.ok ? `Receipt verified: ${out.checks.length} checks passed.` : `Receipt rejected: ${out.checks.filter((c) => !c.ok).length} of ${out.checks.length} checks failed.`;
+  } catch (e) { res.className = 'result no'; res.textContent = 'That is not a readable receipt: ' + e.message; }
+}
+document.getElementById('vbtn').addEventListener('click', () => runVerify(ta.value, false));
+document.getElementById('tbtn').addEventListener('click', () => { ta.value = original || ta.value; runVerify(ta.value, true); });
+
+// --- tabs ---
+document.querySelectorAll('.tabs button').forEach((b) => b.addEventListener('click', () => {
+  document.querySelectorAll('.tabs button').forEach((x) => x.setAttribute('aria-selected', x === b));
+  document.querySelectorAll('.panel').forEach((p) => (p.hidden = p.dataset.p !== b.dataset.t));
+}));
+</script>
+</body>
+</html>

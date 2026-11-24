@@ -1,0 +1,42 @@
+name: KaneJury gate
+description: Decide what a Kane CLI run really means. Tells infrastructure trouble from a real failure, and catches a pass that was reached by repairing the page.
+author: Datwebguy
+branding:
+  icon: shield
+  color: green
+inputs:
+  pack:
+    description: Path to a Kane evidence pack (.evidence) or a folder that contains them.
+    required: true
+  claim:
+    description: Optional claim to judge visually on the last step screenshot. Needs NEAR_AI_API_KEY in the environment.
+    required: false
+  fail-on:
+    description: Comma-separated decisions that fail the step (allow, fix, rerun, recheck, review).
+    required: false
+    default: fix,recheck,review
+outputs:
+  action:
+    description: The most serious decision across the packs.
+    value: ${{ steps.gate.outputs.action }}
+  reasons:
+    description: Why, in one line.
+    value: ${{ steps.gate.outputs.reasons }}
+runs:
+  using: composite
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+    - name: Install KaneJury
+      shell: bash
+      working-directory: ${{ github.action_path }}
+      run: npm ci --omit=dev --no-audit --no-fund
+    - name: Gate the Kane result
+      id: gate
+      shell: bash
+      env:
+        INPUT_PACK: ${{ inputs.pack }}
+        INPUT_CLAIM: ${{ inputs.claim }}
+        INPUT_FAIL_ON: ${{ inputs.fail-on }}
+      run: node "${{ github.action_path }}/src/action.js"
