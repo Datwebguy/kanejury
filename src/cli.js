@@ -26,14 +26,15 @@ async function main() {
     const claim = flag('claim'), imagePath = flag('image');
     if (!claim || !imagePath || claim === true || imagePath === true) usage();
     const policy = flag('policy', 'cautious'), image = fs.readFileSync(imagePath);
+    const mime = /\.jpe?g$/i.test(imagePath) ? 'image/jpeg' : 'image/png';
     const cal = await calibrate(DEFAULT_JURORS, {});
     log(`calibration (${cal.cached ? 'cached' : 'fresh'}, ${cal.takenAt}): ` + Object.entries(cal.jurors).map(([k, j]) => `${k}=${j.eligible ? 'ok' : 'EXCLUDED'}`).join(' '));
     const votes = await Promise.all(DEFAULT_JURORS.map(async (j) => {
-      try { return { ...(await ask(j, claim, image)), eligible: !!cal.jurors[j.id]?.eligible }; }
+      try { return { ...(await ask(j, claim, image, mime)), eligible: !!cal.jurors[j.id]?.eligible }; }
       catch (e) { return { juror: j.id, model: j.model, verdict: 'error', quote: e.message.slice(0, 120), eligible: !!cal.jurors[j.id]?.eligible }; }
     }));
     const result = aggregate(votes.map(({ juror, verdict, eligible }) => ({ juror, verdict, eligible })), { policy });
-    const receipt = buildReceipt({ claim, evidence: [{ name: path.basename(imagePath), sha256: sha256(image) }], policy, calibration: cal, votes, result });
+    const receipt = buildReceipt({ claim, evidence: [{ name: path.basename(imagePath), sha256: sha256(image), mime }], policy, calibration: cal, votes, result });
     const out = flag('out', 'receipt.json'); fs.writeFileSync(out, JSON.stringify(receipt, null, 2));
     if (flag('json', false)) console.log(JSON.stringify(result));
     for (const v of votes) log(`  ${v.eligible ? ' ' : 'x'} ${v.juror.padEnd(10)} ${String(v.verdict).padEnd(13)} ${v.quote ? '"' + v.quote.slice(0, 70) + '"' : ''}`);

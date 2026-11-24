@@ -12,7 +12,7 @@ Nothing here has been run on real Kane output yet. Kane CLI is not logged in.
 | Receipt verify, online: signing address in a live attestation, nonce echoed | Built, run live |
 | Verification of the Intel TDX and NVIDIA quotes | **Not done.** Use NEAR AI's open verifier. |
 | Calibration results signed per fixture call | **Not done.** Eligibility is recorded in the receipt but not individually signed. |
-| Reading a real Kane evidence pack | **Not built.** Needs a real pack. |
+| Reading a real Kane evidence pack | Layout seen first-hand (docs/05). **Reader not built yet.** KaneJury judged one real Kane screenshot (JPEG) from the CLI: false claim got FAIL 2 of 3 with one inconclusive dissent; a true control claim got PASS 3 of 3; receipts verified. Two real cases, not an accuracy measure. |
 | Kane re-run only when jurors split | Planned |
 | MCP tool, GitHub Action, Claude Code stop-hook | Planned |
 | Measured benefit over Kane alone | **Unknown.** On our test images single models were 12/13 and 13/13. A false green seen once did not reproduce on a second run. |

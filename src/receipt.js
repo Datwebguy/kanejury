@@ -47,7 +47,7 @@ export async function verifyReceipt(r, { imagePath, online = false } = {}) {
       let parsed = 'unreadable'; try { parsed = parseVerdict(JSON.parse(body.toString()).choices?.[0]?.message?.content).verdict; } catch {}
       add(parsed === v.verdict, `${tag} recorded verdict "${v.verdict}" is what the signed response actually says ("${parsed}")`);
     } else add(false, `${tag} receipt embeds the signed response`);
-    if (image) add(sha256(requestBytes(v.model, buildContent(r.claim, image), r.maxTokens)) === v.requestSha256, `${tag} request rebuilt from claim + evidence matches the signed request hash`);
+    if (image) add(sha256(requestBytes(v.model, buildContent(r.claim, image, (r.evidence.find((e) => e.sha256 === sha256(image)) || {}).mime || 'image/png'), r.maxTokens)) === v.requestSha256, `${tag} request rebuilt from claim + evidence matches the signed request hash`);
     if (online) {
       try {
         const nonce = [...crypto.getRandomValues(new Uint8Array(32))].map((b) => b.toString(16).padStart(2, '0')).join('');
