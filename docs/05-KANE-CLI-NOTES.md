@@ -47,3 +47,16 @@ Session files also live under `~/.testmuai/kaneai/sessions/<id>/` (`events.ndjso
 - `kane-cli balance` returned **0 credits**. A run reached Chrome, navigated, then stopped with `Credits exhausted: {"error":"insufficient credits"}` and consumed 0 credits.
 - A run objective that names a URL in words still needs `--url <url>` ("No start URL provided" otherwise).
 - The first run auto-created a project ("KaneAI Generated") and a folder ("Untitled") in the TestMu account.
+
+## Measured on 2026-11-24 (real runs, kane-cli 0.10.8, headless Chrome in the cloud container)
+Target: the public Playwright TodoMVC demo (`https://demo.playwright.dev/todomvc`).
+| Run | Objective | Kane verdict | Credits | Time |
+|---|---|---|---|---|
+| A | add "buy milk", verify the list shows it | passed | 16.2 | 40.7 s |
+| B | add "buy milk", verify the counter says 5 items left (false) | failed, with an accurate explanation (page showed 1 item left) | 21.4 | 40.8 s |
+So one run costs roughly 16 to 21 credits and about 41 seconds. A `--name` run wrote a saved test and a sealed pack in both cases. Kane's `balance` output is `{available_credits, total_credits}`. `kane-cli balance` ignores `--profile`; it reports the active profile.
+A first account showed `available 0 of 11000` (used or expired). The organisers allowed a different email, and the second account started with about 11,200 credits.
+
+## KaneJury on those two real packs
+The last step screenshot of each pack was judged with claims that match what Kane asked: run A claim true, PASS 2 of 2 eligible jurors; run B false claim FAIL 2 of 2; run B control claim ("1 item left") PASS 2 of 2. KaneJury agreed with Kane in all three. That shows the reader works on real packs; it does not show added value, because Kane was right every time.
+On that day's calibration one juror (`Qwen/Qwen3.8-27B`) returned an unreadable answer on the known-false fixture and was excluded for the day, so the quorum ran on two jurors. Model output is not fully deterministic, even at temperature 0.
