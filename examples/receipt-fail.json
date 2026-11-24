@@ -1,0 +1,154 @@
+{
+  "kanejury": "0.0.1",
+  "createdAt": "2026-11-24T15:37:15.976Z",
+  "claim": "Price shown at checkout matches the advertised Pro price.",
+  "evidence": [
+    {
+      "name": "c2.png",
+      "sha256": "266f2f01e641c0c9b803123da8098e357f54c0f6c89d619acc4dbb237eae5693"
+    }
+  ],
+  "policy": "cautious",
+  "maxTokens": 1500,
+  "calibration": {
+    "takenAt": "2026-11-24T15:35:16.235Z",
+    "claim": "Price shown at checkout matches the advertised Pro price.",
+    "fixtures": {
+      "true": "aca4d7939173fb60dd07b59769c8393a5da60e9e27bf1705a0da2b367821613f",
+      "false": "266f2f01e641c0c9b803123da8098e357f54c0f6c89d619acc4dbb237eae5693"
+    },
+    "jurors": {
+      "qwen3-vl": {
+        "model": "Qwen/Qwen3-VL-30B-A3B-Instruct",
+        "eligible": true,
+        "onTrue": "pass",
+        "onFalse": "fail"
+      },
+      "glm-flash": {
+        "model": "z-ai/glm-5.3-flash",
+        "eligible": true,
+        "onTrue": "pass",
+        "onFalse": "fail"
+      },
+      "qwen3.8": {
+        "model": "Qwen/Qwen3.8-27B",
+        "eligible": true,
+        "onTrue": "pass",
+        "onFalse": "fail"
+      }
+    },
+    "cached": true
+  },
+  "votes": [
+    {
+      "juror": "qwen3-vl",
+      "model": "Qwen/Qwen3-VL-30B-A3B-Instruct",
+      "verdict": "fail",
+      "quote": "Pro plan $19 / month\nPro plan ..... $29.00\nTotal due today: $29.00",
+      "chatId": "chatcmpl-b2cc095a-eb4b-4281-b602-c1b1193ff702",
+      "usage": {
+        "prompt_tokens": 315,
+        "total_tokens": 353,
+        "completion_tokens": 38,
+        "prompt_tokens_details": {
+          "cached_tokens": 304,
+          "created_cache_tokens": 0,
+          "multimodal_tokens": {
+            "image": 210
+          }
+        }
+      },
+      "requestSha256": "c9ade7e0f66db6b29c83d30bcca4a5c655d9cb9b0a4058f7e2af8bcd14210d1b",
+      "responseSha256": "59294d4c659c029155f28ed89b00f4380a016ff14b579c36b8071db67830a658",
+      "responseBody": "eyJpZCI6ImNoYXRjbXBsLWIyY2MwOTVhLWViNGItNDI4MS1iNjAyLWMxYjExOTNmZjcwMiIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbiIsImNob2ljZXMiOlt7ImluZGV4IjowLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50Ijoie1widmVyZGljdFwiOlwiZmFpbFwiLFwicXVvdGVcIjpcIlBybyBwbGFuICQxOSAvIG1vbnRoXFxuUHJvIHBsYW4gLi4uLi4gJDI5LjAwXFxuVG90YWwgZHVlIHRvZGF5OiAkMjkuMDBcIn0ifSwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJsb2dwcm9icyI6bnVsbH1dLCJtb2RlbCI6IlF3ZW4vUXdlbjMtVkwtMzBCLUEzQi1JbnN0cnVjdCIsImNyZWF0ZWQiOjE3OTU1MzQ2MjcsInVzYWdlIjp7InByb21wdF90b2tlbnMiOjMxNSwidG90YWxfdG9rZW5zIjozNTMsImNvbXBsZXRpb25fdG9rZW5zIjozOCwicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlZF90b2tlbnMiOjMwNCwiY3JlYXRlZF9jYWNoZV90b2tlbnMiOjAsIm11bHRpbW9kYWxfdG9rZW5zIjp7ImltYWdlIjoyMTB9fX0sInN5c3RlbV9maW5nZXJwcmludCI6InZsbG0tMC4zMy4wLTQxZDkwMTQ5In0=",
+      "signature": {
+        "text": "Qwen/Qwen3-VL-30B-A3B-Instruct:c9ade7e0f66db6b29c83d30bcca4a5c655d9cb9b0a4058f7e2af8bcd14210d1b:59294d4c659c029155f28ed89b00f4380a016ff14b579c36b8071db67830a658",
+        "signature": "0xbd4742c902bb37344a807ba0ce12e2601263fe9e8785ae081f8c373e6b0b49b34dd668a7365d55c1916e816a10a21fa337c041bee7819fa4f8889853dd57ca711c",
+        "signingAddress": "0x2665cce942fa427ef30d87f4b0bff67fb7645462",
+        "kind": "provider_tee"
+      },
+      "eligible": true
+    },
+    {
+      "juror": "glm-flash",
+      "model": "z-ai/glm-5.3-flash",
+      "verdict": "fail",
+      "quote": "Pro plan $19 / month ... Pro plan ..... $29.00 Total due today: $29.00",
+      "chatId": "chatcmpl-7e57e18c-4471-4539-8198-fb6faef28d2f",
+      "usage": {
+        "prompt_tokens": 397,
+        "total_tokens": 551,
+        "completion_tokens": 154,
+        "prompt_tokens_details": {
+          "cached_tokens": 0,
+          "created_cache_tokens": 0,
+          "multimodal_tokens": {
+            "image": 288
+          }
+        },
+        "completion_tokens_details": {
+          "reasoning_tokens": 121
+        }
+      },
+      "requestSha256": "4d858b69899852ff57592e564cb1e5d70a7cb982f80c78a7788913a6e3538ffe",
+      "responseSha256": "99b75835918f76918dfdb9b16905ef056b874723c03c1c902aae4010d7b81220",
+      "responseBody": "eyJpZCI6ImNoYXRjbXBsLTdlNTdlMThjLTQ0NzEtNDUzOS04MTk4LWZiNmZhZWYyOGQyZiIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbiIsImNob2ljZXMiOlt7ImluZGV4IjowLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50Ijoie1widmVyZGljdFwiOlwiZmFpbFwiLFwicXVvdGVcIjpcIlBybyBwbGFuICQxOSAvIG1vbnRoIC4uLiBQcm8gcGxhbiAuLi4uLiAkMjkuMDAgVG90YWwgZHVlIHRvZGF5OiAkMjkuMDBcIn0iLCJyZWFzb25pbmdfY29udGVudCI6IlRoZSBpbWFnZSBzaG93czpcbi0gUHJpY2luZyBzZWN0aW9uOiBcIlBybyBwbGFuICQxOSAvIG1vbnRoXCJcbi0gQ2hlY2tvdXQgc2VjdGlvbjogXCJQcm8gcGxhbiAuLi4uLiAkMjkuMDBcIiBhbmQgXCJUb3RhbCBkdWUgdG9kYXk6ICQyOS4wMFwiXG5cblRoZSBjbGFpbTogXCJQcmljZSBzaG93biBhdCBjaGVja291dCBtYXRjaGVzIHRoZSBhZHZlcnRpc2VkIFBybyBwcmljZS5cIlxuXG5BZHZlcnRpc2VkIHByaWNlOiAkMTkvbW9udGguIENoZWNrb3V0IHNob3dzICQyOS4wMC4gVGhlc2UgZG8gbm90IG1hdGNoLiBTbyB2ZXJkaWN0OiBmYWlsLlxuXG5RdW90ZSBleGFjdCB0ZXh0OiBcIlBybyBwbGFuICQxOSAvIG1vbnRoXCIgYW5kIFwiUHJvIHBsYW4gLi4uLi4gJDI5LjAwXCIgLyBcIlRvdGFsIGR1ZSB0b2RheTogJDI5LjAwXCJcblxuSSBzaG91bGQgcHJvdmlkZSBvbmUgSlNPTiBvYmplY3Qgb25seS4ifSwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJsb2dwcm9icyI6bnVsbCwic3RvcF9yZWFzb24iOjE1NDgyN31dLCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsImNyZWF0ZWQiOjE3OTU1MzQ2MjksInVzYWdlIjp7InByb21wdF90b2tlbnMiOjM5NywidG90YWxfdG9rZW5zIjo1NTEsImNvbXBsZXRpb25fdG9rZW5zIjoxNTQsInByb21wdF90b2tlbnNfZGV0YWlscyI6eyJjYWNoZWRfdG9rZW5zIjowLCJjcmVhdGVkX2NhY2hlX3Rva2VucyI6MCwibXVsdGltb2RhbF90b2tlbnMiOnsiaW1hZ2UiOjI4OH19LCJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjp7InJlYXNvbmluZ190b2tlbnMiOjEyMX19LCJzeXN0ZW1fZmluZ2VycHJpbnQiOiJ2bGxtLTAuMzQuMC1kcDItZXAtNGE0YjAxZTMifQ==",
+      "signature": {
+        "text": "z-ai/glm-5.3-flash:4d858b69899852ff57592e564cb1e5d70a7cb982f80c78a7788913a6e3538ffe:99b75835918f76918dfdb9b16905ef056b874723c03c1c902aae4010d7b81220",
+        "signature": "0x2c108af391851a96a242b823cbca2932fe0b4ab27dec24d76a6608c33fa2b64f14593b1b6e55905064bb12b5b1a97d86149d065d978c9dd7c08db4800b821b641b",
+        "signingAddress": "0x3b753b4406613c5e70ae640508632b600424fa0c",
+        "kind": "provider_tee"
+      },
+      "eligible": true
+    },
+    {
+      "juror": "qwen3.8",
+      "model": "Qwen/Qwen3.8-27B",
+      "verdict": "fail",
+      "quote": "Pro plan $19 / month Pro plan ..... $29.00 Total due today: $29.00",
+      "chatId": "802c735281034d4e93267ea23cba2b06",
+      "usage": {
+        "prompt_tokens": 358,
+        "total_tokens": 746,
+        "completion_tokens": 388,
+        "prompt_tokens_details": {
+          "cached_tokens": 320,
+          "image_tokens": 210
+        },
+        "reasoning_tokens": 351,
+        "completion_tokens_details": {
+          "reasoning_tokens": 351
+        }
+      },
+      "requestSha256": "5cb9d0bfb3bd94a72c4c0842b728c73d6db8c85b8893bc3f6ed58faa6ff5004d",
+      "responseSha256": "1c3842d8a0b33e72918ddf847c863fccf0c63156ddbb70c295b6e40229c479fc",
+      "responseBody": "eyJpZCI6IjgwMmM3MzUyODEwMzRkNGU5MzI2N2VhMjNjYmEyYjA2Iiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsIm1lc3NhZ2UiOnsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJcblxue1widmVyZGljdFwiOlwiZmFpbFwiLFwicXVvdGVcIjpcIlBybyBwbGFuICQxOSAvIG1vbnRoIFBybyBwbGFuIC4uLi4uICQyOS4wMCBUb3RhbCBkdWUgdG9kYXk6ICQyOS4wMFwifSIsInJlYXNvbmluZ19jb250ZW50IjoiVGhlIHVzZXIgd2FudHMgbWUgdG8gYWN0IGFzIGEgUUEganVkZ2UuIEkgbmVlZCB0byBsb29rIGF0IHRoZSBpbWFnZSBjYXJlZnVsbHkuXG5cblRoZSBpbWFnZSBzaG93cyB0d28gc2VjdGlvbnM6XG4xLiBcIlByaWNpbmdcIiBzZWN0aW9uOiBcIlBybyBwbGFuICQxOSAvIG1vbnRoXCJcbjIuIFwiQ2hlY2tvdXRcIiBzZWN0aW9uOiBcIlBybyBwbGFuIC4uLi4uICQyOS4wMFwiIGFuZCBcIlRvdGFsIGR1ZSB0b2RheTogJDI5LjAwXCJcblxuVGhlIGNsYWltIGlzOiBcIlByaWNlIHNob3duIGF0IGNoZWNrb3V0IG1hdGNoZXMgdGhlIGFkdmVydGlzZWQgUHJvIHByaWNlLlwiXG5cblRoZSBhZHZlcnRpc2VkIFBybyBwcmljZSBpcyAkMTkvbW9udGguIFRoZSBjaGVja291dCBwcmljZSBpcyAkMjkuMDAuIFRoZXNlIGRvIG5vdCBtYXRjaC5cblxuVGhlcmVmb3JlLCB0aGUgdmVyZGljdCBpcyBcImZhaWxcIi5cblxuVGhlIHF1b3RlIHNob3VsZCBiZSB0aGUgZXhhY3QgdGV4dCBJIHJlYWQuIEkgc2hvdWxkIHBpY2sgdGV4dCB0aGF0IGRlbW9uc3RyYXRlcyB0aGUgbWlzbWF0Y2guIFBlcmhhcHMgSSBzaG91bGQgcXVvdGUgYm90aCByZWxldmFudCBwYXJ0cy4gVGhlIGluc3RydWN0aW9uIHNheXMgXCJleGFjdCB0ZXh0IHlvdSByZWFkXCIuIEknbGwgcXVvdGUgdGhlIHJlbGV2YW50IHRleHQgc2hvd2luZyB0aGUgZGlzY3JlcGFuY3kuIExldCBtZSBxdW90ZSBzb21ldGhpbmcgbGlrZSBcIlBybyBwbGFuICQxOSAvIG1vbnRoIC4uLiBQcm8gcGxhbiAuLi4uLiAkMjkuMDBcIi4gQnV0IHRoZSBxdW90ZSBmaWVsZCBzaG91bGQgYmUgZXhhY3QgdGV4dC4gSSBjYW4gY29tYmluZSB3aXRoIGVsbGlwc2lzPyBUaGUgaW1hZ2UgaXRzZWxmIHVzZXMgXCIuLi4uLlwiIGluIHRoZSBjaGVja291dCBsaW5lLiBUbyBiZSBzYWZlLCBJJ2xsIHF1b3RlIHRoZSB0d28gbGluZXMgdGhhdCBzaG93IHRoZSBtaXNtYXRjaC4gTWF5YmUganVzdCBxdW90ZSB0aGUgY2hlY2tvdXQgbGluZSBhbmQgcHJpY2luZyBsaW5lLiBUaGUgZm9ybWF0IGV4cGVjdHMgYSBzaW5nbGUgc3RyaW5nLiBJJ2xsIHByb3ZpZGU6IFwiUHJvIHBsYW4gJDE5IC8gbW9udGhcIiBhbmQgXCJQcm8gcGxhbiAuLi4uLiAkMjkuMDBcIi4gSSdsbCBqb2luIHRoZW0gd2l0aCBhIHNwYWNlIG9yIG5ld2xpbmUuIExldCBtZSBqdXN0IGdpdmUgdGhlIGV4YWN0IHRleHQgZnJvbSBib3RoIGJveGVzLlxuXG5JJ2xsIHdyaXRlOiBcIlBybyBwbGFuICQxOSAvIG1vbnRoIFBybyBwbGFuIC4uLi4uICQyOS4wMCBUb3RhbCBkdWUgdG9kYXk6ICQyOS4wMFwiXG5cblRoYXQgY2FwdHVyZXMgdGhlIGV2aWRlbmNlLiBWZXJkaWN0IGZhaWwuXG4ifSwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJsb2dwcm9icyI6bnVsbCwibWF0Y2hlZF9zdG9wIjoyNDgwNDZ9XSwibW9kZWwiOiJRd2VuL1F3ZW4zLjgtMjdCIiwiY3JlYXRlZCI6MTc5NTUzNDYyNywidXNhZ2UiOnsicHJvbXB0X3Rva2VucyI6MzU4LCJ0b3RhbF90b2tlbnMiOjc0NiwiY29tcGxldGlvbl90b2tlbnMiOjM4OCwicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlZF90b2tlbnMiOjMyMCwiaW1hZ2VfdG9rZW5zIjoyMTB9LCJyZWFzb25pbmdfdG9rZW5zIjozNTEsImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MzUxfX19",
+      "signature": {
+        "text": "Qwen/Qwen3.8-27B:5cb9d0bfb3bd94a72c4c0842b728c73d6db8c85b8893bc3f6ed58faa6ff5004d:1c3842d8a0b33e72918ddf847c863fccf0c63156ddbb70c295b6e40229c479fc",
+        "signature": "0x400577829cf873da5350fc8d95af39079cafa3410c9649981cfecf52787217585032c1ed9804c0d7555aac65fda930051a177e48755e049580e8826147253de11b",
+        "signingAddress": "0x835ab53d20294ef795906dff21ae4c045336aa26",
+        "kind": "provider_tee"
+      },
+      "eligible": true
+    }
+  ],
+  "result": {
+    "verdict": "fail",
+    "reason": "3 of 3 jurors",
+    "agree": 3,
+    "of": 3,
+    "dissent": [],
+    "excluded": [],
+    "contested": false,
+    "tally": {
+      "pass": 0,
+      "fail": 3,
+      "inconclusive": 0
+    }
+  },
+  "limits": [
+    "Jurors read the evidence image they were given. They cannot see what Kane did not capture.",
+    "Kane itself ran on TestMu AI servers, so this receipt covers the judging step only.",
+    "The Intel TDX and NVIDIA quotes are fetched but not verified by this tool. Use NEAR AI's open verifier for that."
+  ]
+}

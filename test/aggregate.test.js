@@ -1,0 +1,13 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { aggregate } from '../src/aggregate.js';
+const v = (juror, verdict, eligible = true) => ({ juror, verdict, eligible });
+test('unanimous pass', () => { const r = aggregate([v('a', 'pass'), v('b', 'pass'), v('c', 'pass')]); assert.equal(r.verdict, 'pass'); assert.equal(r.agree, 3); assert.equal(r.contested, false); });
+test('2 fail 1 pass is fail, dissent named', () => { const r = aggregate([v('a', 'fail'), v('b', 'fail'), v('c', 'pass')]); assert.equal(r.verdict, 'fail'); assert.deepEqual(r.dissent, [{ juror: 'c', verdict: 'pass' }]); });
+test('cautious: 2 pass 1 fail is inconclusive', () => { const r = aggregate([v('a', 'pass'), v('b', 'pass'), v('c', 'fail')]); assert.equal(r.verdict, 'inconclusive'); assert.match(r.reason, /cautious/); });
+test('majority policy: 2 pass 1 fail is pass', () => { assert.equal(aggregate([v('a', 'pass'), v('b', 'pass'), v('c', 'fail')], { policy: 'majority' }).verdict, 'pass'); });
+test('pass + 2 inconclusive is inconclusive (the cookie-modal case)', () => { assert.equal(aggregate([v('a', 'pass'), v('b', 'inconclusive'), v('c', 'inconclusive')]).verdict, 'inconclusive'); });
+test('three-way split has no majority', () => { const r = aggregate([v('a', 'pass'), v('b', 'fail'), v('c', 'inconclusive')]); assert.equal(r.verdict, 'inconclusive'); assert.match(r.reason, /split/); });
+test('an uncalibrated juror is excluded and cannot swing the vote', () => { const r = aggregate([v('a', 'fail'), v('b', 'fail'), v('c', 'pass', false)]); assert.equal(r.verdict, 'fail'); assert.equal(r.excluded[0].juror, 'c'); });
+test('too few calibrated jurors gives no_quorum', () => { assert.equal(aggregate([v('a', 'pass'), v('b', 'pass', false), v('c', 'pass', false)]).verdict, 'no_quorum'); });
+test('an errored answer is excluded, two agreeing jurors still decide', () => { assert.equal(aggregate([v('a', 'pass'), v('b', 'pass'), v('c', 'error')]).verdict, 'pass'); });

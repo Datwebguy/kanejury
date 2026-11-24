@@ -1,0 +1,11 @@
+{
+  "name": "kanejury",
+  "version": "0.0.1",
+  "description": "An independent jury for Kane CLI verdicts: calibrated, attested model jurors read Kane's evidence and return a signed pass, fail or inconclusive.",
+  "type": "module",
+  "bin": { "kanejury": "src/cli.js" },
+  "engines": { "node": ">=20" },
+  "scripts": { "test": "node --test test/*.test.js" },
+  "license": "MIT",
+  "dependencies": { "@noble/curves": "1.9.7", "@noble/hashes": "1.8.0" }
+}

@@ -1,0 +1,4 @@
+node_modules/
+.kanejury/
+receipt.json
+.env
