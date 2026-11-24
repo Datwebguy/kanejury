@@ -1,0 +1,4 @@
+26c26
+< $('clear').addEventListener('click', () => { todos = []; render(); });
+---
+> $('clear').addEventListener('click', () => { todos = todos.filter(t => !t.done); render(); });

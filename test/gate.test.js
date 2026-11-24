@@ -1,0 +1,12 @@
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { decide } from '../src/gate.js';
+const none = { missing: [] };
+test('pass with nothing odd is allowed', () => assert.equal(decide({ kaneStatus: 'passed', gaps: none }).action, 'allow'));
+test('pass with a missing requested action is rechecked, and a second time goes to a human', () => { assert.equal(decide({ kaneStatus: 'passed', gaps: { missing: ['clear completed'] } }).action, 'recheck'); assert.equal(decide({ kaneStatus: 'passed', gaps: { missing: ['clear completed'] }, strict: true }).action, 'review'); });
+test('typing after the last requested action is rechecked', () => { const post = { after: 'clear completed', steps: [{ ordinal: 10 }] }; assert.equal(decide({ kaneStatus: 'passed', gaps: none, post }).action, 'recheck'); assert.match(decide({ kaneStatus: 'passed', gaps: none, post }).reasons[0], /repaired the page/); });
+test('pass that the jury sees as a failure goes to review', () => assert.equal(decide({ kaneStatus: 'passed', gaps: none, jury: { verdict: 'fail' } }).action, 'review'));
+test('an infrastructure failure means rerun and never involves the agent', () => assert.equal(decide({ kaneStatus: 'failed', failure: { kind: 'infrastructure', why: 'TargetClosedError' } }).action, 'rerun'));
+test('a confirmed assertion failure goes to the agent', () => assert.equal(decide({ kaneStatus: 'failed', failure: { kind: 'assertion', why: 'counter was 1' } }).action, 'fix'));
+test('a failure the jury sees holding goes to review, not to the agent', () => assert.equal(decide({ kaneStatus: 'failed', failure: { kind: 'assertion', why: 'x' }, jury: { verdict: 'pass' } }).action, 'review'));
+test('a jury that disagrees weakly (inconclusive) does not block a fix', () => assert.equal(decide({ kaneStatus: 'failed', failure: { kind: 'assertion', why: 'x' }, jury: { verdict: 'inconclusive' } }).action, 'fix'));

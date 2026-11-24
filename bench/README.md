@@ -28,3 +28,6 @@ A text check asks the same hosted models whether the agent did anything the obje
 - The jurors are small open models; model output varies between runs even at temperature 0.
 - Ground truth for S4 and S7 was set by inspecting the screenshots.
 - KaneJury did not change the outcome of any run except T6, and it found no error that Kane made, except the false green and the crash that Kane's own evidence already contained.
+
+## Live finding after the bench: Kane repairs the page to pass
+In the closed-loop demo ([demo/README.md](../demo/README.md)) a planted bug made "Clear completed" remove every item. Kane in its default lenient mode **noticed the empty list, re-typed the missing item on its own, and reported success** (three of three lenient runs on that app). The final screenshot honestly showed the item, so the vision jury agreed with Kane. A plain-code check on the step list ("typing or key presses after the last requested click") caught it; across the 25 bench runs that check raised no false alarms. Kane's strict mode (`--mode action`) then failed honestly.

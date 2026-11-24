@@ -1,0 +1,17 @@
+{
+  "outcome": "allowed",
+  "rounds": [
+    {
+      "round": 1,
+      "kane": "passed",
+      "credits": 22.3,
+      "seconds": 61,
+      "decision": "allow",
+      "reasons": [
+        "Kane passed and nothing in the evidence disagrees"
+      ],
+      "jury": "pass",
+      "kaneSummary": "Added two todo items, “a” and “b,” to the Tiny todos list. Marked “a” as completed and cleared completed items. The remaining list shows “b” at http://127.0.0.1:8765/todo-app/."
+    }
+  ]
+}

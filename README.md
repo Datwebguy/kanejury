@@ -4,7 +4,7 @@
 
 Independent project built for the Kane CLI Online Hackathon. Not affiliated with TestMu AI.
 
-> **Status: early, with a first real measurement.** We ran 25 real Kane CLI runs on public test sites and compared Kane alone with KaneJury ([bench/README.md](bench/README.md)). The honest result: the vision jury did **not** beat Kane (21 of 24 correct against Kane's 23 of 24). What did hold up on real runs: a plain-code check that tells an infrastructure failure from a real one (it caught the one browser crash in 25 runs with no false alarms), and signed receipts. See [docs/STATUS.md](docs/STATUS.md) for every feature and its state.
+> **Status: early, with real measurements.** We ran 25 real Kane CLI runs on public test sites and compared Kane alone with KaneJury ([bench/README.md](bench/README.md)). The honest result: the vision jury did **not** beat Kane (21 of 24 correct against Kane's 23 of 24). What held up: plain-code checks on Kane's evidence (infrastructure failure versus real failure, requested actions missing from the trail, typing after the last requested action), and signed receipts. In a live loop on a small app with a planted bug, Kane **passed by repairing the page itself**; KaneJury's check caught that, re-ran Kane in its strict mode, Kane then failed honestly, a real coding model fixed the bug, and Kane passed ([demo/README.md](demo/README.md)). See [docs/STATUS.md](docs/STATUS.md) for every feature and its state.
 
 ## Why
 
@@ -27,6 +27,8 @@ node src/cli.js judge --claim "Price shown at checkout matches the advertised Pr
 node src/cli.js verify examples/receipt-fail.json --image examples/evidence-fail.png
 node src/cli.js judge-pack <run.evidence> --claim "..."   # judge a real Kane evidence pack (last step screenshot)
 ```
+
+`gate <run.evidence>` turns a Kane result into one of four actions: `allow`, `fix` (send to the agent), `rerun` (infrastructure trouble, leave the agent out of it) or `recheck`/`review` (the result looks doubtful). `loop` runs Kane, applies the gate, and calls a coding agent only for confirmed failures ([demo/](demo/)).
 
 `judge-pack` first checks, with plain code, whether Kane's failure was really infrastructure (a browser crash, exhausted credits). If so it calls no model and exits 4, so a gate does not send the agent after a bug that is not there.
 

@@ -8,3 +8,7 @@ test('exhausted credits are infrastructure', () => { assert.equal(classifyFailur
 test('a failed assertion is an assertion', () => { assert.equal(classifyFailure(pack('failed', [{ status: 'failed', summary: 'assert: the counter says 5 items left' }])).kind, 'assertion'); });
 test('a passed test has no failure', () => { assert.equal(classifyFailure(pack('passed', [{ status: 'passed', summary: 'assert: ok' }])).kind, 'none'); });
 test('a broken test with an unknown cause is still not a verdict', () => { assert.equal(classifyFailure(pack('broken', [{ status: 'failed', summary: 'something odd' }])).kind, 'infrastructure'); });
+test('Kane failing to understand its own objective is not a verdict on the app', () => {
+  for (const m of ['The mandatory initial checkpoint failed because its condition was unspecified.', 'The mandatory initial checkpoint could not be evaluated truthfully, so the run stopped', 'The child agent treated its sub-objective as an instruction to report failure']) assert.equal(classifyFailure(pack('failed', [{ status: 'failed', failure: m }])).kind, 'infrastructure', m);
+});
+test('the honest failure we wanted is still an assertion', () => { assert.equal(classifyFailure(pack('failed', [{ status: 'failed', summary: 'assert: the list shows b', failure: 'After clearing completed todos, the list is empty and b is absent' }])).kind, 'assertion'); });

@@ -14,6 +14,9 @@ Nothing here has been run on real Kane output yet. Kane CLI is not logged in.
 | Calibration results signed per fixture call | **Not done.** Eligibility is recorded in the receipt but not individually signed. |
 | Evidence pack reader (`src/evidence.js`, zip, no dependencies; never exposes account fields) and `judge-pack` command | Built and run on 25 real packs. |
 | Infrastructure-failure classifier (plain code) | Built. Real packs: 1 of 1 crash found, 0 false alarms in 24 others. |
+| Coverage check (a click the objective names is missing from Kane's steps) | Built. On 25 real packs: flagged 1 (T9), no false alarms among the 8 checkable runs. |
+| Post-action input check (typing after the last requested click) | Built. Caught a live false green; no false alarms on 25 real packs. |
+| Gate (`allow`/`fix`/`rerun`/`recheck`/`review`) and `loop` | Built. One full real run: false green caught, strict recheck, real model fixed the bug, Kane passed. |
 | Trail audit (did the agent do something unrequested) | Experimental, noisy: flagged the one real improvisation but also false alarms. Not part of the verdict. |
 | Bench of 25 real Kane runs | Done, see bench/README.md. Vision jury did not beat Kane alone. |
 | (older line) Reading a real Kane evidence pack | Layout seen first-hand (docs/05). **Reader not built yet.** KaneJury judged one real Kane screenshot (JPEG) from the CLI: false claim got FAIL 2 of 3 with one inconclusive dissent; a true control claim got PASS 3 of 3; receipts verified. Two real cases, not an accuracy measure. |

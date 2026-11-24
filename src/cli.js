@@ -6,7 +6,10 @@ import { calibrate } from './calibrate.js';
 import { aggregate, EXIT } from './aggregate.js';
 import { buildReceipt, verifyReceipt } from './receipt.js';
 import { sha256 } from './near.js';
-import { loadPack, pickScreenshot, classifyFailure } from './evidence.js';
+import { loadPack, pickScreenshot, classifyFailure, coverageGaps } from './evidence.js';
+import { decide } from './gate.js';
+import { loop } from './loop.js';
+import { runJury } from './judge.js';
 
 const argv = process.argv.slice(2);
 const cmd = argv.shift();
@@ -14,6 +17,8 @@ const flag = (n, d) => { const i = argv.indexOf('--' + n); return i < 0 ? d : (a
 const log = (...a) => console.error(...a);
 const usage = () => { log(`kanejury judge --claim "<text>" --image <png> [--policy cautious|majority] [--out receipt.json] [--json]
 kanejury judge-pack <run.evidence> --claim "<text>" [--step last|<n>] [--policy ...] [--out receipt.json]
+kanejury gate <run.evidence> [--claim "<text>"]   # allow | fix | rerun | review (exit 0, 1, 4, 5)
+kanejury loop --objective "<what Kane does>" --url <start url> --agent "<command>" [--claim "<text>"] [--max-fixes 3] [--out loop.json]
 kanejury calibrate [--force]
 kanejury verify <receipt.json> [--image <png>] [--online]
 Exit codes: 0 pass, 1 fail, 4 inconclusive or no quorum, 2 could not run. Needs NEAR_AI_API_KEY.`); process.exit(2); };
@@ -60,6 +65,27 @@ async function main() {
     const res = await verifyReceipt(r, { imagePath: typeof flag('image') === 'string' ? flag('image') : null, online: !!flag('online', false) });
     for (const c of res.checks) log(`${c.ok ? 'PASS' : 'FAIL'}  ${c.what}`);
     log(res.ok ? 'RECEIPT OK' : 'RECEIPT NOT VERIFIED'); process.exit(res.ok ? 0 : 1);
+  }
+  if (cmd === 'gate') {
+    const packFile = argv.find((a) => a.endsWith('.evidence')); if (!packFile) usage();
+    const pack = loadPack(packFile); const t = pack.tests[0];
+    const failure = classifyFailure(pack), gaps = coverageGaps(pack); let jury = null;
+    const claim = flag('claim');
+    if (typeof claim === 'string' && failure.kind !== 'infrastructure') { const pick = pickScreenshot(pack, 0, 'last'); jury = (await runJury({ claim, image: pick.image, mime: pick.mime, evidenceName: `step${pick.step}.jpg`, cacheFile: '.kanejury/calibration.json' })).result; }
+    const d = decide({ kaneStatus: t?.status, failure, gaps, jury });
+    if (flag('json', false)) console.log(JSON.stringify({ ...d, kane: t?.status, jury: jury?.verdict ?? null }));
+    log(`KANE ${String(t?.status).toUpperCase()} -> ${d.action.toUpperCase()}\n  ${d.reasons.join('\n  ')}`);
+    process.exit({ allow: 0, fix: 1, rerun: 4, review: 5 }[d.action]);
+  }
+  if (cmd === 'loop') {
+    const objective = flag('objective'), url = flag('url'), agent = flag('agent');
+    if ([objective, url, agent].some((x) => !x || x === true)) usage();
+    const claim = flag('claim');
+    const res = await loop({ objective, url, agent, claim: typeof claim === 'string' ? claim : null, maxFixes: Number(flag('max-fixes', 3)), maxReruns: Number(flag('max-reruns', 2)), log });
+    fs.writeFileSync(flag('out', 'loop.json'), JSON.stringify(res, null, 2));
+    const credits = res.rounds.reduce((s, r) => s + (r.credits || 0), 0);
+    log(`OUTCOME ${res.outcome.toUpperCase()}${res.reason ? ' (' + res.reason + ')' : ''} after ${res.rounds.length} Kane run(s), ${Math.round(credits * 10) / 10} credits. log: ${flag('out', 'loop.json')}`);
+    process.exit(res.outcome === 'allowed' ? 0 : res.outcome === 'error' ? 2 : 5);
   }
   usage();
 }

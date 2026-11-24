@@ -1,0 +1,28 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><title>Tiny todos</title>
+<style>body{font:16px system-ui;max-width:460px;margin:40px auto}li{display:flex;gap:8px;padding:6px 0}li.done span{text-decoration:line-through;color:#888}#bar{display:flex;justify-content:space-between;margin-top:12px}</style></head>
+<body>
+<h1>Tiny todos</h1>
+<input id="new" placeholder="What needs to be done?" autofocus style="width:100%;padding:8px">
+<ul id="list"></ul>
+<div id="bar"><span id="count">0 items left</span><button id="clear" hidden>Clear completed</button></div>
+<script>
+let todos = [];
+const $ = (id) => document.getElementById(id);
+function render() {
+  $('list').innerHTML = '';
+  todos.forEach((t, i) => {
+    const li = document.createElement('li'); li.className = t.done ? 'done' : '';
+    li.innerHTML = '<input type="checkbox" aria-label="Toggle Todo"' + (t.done ? ' checked' : '') + '><span></span>';
+    li.querySelector('span').textContent = t.text;
+    li.querySelector('input').addEventListener('change', () => { todos[i].done = !todos[i].done; render(); });
+    $('list').appendChild(li);
+  });
+  const left = todos.filter((t) => !t.done).length;
+  $('count').textContent = left + (left === 1 ? ' item left' : ' items left');
+  $('clear').hidden = !todos.some((t) => t.done);
+}
+$('new').addEventListener('keydown', (e) => { if (e.key === 'Enter' && e.target.value.trim()) { todos.push({ text: e.target.value.trim(), done: false }); e.target.value = ''; render(); } });
+$('clear').addEventListener('click', () => { todos = []; render(); });
+render();
+</script></body></html>
