@@ -3,6 +3,7 @@ import fs from 'node:fs';
 import { build } from 'esbuild';
 
 await build({ entryPoints: ['src/verify-core.js'], bundle: true, format: 'esm', minify: true, target: 'es2020', outfile: 'docs/assets/verify.js' });
+await build({ entryPoints: ['src/browser.js'], bundle: true, format: 'esm', minify: true, target: 'es2020', outfile: 'docs/assets/kanejury.js' });
 
 const parseCsv = (text) => { const rows = []; let row = [], cell = '', q = false;
   for (let i = 0; i < text.length; i++) { const c = text[i];
@@ -16,5 +17,7 @@ const patch = fs.readFileSync('demo/results/run3-agent-patch.diff', 'utf8');
 fs.writeFileSync('docs/assets/data.js', `export const RUNS = ${JSON.stringify(runs)};\nexport const LOOP = ${JSON.stringify(loop)};\nexport const PATCH = ${JSON.stringify(patch)};\n`);
 fs.copyFileSync('examples/receipt-fail.json', 'docs/assets/receipt-fail.json');
 fs.copyFileSync('examples/evidence-fail.png', 'docs/assets/evidence-fail.png');
+fs.mkdirSync('docs/assets/packs', { recursive: true });
+for (const f of fs.readdirSync('examples/packs')) if (f.endsWith('.evidence')) fs.copyFileSync(`examples/packs/${f}`, `docs/assets/packs/${f}`);
 fs.writeFileSync('docs/.nojekyll', '');
 console.log(`site assets built: ${runs.length} runs, ${loop.rounds.length} loop rounds`);

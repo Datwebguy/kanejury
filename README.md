@@ -12,6 +12,32 @@ KaneJury is an independent open-source project built on Kane CLI and NEAR AI Clo
 
 ---
 
+## Try it in two minutes
+
+**In your browser, with nothing to install or sign up for:** open **[kanejury.vercel.app](https://kanejury.vercel.app)**.
+
+1. **Try it now.** Pick one of four real Kane CLI runs, or drop in your own `.evidence` file. You see Kane's steps and screenshots, the steps KaneJury flags, and its decision. It all runs in your browser, with the same code as the CLI.
+2. **Test guard.** Fingerprint a saved Kane test, edit or delete a line the way a coding agent might, and watch the pass get held for review.
+3. **Verify a receipt.** Check a real signed receipt, then flip its verdicts and watch the checks fail.
+4. **[Watch the 3-minute demo](https://youtu.be/7qMpgVKiuso).**
+
+**On your machine, with no keys and no Kane account:**
+
+```bash
+git clone https://github.com/Datwebguy/kanejury && cd kanejury && npm install
+npm test                                                     # 74 tests
+
+node src/cli.js gate examples/packs/round1.evidence          # Kane passed -> RECHECK (exit 5): it typed b back in
+node src/cli.js gate examples/packs/round2-strict.evidence   # Kane failed -> FIX (exit 1): a real bug
+node src/cli.js gate examples/packs/crash.evidence           # Kane broken -> RERUN (exit 4): the browser crashed
+node src/cli.js gate examples/packs/round3.evidence          # Kane passed -> ALLOW (exit 0): fixed for real
+
+node src/cli.js verify examples/receipt-fail.json --image examples/evidence-fail.png
+echo '{"jsonrpc":"2.0","id":1,"method":"tools/list"}' | node src/mcp.js
+```
+
+The packs in `examples/packs/` are real Kane CLI evidence packs from the demo loop and the bench, with the account fields removed.
+
 ## The problem
 
 A browser agent returns one word, "passed" or "failed", and automation acts on it. Three things make that word less trustworthy than it looks:
@@ -72,7 +98,7 @@ Requires Node 20 or newer.
 ```bash
 git clone https://github.com/Datwebguy/kanejury && cd kanejury
 npm install
-npm test                                   # 69 tests, no network needed
+npm test                                   # 74 tests, no network needed
 
 # Decide what to do with a Kane run (no model key needed for the plain-code checks)
 node src/cli.js gate path/to/run.evidence
@@ -135,7 +161,7 @@ test/       unit and protocol tests (node:test)
 docs/       evidence packs, receipts, evaluation, integrations, roadmap; proof page in docs/index.html
 bench/      the 25 real runs: cases.tsv and results.csv
 demo/       the planted-bug todo app, the coding agent, and the recorded loop
-examples/   a real receipt and its screenshot, a GitHub workflow
+examples/   real Kane evidence packs, a real receipt and its screenshot, a GitHub workflow
 fixtures/   labelled images used for daily calibration
 scripts/    build-site.mjs (bundles the in-browser verifier)
 ```

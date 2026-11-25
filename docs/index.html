@@ -316,6 +316,58 @@ textarea{display:block;width:100%;min-height:230px;border:0;resize:vertical;back
 .tabpanel .note-card p,.tabpanel .note-card li{color:var(--muted);font-size:14.5px}
 .tabpanel .note-card ul{margin:0;padding-left:18px}
 
+
+/* try it */
+.try-grid{display:grid;grid-template-columns:320px 1fr;gap:24px;align-items:start}
+@media (max-width:960px){.try-grid{grid-template-columns:1fr}}
+.picks{display:flex;flex-direction:column;gap:10px}
+.pick{display:block;text-align:left;width:100%;padding:16px 18px;border-radius:var(--r-sm);border:1px solid var(--line);background:var(--surface);color:var(--ink);font:inherit;cursor:pointer;transition:border-color .2s,transform .2s,box-shadow .2s}
+.pick:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.pick b{display:block;font-weight:600;font-size:15.5px;margin-bottom:2px}
+.pick span{font-size:13.5px;color:var(--muted)}
+.pick[aria-pressed="true"]{border-color:var(--accent);box-shadow:0 0 0 3px color-mix(in srgb,var(--accent) 22%,transparent)}
+.drop{display:block;padding:18px;border-radius:var(--r-sm);border:2px dashed var(--line-2);text-align:center;color:var(--muted);font-size:14px;cursor:pointer;transition:border-color .2s,background .2s}
+.drop:hover,.drop.over{border-color:var(--accent);background:var(--accent-soft)}
+.drop b{color:var(--ink);display:block;margin-bottom:2px}
+.drop input{display:none}
+.res{border-radius:var(--r);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow);overflow:hidden;min-width:0}
+.res-head{padding:20px 22px;border-bottom:1px solid var(--line);display:flex;flex-direction:column;gap:12px}
+.res-head .obj{font-size:14px;color:var(--muted)}
+.res-head .obj b{color:var(--ink-2);font-weight:600}
+.verdicts{display:flex;flex-wrap:wrap;align-items:center;gap:10px}
+.verdicts .big{font:600 15px var(--mono);padding:8px 14px;border-radius:999px}
+.verdicts .arrow-r{color:var(--muted);font-size:20px}
+.reasons{margin:0;padding:0 0 0 18px;color:var(--ink-2);font-size:14.5px}
+.res-body{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.1fr)}
+@media (max-width:760px){.res-body{grid-template-columns:1fr}}
+.steplist{list-style:none;margin:0;padding:12px;display:flex;flex-direction:column;gap:6px;max-height:470px;overflow:auto;border-right:1px solid var(--line)}
+@media (max-width:760px){.steplist{border-right:0;border-bottom:1px solid var(--line);max-height:300px}}
+.steplist button{display:grid;grid-template-columns:30px 82px 1fr;gap:8px;align-items:center;width:100%;text-align:left;padding:8px 10px;border-radius:10px;border:1px solid var(--line);background:var(--surface-2);color:var(--ink-2);font:inherit;font-size:13.5px;cursor:pointer}
+.steplist button .n{font:600 12px var(--mono);width:26px;height:26px;border-radius:8px;display:grid;place-items:center;background:var(--bg-2);color:var(--muted)}
+.steplist button .k{font:500 11.5px var(--mono);color:var(--muted)}
+.steplist button .t{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.steplist button.sel{outline:2px solid var(--accent);outline-offset:1px}
+.steplist button.flag{background:var(--fail-soft);border-color:var(--fail);color:var(--fail)}
+.steplist button.flag .n{background:var(--fail);color:#fff}
+.steplist button.req{background:var(--accent-soft);border-color:color-mix(in srgb,var(--accent) 50%,var(--line))}
+.steplist button.bad{background:var(--warn-soft)}
+.shot{padding:14px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.shot .cap{font:500 12.5px var(--mono);color:var(--muted);display:flex;justify-content:space-between;gap:8px;align-items:center}
+.shot .frame{border:1px solid var(--line);border-radius:10px;overflow:auto;background:#fff;max-height:420px}
+.shot .frame img{display:block;width:100%;transition:width .25s}
+.shot .frame.zoomed img{width:260%}
+.shot .zbtn{border:1px solid var(--line);background:var(--surface);color:var(--ink-2);font:500 12px var(--sans);padding:4px 10px;border-radius:8px;cursor:pointer}
+.empty{padding:40px 22px;color:var(--muted);text-align:center}
+.guardbox{margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:20px;padding:24px;border-radius:var(--r);background:var(--surface);border:1px solid var(--line);box-shadow:var(--shadow)}
+@media (max-width:860px){.guardbox{grid-template-columns:1fr}}
+.guardbox h3{margin:0 0 6px;font:600 20px var(--display);letter-spacing:-.02em}
+.guardbox p{margin:0 0 12px;color:var(--muted);font-size:14.5px}
+.guardbox textarea{min-height:150px;border:1px solid var(--line);border-radius:10px;background:var(--surface-2);color:var(--ink);font:13.5px/1.6 var(--mono)}
+.guardbox .gbtns{display:flex;gap:10px;flex-wrap:wrap;margin-top:12px}
+.guardbox .gbtns .btn{height:42px;font-size:14px}
+.gout{border-radius:12px;background:var(--surface-2);border:1px solid var(--line);padding:16px;font:13px/1.6 var(--mono);color:var(--ink-2);white-space:pre-wrap;min-height:150px;overflow-wrap:anywhere}
+.gout .ok{color:var(--pass);font-weight:600}.gout .no{color:var(--warn);font-weight:600}
+
 /* closing */
 .closing{margin:120px 0 0;padding:64px 40px;border-radius:28px;text-align:center;position:relative;overflow:hidden;background:radial-gradient(120% 140% at 0% 0%,#FFE2BF 0%,transparent 55%),radial-gradient(120% 140% at 100% 100%,#FFC59A 0%,transparent 55%),var(--surface);border:1px solid var(--line)}
 :root[data-theme="dark"] .closing{background:radial-gradient(120% 140% at 0% 0%,#3A2414 0%,transparent 55%),radial-gradient(120% 140% at 100% 100%,#4A2610 0%,transparent 55%),var(--surface)}
@@ -385,7 +437,7 @@ footer a:hover{color:var(--ink)}
       KaneJury
     </a>
     <nav class="nav" aria-label="Sections">
-      <a href="#problem">Why</a><a href="#how">How it works</a><a href="#run">Live run</a><a href="#runs">Results</a><a href="#verify">Verify</a><a href="#use">Integrations</a>
+      <a href="#problem">Why</a><a href="#how">How it works</a><a href="#try">Try it</a><a href="#run">Live run</a><a href="#runs">Results</a><a href="#verify">Verify</a><a href="#use">Integrations</a>
     </nav>
     <div class="actions">
       <button class="icon-btn theme-btn" id="theme" type="button" aria-label="Switch between light and dark theme">
@@ -409,7 +461,7 @@ footer a:hover{color:var(--ink)}
           <h1 class="rv d1">Know when to <span class="grad">trust</span> a Kane verdict.</h1>
           <p class="lead rv d2">KaneJury reads the evidence behind every Kane CLI run and tells your pipeline what to do next: ship it, fix it, run it again, or look closer. Each decision comes with a receipt anyone can verify.</p>
           <div class="cta rv d3">
-            <a class="btn primary" href="#run">See a real run
+            <a class="btn primary" href="#try">Try it now
               <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
             <a class="btn" href="https://youtu.be/7qMpgVKiuso"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.5v13l11-6.5z"/></svg>Watch the demo</a>
           </div>
@@ -486,6 +538,40 @@ footer a:hover{color:var(--ink)}
         <div class="dec rv d2"><span class="pill p-rerun">rerun</span><p>Infrastructure trouble. The agent stays out of it. <code>exit 4</code></p></div>
         <div class="dec rv d3"><span class="pill p-recheck">recheck</span><p>Passed, but may have repaired the page. Re-run strict. <code>exit 5</code></p></div>
         <div class="dec rv d3"><span class="pill p-review">review</span><p>The evidence disagrees with itself. A person looks. <code>exit 5</code></p></div>
+      </div>
+    </div>
+  </section>
+
+  <section id="try">
+    <div class="wrap">
+      <span class="kicker rv">Try it now · no sign-up</span>
+      <h2 class="rv">Run KaneJury on a real Kane run, right here.</h2>
+      <p class="sub rv">Pick a real evidence pack from our Kane CLI runs, or drop in your own <code>.evidence</code> file. The same checks and gate as the command line run in your browser, and nothing is uploaded.</p>
+      <div class="try-grid">
+        <div class="picks rv">
+          <button class="pick" type="button" data-pack="round1"><b>Kane passed after repairing the page</b><span>Planted bug, Kane's default mode</span></button>
+          <button class="pick" type="button" data-pack="round2-strict"><b>Kane fails honestly in strict mode</b><span>Same bug, re-run with --mode action</span></button>
+          <button class="pick" type="button" data-pack="crash"><b>The browser crashed mid-run</b><span>Public demo shop, reported as a failure</span></button>
+          <button class="pick" type="button" data-pack="round3"><b>Kane passes after the real fix</b><span>The coding agent's patch applied</span></button>
+          <label class="drop" id="drop"><b>Drop your own .evidence file</b>or click to choose one. It stays on your device.<input type="file" id="packfile" accept=".evidence,.zip"></label>
+        </div>
+        <div class="res rv d1" id="res" aria-live="polite"><div class="empty">Choose a run on the left to see what Kane did and what KaneJury decides.</div></div>
+      </div>
+      <div class="guardbox rv">
+        <div>
+          <h3>Test guard: try to cheat</h3>
+          <p>This is a saved Kane test. Take its fingerprint, then edit or delete a line the way a coding agent might to get a pass, and check again.</p>
+          <label for="gtext" class="sr">Kane test file</label>
+          <textarea id="gtext" spellcheck="false">- add a todo called a
+- add a todo called b
+- mark a as completed
+- click Clear completed
+- verify the list shows b</textarea>
+          <div class="gbtns"><button class="btn primary" id="gsnap" type="button">1. Take fingerprint</button><button class="btn" id="gcheck" type="button" disabled>2. Check</button></div>
+        </div>
+        <div class="gout" id="gout" aria-live="polite">.testmuai/tests/clear-completed_test.md
+
+Press "Take fingerprint" to start.</div>
       </div>
     </div>
   </section>
@@ -794,6 +880,90 @@ const io = 'IntersectionObserver' in window && !reduce ? new IntersectionObserve
 document.querySelectorAll('.rv').forEach((el) => {
   if (io) io.observe(el);
   else { el.classList.add('in'); el.querySelectorAll('.bar i').forEach((i) => (i.style.width = i.dataset.w + '%')); }
+});
+</script>
+
+<script type="module">
+import { inspectPack, sha256Text, compareSnapshots, tamperReasons } from './assets/kanejury.js';
+const $ = (q) => document.querySelector(q);
+const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
+const res = $('#res'); let urls = [], full = '', cropped = '', showFull = false;
+// Kane screenshots are full 1920x1080 pages; crop to where the page actually has content so it is readable.
+async function cropToContent(url) {
+  const img = new Image(); img.src = url; await img.decode();
+  const W = img.naturalWidth, H = img.naturalHeight, k = 4, c = document.createElement('canvas'); c.width = W / k; c.height = H / k;
+  const g = c.getContext('2d'); g.drawImage(img, 0, 0, c.width, c.height); const d = g.getImageData(0, 0, c.width, c.height).data;
+  let x0 = c.width, y0 = c.height, x1 = 0, y1 = 0;
+  for (let y = 0; y < c.height; y++) for (let x = 0; x < c.width; x++) { const i = (y * c.width + x) * 4; if (d[i] < 235 || d[i + 1] < 235 || d[i + 2] < 235) { if (x < x0) x0 = x; if (y < y0) y0 = y; if (x > x1) x1 = x; if (y > y1) y1 = y; } }
+  if (x1 <= x0) return url;
+  let w = (x1 - x0) * k + 120, h = (y1 - y0) * k + 120; const minW = 640; if (w < minW) w = minW;
+  const sx = Math.max(0, Math.min(W - w, x0 * k - 60)), sy = Math.max(0, y0 * k - 60); h = Math.max(h, w * 0.45);
+  const o = document.createElement('canvas'); o.width = Math.min(w, W); o.height = Math.min(h, H - sy);
+  o.getContext('2d').fillStyle = '#fff'; o.getContext('2d').fillRect(0, 0, o.width, o.height);
+  o.getContext('2d').drawImage(img, sx, sy, o.width, o.height, 0, 0, o.width, o.height);
+  return o.toDataURL('image/jpeg', 0.9);
+}
+const pill = { allow: 'p-allow', fix: 'p-fix', rerun: 'p-rerun', recheck: 'p-recheck', review: 'p-review' };
+const kaneCls = (st) => (st === 'passed' ? 'k-pass' : 'k-fail');
+async function show(buf, label) {
+  urls.forEach(URL.revokeObjectURL); urls = [];
+  res.innerHTML = '<div class="empty">Reading the evidence pack…</div>';
+  try {
+    const r = await inspectPack(buf), t = r.test, d = r.decision;
+    const flagged = new Set((r.post.steps || []).map((x) => x.ordinal));
+    const wanted = r.gaps.checked || [];
+    const steps = t.steps.map((st) => {
+      const req = ['click', 'select'].includes(st.kind) && wanted.some((w) => String(st.summary || '').toLowerCase().includes(w));
+      const cls = flagged.has(st.ordinal) ? 'flag' : req ? 'req' : st.status && st.status !== 'passed' ? 'bad' : '';
+      const text = String(st.summary || '').replace(/^[a-z_]+:\s*/, '').replace('PRIMARY: ', '');
+      return `<li><button type="button" class="${cls}" data-o="${st.ordinal}"><span class="n">${st.ordinal}</span><span class="k">${esc(st.kind || '')}</span><span class="t" title="${esc(text)}">${esc(text)}</span></button></li>`;
+    }).join('');
+    res.innerHTML = `<div class="res-head">
+        <div class="obj"><b>${esc(label)}</b>${t.objective ? ` · objective: ${esc(t.objective)}` : ''}</div>
+        <div class="verdicts"><span class="chip ${kaneCls(t.status)} big">Kane: ${esc(t.status)}</span><span class="arrow-r">→</span><span class="pill ${pill[d.action]} big">KaneJury: ${esc(d.action)}</span></div>
+        <ul class="reasons">${d.reasons.map((x) => `<li>${esc(x)}</li>`).join('')}</ul>
+      </div>
+      <div class="res-body"><ol class="steplist">${steps}</ol>
+        <div class="shot"><div class="cap"><span id="scap"></span><button class="zbtn" type="button" id="zbtn">Full page</button></div><div class="frame" id="sframe"><img id="simg" alt="Kane's screenshot at this step"></div></div></div>`;
+    const withShot = t.steps.filter((x) => x.screenshot);
+    const pick = (o) => {
+      const st = t.steps.find((x) => x.ordinal === o && x.screenshot) || withShot[withShot.length - 1];
+      res.querySelectorAll('.steplist button').forEach((b) => b.classList.toggle('sel', +b.dataset.o === st?.ordinal));
+      if (!st) { $('#scap').textContent = 'No screenshots in this pack (the browser died first).'; $('#simg').removeAttribute('src'); return; }
+      const u = URL.createObjectURL(new Blob([st.screenshot], { type: 'image/jpeg' })); urls.push(u);
+      $('#scap').textContent = `Kane's own screenshot · step ${st.ordinal}`;
+      cropToContent(u).then((c) => { full = u; cropped = c; $('#simg').src = showFull ? u : c; });
+    };
+    res.querySelectorAll('.steplist button').forEach((b) => b.addEventListener('click', () => pick(+b.dataset.o)));
+    $('#zbtn').addEventListener('click', () => { showFull = !showFull; $('#zbtn').textContent = showFull ? 'Fit to content' : 'Full page'; $('#simg').src = showFull ? full : cropped; });
+    const firstFlag = [...flagged][0];
+    pick(firstFlag ?? withShot[withShot.length - 1]?.ordinal);
+  } catch (e) { res.innerHTML = `<div class="empty">${esc(e.message)}</div>`; }
+}
+const picks = [...document.querySelectorAll('.pick')];
+picks.forEach((b) => b.addEventListener('click', async () => {
+  picks.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+  const buf = await (await fetch(`./assets/packs/${b.dataset.pack}.evidence`)).arrayBuffer();
+  show(buf, b.querySelector('b').textContent);
+}));
+const file = $('#packfile'), drop = $('#drop');
+file.addEventListener('change', async () => { const f = file.files[0]; if (!f) return; picks.forEach((x) => x.setAttribute('aria-pressed', 'false')); show(await f.arrayBuffer(), f.name); });
+['dragenter', 'dragover'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.add('over'); }));
+['dragleave', 'drop'].forEach((ev) => drop.addEventListener(ev, (e) => { e.preventDefault(); drop.classList.remove('over'); }));
+drop.addEventListener('drop', async (e) => { const f = e.dataTransfer.files[0]; if (f) { picks.forEach((x) => x.setAttribute('aria-pressed', 'false')); show(await f.arrayBuffer(), f.name); } });
+
+// test guard demo
+const NAME = '.testmuai/tests/clear-completed_test.md'; let base = null;
+const snap = async () => { const text = $('#gtext').value; return { files: text.trim() ? { [NAME]: await sha256Text(text) } : {} }; };
+$('#gsnap').addEventListener('click', async () => {
+  base = await snap(); $('#gcheck').disabled = false;
+  $('#gout').innerHTML = `${NAME}\nfingerprint: sha256 ${esc((base.files[NAME] || 'empty').slice(0, 16))}…\n\nNow edit or delete a line, then press Check.`;
+});
+$('#gcheck').addEventListener('click', async () => {
+  const diff = compareSnapshots(base, await snap());
+  $('#gout').innerHTML = diff.tampered
+    ? `<span class="no">TESTS CHANGED → REVIEW</span>\n${esc(tamperReasons(diff).join('\n'))}\n\nEven if Kane now says passed, KaneJury holds this result for a person.`
+    : `<span class="ok">TESTS UNCHANGED</span>\nThe normal gate decides. Try editing or deleting a line.`;
 });
 </script>
 </body>
