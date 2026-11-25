@@ -6,7 +6,7 @@
 
 KaneJury reads the evidence behind a [Kane CLI](https://www.testmuai.com/kane-cli/) run and tells your pipeline what to do next: **ship it, fix it, run it again, or look closer.** Every decision can come with a signed receipt that anyone can verify, in a terminal or in a browser tab.
 
-[Watch the demo (3 min)](https://youtu.be/7qMpgVKiuso) · [Proof page and live receipt verifier](https://kanejury.vercel.app) · [Evaluation](docs/evaluation.md) · [Integrations](docs/integrations.md) · [Receipts](docs/receipts.md)
+[Watch the demo (3 min)](https://youtu.be/KL3aVaod9nw) · [Proof page and live receipt verifier](https://kanejury.vercel.app) · [Evaluation](docs/evaluation.md) · [Integrations](docs/integrations.md) · [Receipts](docs/receipts.md)
 
 KaneJury is an independent open-source project built on Kane CLI and NEAR AI Cloud. It is not an official TestMu AI product.
 
@@ -19,7 +19,7 @@ KaneJury is an independent open-source project built on Kane CLI and NEAR AI Clo
 1. **Try it now.** Pick one of four real Kane CLI runs, or drop in your own `.evidence` file. You see Kane's steps and screenshots, the steps KaneJury flags, and its decision. It all runs in your browser, with the same code as the CLI.
 2. **Test guard.** Fingerprint a saved Kane test, edit or delete a line the way a coding agent might, and watch the pass get held for review.
 3. **Verify a receipt.** Check a real signed receipt, then flip its verdicts and watch the checks fail.
-4. **[Watch the 3-minute demo](https://youtu.be/7qMpgVKiuso).**
+4. **[Watch the 3-minute demo](https://youtu.be/KL3aVaod9nw).**
 
 **On your machine, with no keys and no Kane account:**
 
