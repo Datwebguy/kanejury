@@ -21,6 +21,7 @@ A browser agent returns one word, "passed" or "failed", and automation acts on i
 | **Repaired to pass.** The page was broken, so the agent typed the missing item again and reported success. | The bug ships. The step list shows the repair; the summary does not. |
 | **A crash labelled as a failure.** The browser died mid-run, and the run is reported as "failed". | A coding agent is sent to fix a bug that does not exist. |
 | **Steps that do not match the story.** The summary claims a click that is absent from the recorded steps. | The verdict rests on something that never happened. |
+| **Tests edited to pass.** The coding agent cannot make the feature work, so it weakens or deletes the test instead. | The run turns green and nothing was fixed. |
 
 KaneJury opens the sealed evidence pack that Kane writes for every run and checks these things with plain, deterministic code. A vision jury of three attested models gives a second look at what was on screen.
 
@@ -50,6 +51,7 @@ Three Kane runs, 49.7 credits, one real fix. Without the check, round 1 would ha
    - *Infrastructure or real failure?* Browser crashes, exhausted credits, network errors and Kane's own parser failures are recognised and sent to `rerun`.
    - *Coverage.* Every click the objective names must appear in the recorded steps.
    - *Repair-to-pass.* Typing or key presses after the last requested click are flagged.
+   - *Test guard.* The protected tests (Kane's saved tests in `.testmuai/tests`, plus any paths you add) are fingerprinted before the coding agent starts. If the agent edits or deletes one, the result goes to `review`, even when Kane passes. New tests are allowed.
 3. **Look at the screen.** Three vision models, hosted by NEAR AI Cloud in hardware enclaves, read the last screenshot and the claim. Each juror must first answer a known-true and a known-false fixture correctly that day, or it is left out.
 4. **Decide.** One of five actions:
 
@@ -70,7 +72,7 @@ Requires Node 20 or newer.
 ```bash
 git clone https://github.com/Datwebguy/kanejury && cd kanejury
 npm install
-npm test                                   # 60 unit tests, no network needed
+npm test                                   # 69 tests, no network needed
 
 # Decide what to do with a Kane run (no model key needed for the plain-code checks)
 node src/cli.js gate path/to/run.evidence
@@ -82,6 +84,10 @@ node src/cli.js judge-pack path/to/run.evidence --claim "The cart badge shows 1.
 
 # Check a receipt, offline
 node src/cli.js verify examples/receipt-fail.json --image examples/evidence-fail.png
+
+# Guard the tests around a coding agent's work
+node src/cli.js guard snapshot              # before the agent starts
+node src/cli.js guard check                 # after: exit 0 unchanged, 5 if a test was edited or deleted
 ```
 
 To run the whole loop (Kane, gate, coding agent, Kane again), see [demo/](demo/).
@@ -91,9 +97,9 @@ To run the whole loop (Kane, gate, coding agent, Kane again), see [demo/](demo/)
 | Surface | How |
 |---|---|
 | **Command line** | `kanejury gate`, `judge-pack`, `loop`, `verify`, `calibrate` |
-| **MCP server** | `node src/mcp.js` exposes `kanejury_inspect_pack`, `kanejury_gate`, `kanejury_judge_pack`, `kanejury_verify_receipt` to any MCP client |
+| **MCP server** | `node src/mcp.js` exposes `kanejury_inspect_pack`, `kanejury_gate`, `kanejury_judge_pack`, `kanejury_verify_receipt`, `kanejury_guard_snapshot` and `kanejury_guard_check` to any MCP client |
 | **GitHub Action** | `uses: Datwebguy/kanejury@main` reads evidence packs in CI, writes a job summary, fails the build on the actions you choose |
-| **Claude Code** | A Stop hook runs Kane after each turn and feeds the gate's reasons back to the agent, with three attempts before it hands over to a person |
+| **Claude Code** | A prompt hook fingerprints the tests when you give the agent a task; a Stop hook runs Kane when the agent says it is done, blocks a pass against edited tests, and feeds the gate's reasons back to the agent, with three attempts before it hands over to a person |
 | **Browser** | The [proof page](https://kanejury.vercel.app) verifies a receipt entirely client-side |
 
 Setup for each is in [docs/integrations.md](docs/integrations.md).

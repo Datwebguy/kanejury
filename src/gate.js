@@ -4,7 +4,9 @@
 //   rerun  : infrastructure trouble, not a verdict; run Kane again, do NOT involve the agent
 //   recheck: Kane passed but its own trail looks like it repaired the page to pass; run it again in Kane's strict mode
 //   review : the result is doubtful and a recheck did not settle it; a human should look
-export function decide({ kaneStatus, failure, gaps, jury, post, strict = false }) {
+export function decide({ kaneStatus, failure, gaps, jury, post, strict = false, tamper = null }) {
+  // The test guard comes first: a result against edited or deleted tests is never allowed through.
+  if (tamper && tamper.length) return { action: 'review', reasons: tamper, guard: true };
   const reasons = [];
   const juryFail = jury && jury.verdict === 'fail', juryPass = jury && jury.verdict === 'pass';
   if (kaneStatus === 'passed') {

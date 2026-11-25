@@ -147,7 +147,7 @@ h2{font:600 clamp(30px,4vw,46px)/1.08 var(--display);letter-spacing:-.035em;marg
 .head-row .sub{margin-bottom:44px}
 
 /* problem cards */
-.cards3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.cards3{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
 @media (max-width:900px){.cards3{grid-template-columns:1fr}}
 .card{position:relative;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:28px;box-shadow:var(--shadow);transition:transform .3s,box-shadow .3s,border-color .3s;min-width:0}
 .card:hover{transform:translateY(-4px);box-shadow:var(--shadow-lg);border-color:var(--line-2)}
@@ -454,6 +454,12 @@ footer a:hover{color:var(--ink)}
           <p>The summary says a button was pressed. The recorded steps have no such click. The verdict rests on an action that never happened.</p>
           <div class="fix"><b>KaneJury:</b> checks every action the objective names against the recorded steps.</div>
         </article>
+        <article class="card rv d3">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="10" width="16" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3M12 14v3"/></svg></div>
+          <h3>Tests edited to pass</h3>
+          <p>The coding agent can't make the feature work, so it weakens or deletes the test instead. The run turns green and nothing was fixed.</p>
+          <div class="fix"><b>KaneJury:</b> fingerprints the tests before the agent starts and holds any pass against edited or deleted tests for review.</div>
+        </article>
       </div>
     </div>
   </section>
@@ -590,7 +596,7 @@ node src/cli.js verify receipt.json --image evidence.png</pre></div>
     }
   }
 }</pre></div>
-        <div class="note-card"><h4>Four tools for any MCP client</h4><ul><li><code>kanejury_inspect_pack</code></li><li><code>kanejury_gate</code></li><li><code>kanejury_judge_pack</code></li><li><code>kanejury_verify_receipt</code></li></ul></div>
+        <div class="note-card"><h4>Six tools for any MCP client</h4><ul><li><code>kanejury_inspect_pack</code></li><li><code>kanejury_gate</code></li><li><code>kanejury_judge_pack</code></li><li><code>kanejury_verify_receipt</code></li><li><code>kanejury_guard_snapshot</code></li><li><code>kanejury_guard_check</code></li></ul></div>
       </div></div>
       <div class="tabpanel" data-p="action" hidden><div class="use-grid">
         <div class="code-card"><div class="code-head"><span>.github/workflows/e2e.yml</span><button class="copy" type="button">Copy</button></div><pre>- uses: Datwebguy/kanejury@main
@@ -600,11 +606,13 @@ node src/cli.js verify receipt.json --image evidence.png</pre></div>
         <div class="note-card"><h4>Gate every pull request</h4><p>Reads each evidence pack, writes a job summary with the reasons, and fails the build on the actions you choose.</p></div>
       </div></div>
       <div class="tabpanel" data-p="hook" hidden><div class="use-grid">
-        <div class="code-card"><div class="code-head"><span>.claude/settings.json</span><button class="copy" type="button">Copy</button></div><pre>{ "hooks": { "Stop": [ { "hooks": [ {
-  "type": "command",
-  "command": "KANEJURY_OBJECTIVE='...' KANEJURY_URL=http://localhost:3000 node /path/to/kanejury/hooks/claude-code-stop.mjs"
-} ] } ] } }</pre></div>
-        <div class="note-card"><h4>Close the loop for coding agents</h4><p>After each turn, Kane tests the change, the gate decides, and the reasons go straight back to the agent. After three attempts it hands over to a person.</p></div>
+        <div class="code-card"><div class="code-head"><span>.claude/settings.json</span><button class="copy" type="button">Copy</button></div><pre>{ "hooks": {
+  "UserPromptSubmit": [ { "hooks": [ { "type": "command",
+    "command": "KANEJURY_OBJECTIVE='...' node /path/to/kanejury/hooks/claude-code-prompt.mjs" } ] } ],
+  "Stop": [ { "hooks": [ { "type": "command",
+    "command": "KANEJURY_OBJECTIVE='...' KANEJURY_URL=http://localhost:3000 node /path/to/kanejury/hooks/claude-code-stop.mjs" } ] } ]
+} }</pre></div>
+        <div class="note-card"><h4>Close the loop for coding agents</h4><p>When you give the agent a task, the tests are fingerprinted. When it says done, Kane tests the change, the gate decides, and the reasons go straight back to the agent. A pass against edited tests is blocked. After three attempts it hands over to a person.</p></div>
       </div></div>
 
       <div class="closing rv">

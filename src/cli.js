@@ -7,6 +7,7 @@ import { aggregate, EXIT } from './aggregate.js';
 import { buildReceipt, verifyReceipt } from './receipt.js';
 import { sha256 } from './near.js';
 import { loadPack, pickScreenshot, classifyFailure, coverageGaps } from './evidence.js';
+import { snapshotTests, compareSnapshots, tamperReasons, protectList, saveSnapshot, loadSnapshot } from './guard.js';
 import { gatePack, EXIT as GATE_EXIT } from './gate-pack.js';
 import { loop } from './loop.js';
 import { runJury } from './judge.js';
@@ -19,6 +20,8 @@ const usage = () => { log(`kanejury judge --claim "<text>" --image <png> [--poli
 kanejury judge-pack <run.evidence> --claim "<text>" [--step last|<n>] [--policy ...] [--out receipt.json]
 kanejury gate <run.evidence> [--claim "<text>"]   # allow | fix | rerun | review (exit 0, 1, 4, 5)
 kanejury loop --objective "<what Kane does>" --url <start url> --agent "<command>" [--claim "<text>"] [--max-fixes 3] [--out loop.json]
+kanejury guard snapshot [--protect <paths>] [--baseline <file>]   # fingerprint the tests before the agent works
+kanejury guard check [--baseline <file>]   # exit 0 if unchanged, 5 if a protected test was edited or deleted
 kanejury calibrate [--force]
 kanejury verify <receipt.json> [--image <png>] [--online]
 Exit codes: 0 pass, 1 fail, 4 inconclusive or no quorum, 2 could not run. Needs NEAR_AI_API_KEY.`); process.exit(2); };
@@ -73,6 +76,19 @@ async function main() {
     if (flag('json', false)) console.log(JSON.stringify(g));
     log(`KANE ${String(g.kane_status).toUpperCase()} -> ${g.action.toUpperCase()}\n  ${g.reasons.join('\n  ')}`);
     process.exit(GATE_EXIT[g.action]);
+  }
+  if (cmd === 'guard') {
+    const sub = argv[0], file = typeof flag('baseline') === 'string' ? flag('baseline') : '.kanejury-baseline.json';
+    const protect = protectList(typeof flag('protect') === 'string' ? flag('protect') : process.env.KANEJURY_PROTECT);
+    if (sub === 'snapshot') { const snap = snapshotTests(process.cwd(), protect); saveSnapshot(file, snap); log(`fingerprinted ${Object.keys(snap.files).length} test file(s) under ${protect.join(', ')} -> ${file}`); process.exit(0); }
+    if (sub === 'check') {
+      if (!fs.existsSync(file)) { log(`no baseline at ${file}; run: kanejury guard snapshot`); process.exit(2); }
+      const base = loadSnapshot(file); const diff = compareSnapshots(base, snapshotTests(process.cwd(), base.protect || protect));
+      if (flag('json', false)) console.log(JSON.stringify(diff));
+      if (!diff.tampered) { log(`TESTS UNCHANGED${diff.added.length ? ` (${diff.added.length} new test file(s) added)` : ''}`); process.exit(0); }
+      log(`TESTS CHANGED -> REVIEW\n  ${tamperReasons(diff).join('\n  ')}`); process.exit(GATE_EXIT.review);
+    }
+    usage();
   }
   if (cmd === 'loop') {
     const objective = flag('objective'), url = flag('url'), agent = flag('agent');
