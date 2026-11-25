@@ -1,17 +1,18 @@
 {
   "kanejury": "0.0.1",
-  "createdAt": "2026-11-24T15:37:15.976Z",
+  "createdAt": "2026-11-25T09:47:25.764Z",
   "claim": "Price shown at checkout matches the advertised Pro price.",
   "evidence": [
     {
-      "name": "c2.png",
-      "sha256": "266f2f01e641c0c9b803123da8098e357f54c0f6c89d619acc4dbb237eae5693"
+      "name": "evidence-fail.png",
+      "sha256": "266f2f01e641c0c9b803123da8098e357f54c0f6c89d619acc4dbb237eae5693",
+      "mime": "image/png"
     }
   ],
   "policy": "cautious",
   "maxTokens": 1500,
   "calibration": {
-    "takenAt": "2026-11-24T15:35:16.235Z",
+    "takenAt": "2026-11-25T09:46:40.338Z",
     "claim": "Price shown at checkout matches the advertised Pro price.",
     "fixtures": {
       "true": "aca4d7939173fb60dd07b59769c8393a5da60e9e27bf1705a0da2b367821613f",
@@ -22,22 +23,112 @@
         "model": "Qwen/Qwen3-VL-30B-A3B-Instruct",
         "eligible": true,
         "onTrue": "pass",
-        "onFalse": "fail"
+        "onFalse": "fail",
+        "answers": {
+          "true": {
+            "model": "Qwen/Qwen3-VL-30B-A3B-Instruct",
+            "verdict": "pass",
+            "quote": "Pro plan $19 / month\nPro plan .... $19.00\nTotal due today: $19.00",
+            "requestSha256": "e709fa9c19b3c392575463525391f5af49d718dbcb67edaabd3e7cd1890cee26",
+            "responseSha256": "fe636bcd98f5d6ee59cea3216b64209863b7c437a1d4d17af390b3da5469a15b",
+            "responseBody": "eyJpZCI6ImNoYXRjbXBsLTU3NWM2YzcxLWI2MTUtNDk5NS04Mzg3LTAzMmJkZWNkYzk5OSIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbiIsImNob2ljZXMiOlt7ImluZGV4IjowLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50Ijoie1widmVyZGljdFwiOlwicGFzc1wiLFwicXVvdGVcIjpcIlBybyBwbGFuICQxOSAvIG1vbnRoXFxuUHJvIHBsYW4gLi4uLiAkMTkuMDBcXG5Ub3RhbCBkdWUgdG9kYXk6ICQxOS4wMFwifSJ9LCJmaW5pc2hfcmVhc29uIjoic3RvcCIsImxvZ3Byb2JzIjpudWxsfV0sIm1vZGVsIjoiUXdlbi9Rd2VuMy1WTC0zMEItQTNCLUluc3RydWN0IiwiY3JlYXRlZCI6MTc5NTYwMDAwMCwidXNhZ2UiOnsicHJvbXB0X3Rva2VucyI6MzE1LCJ0b3RhbF90b2tlbnMiOjM1MywiY29tcGxldGlvbl90b2tlbnMiOjM4LCJwcm9tcHRfdG9rZW5zX2RldGFpbHMiOnsiY2FjaGVkX3Rva2VucyI6OTYsImNyZWF0ZWRfY2FjaGVfdG9rZW5zIjoyMDgsIm11bHRpbW9kYWxfdG9rZW5zIjp7ImltYWdlIjoyMTB9fX0sInN5c3RlbV9maW5nZXJwcmludCI6InZsbG0tMC4zMy4wLTQxZDkwMTQ5In0=",
+            "signature": {
+              "text": "Qwen/Qwen3-VL-30B-A3B-Instruct:e709fa9c19b3c392575463525391f5af49d718dbcb67edaabd3e7cd1890cee26:fe636bcd98f5d6ee59cea3216b64209863b7c437a1d4d17af390b3da5469a15b",
+              "signature": "0xdb58a549f6cd9b5b30211c9eba92ccfa9f6175e18bdc07c2fae8dffe5e17efa3287f091313e2c7075ff8b34f25d522eda5a9a82a13023fc86452a49c8c6f2eaf1c",
+              "signingAddress": "0x2665cce942fa427ef30d87f4b0bff67fb7645462",
+              "kind": "provider_tee"
+            }
+          },
+          "false": {
+            "model": "Qwen/Qwen3-VL-30B-A3B-Instruct",
+            "verdict": "fail",
+            "quote": "Pro plan $19 / month",
+            "requestSha256": "c9ade7e0f66db6b29c83d30bcca4a5c655d9cb9b0a4058f7e2af8bcd14210d1b",
+            "responseSha256": "d15dd8a2df9530193508f893f6b80e069ab65461b6fe9ef04a6f558b0292c00d",
+            "responseBody": "eyJpZCI6ImNoYXRjbXBsLWExZWEyNjQ2LWUyZjctNGQ4ZC05YzNhLTA2ZWY1ODkyYjkzMSIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbiIsImNob2ljZXMiOlt7ImluZGV4IjowLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50Ijoie1widmVyZGljdFwiOlwiZmFpbFwiLFwicXVvdGVcIjpcIlBybyBwbGFuICQxOSAvIG1vbnRoXCJ9In0sImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibG9ncHJvYnMiOm51bGx9XSwibW9kZWwiOiJRd2VuL1F3ZW4zLVZMLTMwQi1BM0ItSW5zdHJ1Y3QiLCJjcmVhdGVkIjoxNzk1NjAwMDAwLCJ1c2FnZSI6eyJwcm9tcHRfdG9rZW5zIjozMTUsInRvdGFsX3Rva2VucyI6MzMyLCJjb21wbGV0aW9uX3Rva2VucyI6MTcsInByb21wdF90b2tlbnNfZGV0YWlscyI6eyJjYWNoZWRfdG9rZW5zIjowLCJjcmVhdGVkX2NhY2hlX3Rva2VucyI6MzA0LCJtdWx0aW1vZGFsX3Rva2VucyI6eyJpbWFnZSI6MjEwfX19LCJzeXN0ZW1fZmluZ2VycHJpbnQiOiJ2bGxtLTAuMzMuMC00MWQ5MDE0OSJ9",
+            "signature": {
+              "text": "Qwen/Qwen3-VL-30B-A3B-Instruct:c9ade7e0f66db6b29c83d30bcca4a5c655d9cb9b0a4058f7e2af8bcd14210d1b:d15dd8a2df9530193508f893f6b80e069ab65461b6fe9ef04a6f558b0292c00d",
+              "signature": "0x739f139b14f4953b440b9e2357318e54eca9bb5b53664337bf58e071c39c67512fa97707cff989e1e5ea5385833cfc13b88ad47c5c531655433542119db15c471c",
+              "signingAddress": "0x2665cce942fa427ef30d87f4b0bff67fb7645462",
+              "kind": "provider_tee"
+            }
+          }
+        }
       },
       "glm-flash": {
         "model": "z-ai/glm-5.3-flash",
         "eligible": true,
         "onTrue": "pass",
-        "onFalse": "fail"
+        "onFalse": "fail",
+        "answers": {
+          "true": {
+            "model": "z-ai/glm-5.3-flash",
+            "verdict": "pass",
+            "quote": "Pro plan $19 / month ... Pro plan ..... $19.00 Total due today: $19.00",
+            "requestSha256": "49e014b8b55cc12dfde0be80dcdd8e8cff789b1de74c3722d62f7c077d84df68",
+            "responseSha256": "8dac864a9088e541e3446247a3cf1437a479d4d464f82c2c9d72015dc74e6d2d",
+            "responseBody": "eyJpZCI6ImNoYXRjbXBsLTZiN2I3MmIzLWIwNWItNDFmNS05OGZlLWM1YzQzNmUxZTQxYiIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbiIsImNob2ljZXMiOlt7ImluZGV4IjowLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50Ijoie1widmVyZGljdFwiOlwicGFzc1wiLFwicXVvdGVcIjpcIlBybyBwbGFuICQxOSAvIG1vbnRoIC4uLiBQcm8gcGxhbiAuLi4uLiAkMTkuMDAgVG90YWwgZHVlIHRvZGF5OiAkMTkuMDBcIn0iLCJyZWFzb25pbmdfY29udGVudCI6IlRoZSBpbWFnZSBzaG93cyBhIFByaWNpbmcgc2VjdGlvbiB3aXRoIFwiUHJvIHBsYW4gJDE5IC8gbW9udGhcIiBhbmQgYSBDaGVja291dCBzZWN0aW9uIHdpdGggXCJQcm8gcGxhbiAuLi4uLiAkMTkuMDBcIiBhbmQgXCJUb3RhbCBkdWUgdG9kYXk6ICQxOS4wMFwiLlxuXG5UaGUgY2xhaW06ICdQcmljZSBzaG93biBhdCBjaGVja291dCBtYXRjaGVzIHRoZSBhZHZlcnRpc2VkIFBybyBwcmljZS4nXG5cbkFkdmVydGlzZWQgUHJvIHByaWNlOiAkMTkvbW9udGguIENoZWNrb3V0IHNob3dzICQxOS4wMC4gVGhlc2UgbWF0Y2guIFNvIHZlcmRpY3Q6IHBhc3MuXG5cblF1b3RlOiBleGFjdCB0ZXh0IEkgcmVhZC4gSSBzaG91bGQgcXVvdGUgdGhlIHJlbGV2YW50IHRleHQsIGUuZy4sIFwiUHJvIHBsYW4gJDE5IC8gbW9udGhcIiBhbmQgXCJUb3RhbCBkdWUgdG9kYXk6ICQxOS4wMFwiLiBUaGUgcXVvdGUgZmllbGQgc2hvdWxkIGJlIGV4YWN0IHRleHQuIEknbGwgaW5jbHVkZSBib3RoLiJ9LCJmaW5pc2hfcmVhc29uIjoic3RvcCIsImxvZ3Byb2JzIjpudWxsLCJzdG9wX3JlYXNvbiI6MTU0ODI3fV0sIm1vZGVsIjoiei1haS9nbG0tNS4zLWZsYXNoIiwiY3JlYXRlZCI6MTc5NTYwMDAwMSwidXNhZ2UiOnsicHJvbXB0X3Rva2VucyI6Mzk3LCJ0b3RhbF90b2tlbnMiOjU1OCwiY29tcGxldGlvbl90b2tlbnMiOjE2MSwicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlZF90b2tlbnMiOjAsImNyZWF0ZWRfY2FjaGVfdG9rZW5zIjowLCJtdWx0aW1vZGFsX3Rva2VucyI6eyJpbWFnZSI6Mjg4fX0sImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MTI4fX0sInN5c3RlbV9maW5nZXJwcmludCI6InZsbG0tMC4zNC4wLWRwMi1lcC00YTRiMDFlMyJ9",
+            "signature": {
+              "text": "z-ai/glm-5.3-flash:49e014b8b55cc12dfde0be80dcdd8e8cff789b1de74c3722d62f7c077d84df68:8dac864a9088e541e3446247a3cf1437a479d4d464f82c2c9d72015dc74e6d2d",
+              "signature": "0x75d2d7be3467abf65fd563fae6dbcb0a7898ac9127398fde21a2e5da1ce4d1e247ba81515115e1af9f3d2b54d97f609ab432286ab7744ecfc1c3dc350ba006a01c",
+              "signingAddress": "0x3b753b4406613c5e70ae640508632b600424fa0c",
+              "kind": "provider_tee"
+            }
+          },
+          "false": {
+            "model": "z-ai/glm-5.3-flash",
+            "verdict": "fail",
+            "quote": "Pro plan $19 / month ... Pro plan ..... $29.00 Total due today: $29.00",
+            "requestSha256": "4d858b69899852ff57592e564cb1e5d70a7cb982f80c78a7788913a6e3538ffe",
+            "responseSha256": "e485bb594da2ba479f4e1d2cd97ffc7cfaafe32129ae65ba8d50e9f9587c625f",
+            "responseBody": "eyJpZCI6ImNoYXRjbXBsLThiNTRiZmJhLWM5MzYtNDBkNC05MzJmLWM4ODMwYTgzZjkwMSIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbiIsImNob2ljZXMiOlt7ImluZGV4IjowLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50Ijoie1widmVyZGljdFwiOlwiZmFpbFwiLFwicXVvdGVcIjpcIlBybyBwbGFuICQxOSAvIG1vbnRoIC4uLiBQcm8gcGxhbiAuLi4uLiAkMjkuMDAgVG90YWwgZHVlIHRvZGF5OiAkMjkuMDBcIn0iLCJyZWFzb25pbmdfY29udGVudCI6IlRoZSBpbWFnZSBzaG93cyBhIFByaWNpbmcgc2VjdGlvbiB3aXRoIFwiUHJvIHBsYW4gJDE5IC8gbW9udGhcIiBhbmQgYSBDaGVja291dCBzZWN0aW9uIHdpdGggXCJQcm8gcGxhbiAuLi4uLiAkMjkuMDBcIiBhbmQgXCJUb3RhbCBkdWUgdG9kYXk6ICQyOS4wMFwiLlxuXG5UaGUgY2xhaW06ICdQcmljZSBzaG93biBhdCBjaGVja291dCBtYXRjaGVzIHRoZSBhZHZlcnRpc2VkIFBybyBwcmljZS4nXG5cbkFkdmVydGlzZWQgcHJpY2U6ICQxOS9tb250aC4gQ2hlY2tvdXQgc2hvd3MgJDI5LjAwLiBUaGVzZSBkbyBub3QgbWF0Y2guIFNvIHZlcmRpY3Q6IGZhaWwuXG5cblF1b3RlOiBleGFjdCB0ZXh0IEkgcmVhZC4gSSBzaG91bGQgcXVvdGUgdGhlIHJlbGV2YW50IHRleHQsIGUuZy4sIFwiUHJvIHBsYW4gJDE5IC8gbW9udGhcIiBhbmQgXCJQcm8gcGxhbiAuLi4uLiAkMjkuMDAgVG90YWwgZHVlIHRvZGF5OiAkMjkuMDBcIi4gVGhlIHF1b3RlIGZpZWxkIHNob3VsZCBiZSBleGFjdCB0ZXh0LiBJJ2xsIGluY2x1ZGUgYm90aC4ifSwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJsb2dwcm9icyI6bnVsbCwic3RvcF9yZWFzb24iOjE1NDgyN31dLCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsImNyZWF0ZWQiOjE3OTU2MDAwMDEsInVzYWdlIjp7InByb21wdF90b2tlbnMiOjM5NywidG90YWxfdG9rZW5zIjo1NjYsImNvbXBsZXRpb25fdG9rZW5zIjoxNjksInByb21wdF90b2tlbnNfZGV0YWlscyI6eyJjYWNoZWRfdG9rZW5zIjowLCJjcmVhdGVkX2NhY2hlX3Rva2VucyI6MCwibXVsdGltb2RhbF90b2tlbnMiOnsiaW1hZ2UiOjI4OH19LCJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjp7InJlYXNvbmluZ190b2tlbnMiOjEzNn19LCJzeXN0ZW1fZmluZ2VycHJpbnQiOiJ2bGxtLTAuMzQuMC1kcDItZXAtNGE0YjAxZTMifQ==",
+            "signature": {
+              "text": "z-ai/glm-5.3-flash:4d858b69899852ff57592e564cb1e5d70a7cb982f80c78a7788913a6e3538ffe:e485bb594da2ba479f4e1d2cd97ffc7cfaafe32129ae65ba8d50e9f9587c625f",
+              "signature": "0x050e7b2d17a283284770453f2f0d81450238903b7849e5c6faa9a75107bbcbc97ccb569d8fe1f4496b56148dd7de480ae1fd314c238c9da22731b365716bbd461b",
+              "signingAddress": "0x3b753b4406613c5e70ae640508632b600424fa0c",
+              "kind": "provider_tee"
+            }
+          }
+        }
       },
       "qwen3.8": {
         "model": "Qwen/Qwen3.8-27B",
         "eligible": true,
         "onTrue": "pass",
-        "onFalse": "fail"
+        "onFalse": "fail",
+        "answers": {
+          "true": {
+            "model": "Qwen/Qwen3.8-27B",
+            "verdict": "pass",
+            "quote": "Pro plan $19 / month\nPro plan ..... $19.00\nTotal due today: $19.00",
+            "requestSha256": "1452359f7b95c574cb7f0d50dab114775d9e4132d5845ec99d6fb89ce2841407",
+            "responseSha256": "dd1288a9a27f418c4ebec33b6d17a090e856f6f848c64bc66db653cc4694c57e",
+            "responseBody": "eyJpZCI6IjQ2MjA3NjU3YjQwNDQ5NzJhODVlYTg3OTQ3NDA1OTkzIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsIm1lc3NhZ2UiOnsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJcblxue1widmVyZGljdFwiOlwicGFzc1wiLFwicXVvdGVcIjpcIlBybyBwbGFuICQxOSAvIG1vbnRoXFxuUHJvIHBsYW4gLi4uLi4gJDE5LjAwXFxuVG90YWwgZHVlIHRvZGF5OiAkMTkuMDBcIn0iLCJyZWFzb25pbmdfY29udGVudCI6IlRoZSB1c2VyIHdhbnRzIG1lIHRvIGFjdCBhcyBhIFFBIGp1ZGdlLiBJIG5lZWQgdG8gbG9vayBhdCB0aGUgaW1hZ2UgYW5kIHZlcmlmeSB0aGUgY2xhaW06IFwiUHJpY2Ugc2hvd24gYXQgY2hlY2tvdXQgbWF0Y2hlcyB0aGUgYWR2ZXJ0aXNlZCBQcm8gcHJpY2UuXCJcblxuTG9va2luZyBhdCB0aGUgaW1hZ2U6XG4tIFVuZGVyIFwiUHJpY2luZ1wiOiBcIlBybyBwbGFuICQxOSAvIG1vbnRoXCJcbi0gVW5kZXIgXCJDaGVja291dFwiOiBcIlBybyBwbGFuIC4uLi4uICQxOS4wMFwiIGFuZCBcIlRvdGFsIGR1ZSB0b2RheTogJDE5LjAwXCJcblxuVGhlIGFkdmVydGlzZWQgcHJpY2UgaXMgJDE5LCBhbmQgdGhlIGNoZWNrb3V0IHNob3dzICQxOS4wMC4gVGhlc2UgbWF0Y2guXG5cblNvIHRoZSB2ZXJkaWN0IGlzIFwicGFzc1wiLlxuXG5JIG5lZWQgdG8gcHJvdmlkZSBhbiBleGFjdCBxdW90ZS4gSSdsbCBxdW90ZSB0aGUgcmVsZXZhbnQgdGV4dC4gVGhlIHF1b3RlIHNob3VsZCBiZSBleGFjdCB0ZXh0IEkgcmVhZC4gSSBjb3VsZCBxdW90ZSBcIlBybyBwbGFuICQxOSAvIG1vbnRoXCIgYW5kIFwiVG90YWwgZHVlIHRvZGF5OiAkMTkuMDBcIiBidXQgdGhlIGZvcm1hdCBhc2tzIGZvciBhIHNpbmdsZSBxdW90ZSBzdHJpbmcuIEknbGwgY29tYmluZSBvciBwaWNrIHRoZSBtb3N0IHJlbGV2YW50LiBMZXQgbWUgcHJvdmlkZSBhIHF1b3RlIHRoYXQgY2FwdHVyZXMgYm90aC4gTWF5YmUgXCJQcm8gcGxhbiAkMTkgLyBtb250aCAuLi4gUHJvIHBsYW4gLi4uLi4gJDE5LjAwIFRvdGFsIGR1ZSB0b2RheTogJDE5LjAwXCIuIEJ1dCBleGFjdCB0ZXh0IG1lYW5zIEkgc2hvdWxkIHJlYWQgd2hhdCdzIHRoZXJlLiBJJ2xsIHF1b3RlIHRoZSBjaGVja291dCB0b3RhbCBhbmQgcHJpY2luZyBsaW5lLlxuXG5JJ2xsIHNldCBxdW90ZSB0byBcIlBybyBwbGFuICQxOSAvIG1vbnRoXCIgYW5kIFwiVG90YWwgZHVlIHRvZGF5OiAkMTkuMDBcIiDigJQgYnV0IGl0J3Mgb25lIHN0cmluZy4gSSdsbCB3cml0ZTogXCJQcm8gcGxhbiAkMTkgLyBtb250aCAuLi4gUHJvIHBsYW4gLi4uLi4gJDE5LjAwIFRvdGFsIGR1ZSB0b2RheTogJDE5LjAwXCIuIEhtbSwgdGhlIFwiLi4uLi5cIiBpcyBpbiB0aGUgaW1hZ2UuIExldCBtZSBqdXN0IHF1b3RlIHRoZSB0d28ga2V5IGxpbmVzIHNlcGFyYXRlZCBieSBhIG5ld2xpbmUgb3Igc3BhY2UuIFRoZSBpbnN0cnVjdGlvbiBzYXlzIFwiZXhhY3QgdGV4dCB5b3UgcmVhZFwiLiBJJ2xsIHByb3ZpZGU6IFwiUHJvIHBsYW4gJDE5IC8gbW9udGhcIiBhcyB0aGUgYWR2ZXJ0aXNlZCBhbmQgdGhlIGNoZWNrb3V0LiBBY3R1YWxseSBJIHRoaW5rIGEgc2luZ2xlIHF1b3RlIGZpZWxkIGNhbiBjb250YWluIHRoZSByZWxldmFudCB0ZXh0LiBJJ2xsIHB1dDogXCJQcm8gcGxhbiAkMTkgLyBtb250aFwiIGFuZCB0aGUgY2hlY2tvdXQgbGluZS4gTGV0IG1lIGp1c3QgaW5jbHVkZSBib3RoIGxpbmVzLlxuXG5JJ2xsIHdyaXRlIHF1b3RlIGFzOiBcIlBybyBwbGFuICQxOSAvIG1vbnRoXCIg4oCUIGJ1dCB0aGF0IGRvZXNuJ3Qgc2hvdyBjaGVja291dC4gQmV0dGVyIHRvIGluY2x1ZGUgYm90aC4gSSdsbCBkbzogXCJQcm8gcGxhbiAkMTkgLyBtb250aCAuLi4gUHJvIHBsYW4gLi4uLi4gJDE5LjAwIFRvdGFsIGR1ZSB0b2RheTogJDE5LjAwXCIuIFRoZSBcIi4uLlwiIEknbSBhZGRpbmcgaXNuJ3QgaW4gaW1hZ2UuIFRoZSBpbWFnZSBoYXMgXCIuLi4uLlwiIGJldHdlZW4gXCJQcm8gcGxhblwiIGFuZCBcIiQxOS4wMFwiLiBMZXQgbWUgdHJhbnNjcmliZSBleGFjdGx5OlxuXG5QcmljaW5nXG5Qcm8gcGxhbiAkMTkgLyBtb250aFxuQ2hlY2tvdXRcblBybyBwbGFuIC4uLi4uICQxOS4wMFxuVG90YWwgZHVlIHRvZGF5OiAkMTkuMDBcblxuSSdsbCBxdW90ZTogXCJQcm8gcGxhbiAkMTkgLyBtb250aFwiIGFuZCBcIlRvdGFsIGR1ZSB0b2RheTogJDE5LjAwXCIuIFRvIGtlZXAgb25lIHN0cmluZywgSSdsbCB1c2U6IFwiUHJvIHBsYW4gJDE5IC8gbW9udGggLi4uIFRvdGFsIGR1ZSB0b2RheTogJDE5LjAwXCIuIFRoZSBcIi4uLlwiIGlzIG15IHNlcGFyYXRvciwgbm90IGV4YWN0LiBIbW0uXG5cblRoZSBpbnN0cnVjdGlvbjogXCJxdW90ZVwiOlwiZXhhY3QgdGV4dCB5b3UgcmVhZFwiLiBJIHRoaW5rIGl0J3MgZmluZSB0byBwcm92aWRlIGEgY29udGlndW91cyBleGNlcnB0LiBUaGUgbW9zdCBkZWNpc2l2ZSBleGNlcnB0IGlzIHRoZSBjaGVja291dCB0b3RhbCBtYXRjaGluZy4gQnV0IHRvIHNob3cgYm90aCwgSSdkIG5lZWQgbm9uLWNvbnRpZ3VvdXMuIEknbGwganVzdCBwcm92aWRlIHRoZSBjaGVja291dCBsaW5lIHdoaWNoIGNvbnRhaW5zIHRoZSBwcmljZSwgcGx1cyB0aGUgcHJpY2luZyBsaW5lIGlzIGltcGxpZWQuIEFjdHVhbGx5IHRoZSBjbGFpbSBpcyBhYm91dCBtYXRjaGluZywgc28gSSBzaG91bGQgcXVvdGUgYm90aC4gSSdsbCBwcm92aWRlIGEgcXVvdGUgdGhhdCBpbmNsdWRlcyBib3RoIGxpbmVzIGFzIHRoZXkgYXBwZWFyLCB1c2luZyBhIG5ld2xpbmU/IEpTT04gY2FuIGNvbnRhaW4gXFxuLiBJJ2xsIGRvOiBcIlBybyBwbGFuICQxOSAvIG1vbnRoXFxuUHJvIHBsYW4gLi4uLi4gJDE5LjAwXFxuVG90YWwgZHVlIHRvZGF5OiAkMTkuMDBcIi4gVGhhdCdzIGV4YWN0IHRleHQgcmVhZCBhY3Jvc3MgdGhlIGltYWdlIChza2lwcGluZyBoZWFkZXJzKS4gVGhhdCdzIHJlYXNvbmFibGUuXG5cbkknbGwgZ28gd2l0aCB0aGF0LlxuIn0sImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibG9ncHJvYnMiOm51bGwsIm1hdGNoZWRfc3RvcCI6MjQ4MDQ2fV0sIm1vZGVsIjoiUXdlbi9Rd2VuMy44LTI3QiIsImNyZWF0ZWQiOjE3OTU2MDAwMDAsInVzYWdlIjp7InByb21wdF90b2tlbnMiOjM1OCwidG90YWxfdG9rZW5zIjoxMTY0LCJjb21wbGV0aW9uX3Rva2VucyI6ODA2LCJwcm9tcHRfdG9rZW5zX2RldGFpbHMiOnsiY2FjaGVkX3Rva2VucyI6MCwiaW1hZ2VfdG9rZW5zIjoyMTB9LCJyZWFzb25pbmdfdG9rZW5zIjo3NjcsImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6NzY3fX19",
+            "signature": {
+              "text": "Qwen/Qwen3.8-27B:1452359f7b95c574cb7f0d50dab114775d9e4132d5845ec99d6fb89ce2841407:dd1288a9a27f418c4ebec33b6d17a090e856f6f848c64bc66db653cc4694c57e",
+              "signature": "0x31d060872cad7a306236c3ff5599fab7cc36e0eb9429a857c0cad227f3000ac84c5d20b4335c0dfaa29f733181ba63ac92049560b0f9df501d3431ff06b6db5b1b",
+              "signingAddress": "0x835ab53d20294ef795906dff21ae4c045336aa26",
+              "kind": "provider_tee"
+            }
+          },
+          "false": {
+            "model": "Qwen/Qwen3.8-27B",
+            "verdict": "fail",
+            "quote": "Pro plan $19 / month\nPro plan ..... $29.00",
+            "requestSha256": "5cb9d0bfb3bd94a72c4c0842b728c73d6db8c85b8893bc3f6ed58faa6ff5004d",
+            "responseSha256": "7812ab9c17c89de5700e566230a35ca312d628529b0903014dd1fbb0cccf6f62",
+            "responseBody": "eyJpZCI6IjYzYzczMDdhZTFkNTQ0MTlhMjI5MzVlNzdkODg1YjhhIiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsIm1lc3NhZ2UiOnsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJcblxue1widmVyZGljdFwiOlwiZmFpbFwiLFwicXVvdGVcIjpcIlBybyBwbGFuICQxOSAvIG1vbnRoXFxuUHJvIHBsYW4gLi4uLi4gJDI5LjAwXCJ9IiwicmVhc29uaW5nX2NvbnRlbnQiOiJUaGUgdXNlciB3YW50cyBtZSB0byBhY3QgYXMgYSBRQSBqdWRnZS4gSSBuZWVkIHRvIGxvb2sgYXQgdGhlIGltYWdlIGFuZCB2ZXJpZnkgdGhlIGNsYWltOiBcIlByaWNlIHNob3duIGF0IGNoZWNrb3V0IG1hdGNoZXMgdGhlIGFkdmVydGlzZWQgUHJvIHByaWNlLlwiXG5cbkxvb2tpbmcgYXQgdGhlIGltYWdlOlxuLSBVbmRlciBcIlByaWNpbmdcIjogXCJQcm8gcGxhbiAkMTkgLyBtb250aFwiXG4tIFVuZGVyIFwiQ2hlY2tvdXRcIjogXCJQcm8gcGxhbiAuLi4uLiAkMjkuMDBcIiBhbmQgXCJUb3RhbCBkdWUgdG9kYXk6ICQyOS4wMFwiXG5cblRoZSBhZHZlcnRpc2VkIHByaWNlIGlzICQxOSwgYnV0IHRoZSBjaGVja291dCBzaG93cyAkMjkuMDAuIFRoZXNlIGRvIG5vdCBtYXRjaC4gVGhlcmVmb3JlIHRoZSBjbGFpbSBmYWlscy5cblxuVGhlIGV2aWRlbmNlIGlzIGNsZWFyIGFuZCBub3QgY3V0IG9mZiBvciBsb2FkaW5nLiBTbyB0aGUgdmVyZGljdCBpcyBcImZhaWxcIi5cblxuRm9yIHRoZSBxdW90ZSwgSSBzaG91bGQgcHJvdmlkZSBleGFjdCB0ZXh0IEkgcmVhZC4gSSdsbCBxdW90ZSB0aGUgcmVsZXZhbnQgcGFydHMgc2hvd2luZyB0aGUgZGlzY3JlcGFuY3kuIFRoZSBpbnN0cnVjdGlvbiBzYXlzIFwiZXhhY3QgdGV4dCB5b3UgcmVhZFwiLiBJJ2xsIHByb3ZpZGUgYSBxdW90ZSB0aGF0IGNhcHR1cmVzIGJvdGggcHJpY2VzLiBNYXliZSBcIlBybyBwbGFuICQxOSAvIG1vbnRoXCIgYW5kIFwiUHJvIHBsYW4gLi4uLi4gJDI5LjAwXCIuIEJ1dCB0aGUgcXVvdGUgZmllbGQgaXMgYSBzaW5nbGUgc3RyaW5nLiBJJ2xsIGNvbWJpbmUgdGhlbSBvciBwaWNrIHRoZSBtb3N0IHJlbGV2YW50LiBUaGUgY2xhaW0gaXMgYWJvdXQgbWF0Y2hpbmcsIHNvIEkgc2hvdWxkIHF1b3RlIGJvdGguIExldCBtZSBxdW90ZTogXCJQcm8gcGxhbiAkMTkgLyBtb250aCAuLi4gUHJvIHBsYW4gLi4uLi4gJDI5LjAwXCIuIEhtbSwgYnV0IGl0IHNheXMgZXhhY3QgdGV4dC4gSSdsbCBqdXN0IHF1b3RlIHRoZSBjaGVja291dCBsaW5lIGFuZCBwcmljaW5nIGxpbmUuIFBlcmhhcHMgYmVzdCB0byBxdW90ZSB0aGUgd2hvbGUgdmlzaWJsZSB0ZXh0IHJlbGV2YW50LiBMZXQgbWUgZ2l2ZTogXCJQcm8gcGxhbiAkMTkgLyBtb250aFwiIGFzIHRoZSBhZHZlcnRpc2VkIGFuZCB0aGUgY2hlY2tvdXQgYXMgXCIkMjkuMDBcIi4gVGhlIHF1b3RlIGZpZWxkIGxpa2VseSBleHBlY3RzIGEgc2luZ2xlIGV4YWN0IHN0cmluZyBmcm9tIHRoZSBpbWFnZS4gSSdsbCBwcm92aWRlIFwiUHJvIHBsYW4gJDE5IC8gbW9udGhcIiBhbmQgXCJQcm8gcGxhbiAuLi4uLiAkMjkuMDBcIiDigJQgYnV0IEkgY2FuIG9ubHkgcHV0IG9uZSBzdHJpbmcuIEknbGwgcHV0IHRoZSBjb25jYXRlbmF0aW9uIHdpdGggYSBzZXBhcmF0b3IgdGhhdCdzIG5vdCBpbiB0aGUgaW1hZ2U/IFRoYXQgbWlnaHQgdmlvbGF0ZSBcImV4YWN0IHRleHRcIi4gQmV0dGVyIHRvIHBpY2sgb25lIGV4YWN0IHN0cmluZyB0aGF0IGRlbW9uc3RyYXRlcyB0aGUgbWlzbWF0Y2guIFRoZSBtb3N0IGRlY2lzaXZlIGlzIHRoZSBjaGVja291dCB0b3RhbCB2cyBhZHZlcnRpc2VkLiBJIHRoaW5rIHF1b3RpbmcgYm90aCBsaW5lcyBzZXBhcmF0ZWQgYnkgYSBuZXdsaW5lIG1pZ2h0IGJlIGFjY2VwdGFibGUgYXMgZXhhY3QgdGV4dCByZWFkIGZyb20gdGhlIGltYWdlIChzaW5jZSB0aGV5IGFyZSBib3RoIGluIHRoZSBpbWFnZSkuIEknbGwgdXNlOiBcIlBybyBwbGFuICQxOSAvIG1vbnRoXFxuUHJvIHBsYW4gLi4uLi4gJDI5LjAwXCIuIFRoYXQncyBleGFjdCB0ZXh0IGZyb20gdGhlIGltYWdlLCBqdXN0IHR3byBsaW5lcy4gVGhhdCBzaG91bGQgYmUgZmluZS5cblxuVmVyZGljdDogZmFpbC5cbiJ9LCJmaW5pc2hfcmVhc29uIjoic3RvcCIsImxvZ3Byb2JzIjpudWxsLCJtYXRjaGVkX3N0b3AiOjI0ODA0Nn1dLCJtb2RlbCI6IlF3ZW4vUXdlbjMuOC0yN0IiLCJjcmVhdGVkIjoxNzk1NjAwMDAwLCJ1c2FnZSI6eyJwcm9tcHRfdG9rZW5zIjozNTgsInRvdGFsX3Rva2VucyI6ODYxLCJjb21wbGV0aW9uX3Rva2VucyI6NTAzLCJwcm9tcHRfdG9rZW5zX2RldGFpbHMiOnsiY2FjaGVkX3Rva2VucyI6MCwiaW1hZ2VfdG9rZW5zIjoyMTB9LCJyZWFzb25pbmdfdG9rZW5zIjo0NzUsImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6NDc1fX19",
+            "signature": {
+              "text": "Qwen/Qwen3.8-27B:5cb9d0bfb3bd94a72c4c0842b728c73d6db8c85b8893bc3f6ed58faa6ff5004d:7812ab9c17c89de5700e566230a35ca312d628529b0903014dd1fbb0cccf6f62",
+              "signature": "0xad6cf838ab7cb0814ebf7bf7f83d1db1d2f3492a3ffa3704bd462f5fb1f722c075c9c20cd84bcbb57acfe096b8c4772d49afe8e1bf2cbe42fbc790e23a73a14b1b",
+              "signingAddress": "0x835ab53d20294ef795906dff21ae4c045336aa26",
+              "kind": "provider_tee"
+            }
+          }
+        }
       }
     },
-    "cached": true
+    "cached": false
   },
   "votes": [
     {
@@ -45,7 +136,7 @@
       "model": "Qwen/Qwen3-VL-30B-A3B-Instruct",
       "verdict": "fail",
       "quote": "Pro plan $19 / month\nPro plan ..... $29.00\nTotal due today: $29.00",
-      "chatId": "chatcmpl-b2cc095a-eb4b-4281-b602-c1b1193ff702",
+      "chatId": "chatcmpl-221fd9e8-a9b0-4b86-95be-8309ae4b96bd",
       "usage": {
         "prompt_tokens": 315,
         "total_tokens": 353,
@@ -59,11 +150,11 @@
         }
       },
       "requestSha256": "c9ade7e0f66db6b29c83d30bcca4a5c655d9cb9b0a4058f7e2af8bcd14210d1b",
-      "responseSha256": "59294d4c659c029155f28ed89b00f4380a016ff14b579c36b8071db67830a658",
-      "responseBody": "eyJpZCI6ImNoYXRjbXBsLWIyY2MwOTVhLWViNGItNDI4MS1iNjAyLWMxYjExOTNmZjcwMiIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbiIsImNob2ljZXMiOlt7ImluZGV4IjowLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50Ijoie1widmVyZGljdFwiOlwiZmFpbFwiLFwicXVvdGVcIjpcIlBybyBwbGFuICQxOSAvIG1vbnRoXFxuUHJvIHBsYW4gLi4uLi4gJDI5LjAwXFxuVG90YWwgZHVlIHRvZGF5OiAkMjkuMDBcIn0ifSwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJsb2dwcm9icyI6bnVsbH1dLCJtb2RlbCI6IlF3ZW4vUXdlbjMtVkwtMzBCLUEzQi1JbnN0cnVjdCIsImNyZWF0ZWQiOjE3OTU1MzQ2MjcsInVzYWdlIjp7InByb21wdF90b2tlbnMiOjMxNSwidG90YWxfdG9rZW5zIjozNTMsImNvbXBsZXRpb25fdG9rZW5zIjozOCwicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlZF90b2tlbnMiOjMwNCwiY3JlYXRlZF9jYWNoZV90b2tlbnMiOjAsIm11bHRpbW9kYWxfdG9rZW5zIjp7ImltYWdlIjoyMTB9fX0sInN5c3RlbV9maW5nZXJwcmludCI6InZsbG0tMC4zMy4wLTQxZDkwMTQ5In0=",
+      "responseSha256": "2493ba689e7fd8a2b890780f03621d33c1df8cc3c98d70d126018792f1144060",
+      "responseBody": "eyJpZCI6ImNoYXRjbXBsLTIyMWZkOWU4LWE5YjAtNGI4Ni05NWJlLTgzMDlhZTRiOTZiZCIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbiIsImNob2ljZXMiOlt7ImluZGV4IjowLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50Ijoie1widmVyZGljdFwiOlwiZmFpbFwiLFwicXVvdGVcIjpcIlBybyBwbGFuICQxOSAvIG1vbnRoXFxuUHJvIHBsYW4gLi4uLi4gJDI5LjAwXFxuVG90YWwgZHVlIHRvZGF5OiAkMjkuMDBcIn0ifSwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJsb2dwcm9icyI6bnVsbH1dLCJtb2RlbCI6IlF3ZW4vUXdlbjMtVkwtMzBCLUEzQi1JbnN0cnVjdCIsImNyZWF0ZWQiOjE3OTU2MDAwNDEsInVzYWdlIjp7InByb21wdF90b2tlbnMiOjMxNSwidG90YWxfdG9rZW5zIjozNTMsImNvbXBsZXRpb25fdG9rZW5zIjozOCwicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlZF90b2tlbnMiOjMwNCwiY3JlYXRlZF9jYWNoZV90b2tlbnMiOjAsIm11bHRpbW9kYWxfdG9rZW5zIjp7ImltYWdlIjoyMTB9fX0sInN5c3RlbV9maW5nZXJwcmludCI6InZsbG0tMC4zMy4wLTQxZDkwMTQ5In0=",
       "signature": {
-        "text": "Qwen/Qwen3-VL-30B-A3B-Instruct:c9ade7e0f66db6b29c83d30bcca4a5c655d9cb9b0a4058f7e2af8bcd14210d1b:59294d4c659c029155f28ed89b00f4380a016ff14b579c36b8071db67830a658",
-        "signature": "0xbd4742c902bb37344a807ba0ce12e2601263fe9e8785ae081f8c373e6b0b49b34dd668a7365d55c1916e816a10a21fa337c041bee7819fa4f8889853dd57ca711c",
+        "text": "Qwen/Qwen3-VL-30B-A3B-Instruct:c9ade7e0f66db6b29c83d30bcca4a5c655d9cb9b0a4058f7e2af8bcd14210d1b:2493ba689e7fd8a2b890780f03621d33c1df8cc3c98d70d126018792f1144060",
+        "signature": "0xa21cfb89498b3d80d4060ac58585016a261f975be3f24f1b78f3339e991283807e3a6d42712baf3801017ea6dd238590fb6f01aecd4d9e45646ec304bd258c141c",
         "signingAddress": "0x2665cce942fa427ef30d87f4b0bff67fb7645462",
         "kind": "provider_tee"
       },
@@ -74,11 +165,11 @@
       "model": "z-ai/glm-5.3-flash",
       "verdict": "fail",
       "quote": "Pro plan $19 / month ... Pro plan ..... $29.00 Total due today: $29.00",
-      "chatId": "chatcmpl-7e57e18c-4471-4539-8198-fb6faef28d2f",
+      "chatId": "chatcmpl-93573d0a-c199-4225-bd7c-a9c22ce8c08b",
       "usage": {
         "prompt_tokens": 397,
-        "total_tokens": 551,
-        "completion_tokens": 154,
+        "total_tokens": 557,
+        "completion_tokens": 160,
         "prompt_tokens_details": {
           "cached_tokens": 0,
           "created_cache_tokens": 0,
@@ -87,15 +178,15 @@
           }
         },
         "completion_tokens_details": {
-          "reasoning_tokens": 121
+          "reasoning_tokens": 127
         }
       },
       "requestSha256": "4d858b69899852ff57592e564cb1e5d70a7cb982f80c78a7788913a6e3538ffe",
-      "responseSha256": "99b75835918f76918dfdb9b16905ef056b874723c03c1c902aae4010d7b81220",
-      "responseBody": "eyJpZCI6ImNoYXRjbXBsLTdlNTdlMThjLTQ0NzEtNDUzOS04MTk4LWZiNmZhZWYyOGQyZiIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbiIsImNob2ljZXMiOlt7ImluZGV4IjowLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50Ijoie1widmVyZGljdFwiOlwiZmFpbFwiLFwicXVvdGVcIjpcIlBybyBwbGFuICQxOSAvIG1vbnRoIC4uLiBQcm8gcGxhbiAuLi4uLiAkMjkuMDAgVG90YWwgZHVlIHRvZGF5OiAkMjkuMDBcIn0iLCJyZWFzb25pbmdfY29udGVudCI6IlRoZSBpbWFnZSBzaG93czpcbi0gUHJpY2luZyBzZWN0aW9uOiBcIlBybyBwbGFuICQxOSAvIG1vbnRoXCJcbi0gQ2hlY2tvdXQgc2VjdGlvbjogXCJQcm8gcGxhbiAuLi4uLiAkMjkuMDBcIiBhbmQgXCJUb3RhbCBkdWUgdG9kYXk6ICQyOS4wMFwiXG5cblRoZSBjbGFpbTogXCJQcmljZSBzaG93biBhdCBjaGVja291dCBtYXRjaGVzIHRoZSBhZHZlcnRpc2VkIFBybyBwcmljZS5cIlxuXG5BZHZlcnRpc2VkIHByaWNlOiAkMTkvbW9udGguIENoZWNrb3V0IHNob3dzICQyOS4wMC4gVGhlc2UgZG8gbm90IG1hdGNoLiBTbyB2ZXJkaWN0OiBmYWlsLlxuXG5RdW90ZSBleGFjdCB0ZXh0OiBcIlBybyBwbGFuICQxOSAvIG1vbnRoXCIgYW5kIFwiUHJvIHBsYW4gLi4uLi4gJDI5LjAwXCIgLyBcIlRvdGFsIGR1ZSB0b2RheTogJDI5LjAwXCJcblxuSSBzaG91bGQgcHJvdmlkZSBvbmUgSlNPTiBvYmplY3Qgb25seS4ifSwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJsb2dwcm9icyI6bnVsbCwic3RvcF9yZWFzb24iOjE1NDgyN31dLCJtb2RlbCI6InotYWkvZ2xtLTUuMy1mbGFzaCIsImNyZWF0ZWQiOjE3OTU1MzQ2MjksInVzYWdlIjp7InByb21wdF90b2tlbnMiOjM5NywidG90YWxfdG9rZW5zIjo1NTEsImNvbXBsZXRpb25fdG9rZW5zIjoxNTQsInByb21wdF90b2tlbnNfZGV0YWlscyI6eyJjYWNoZWRfdG9rZW5zIjowLCJjcmVhdGVkX2NhY2hlX3Rva2VucyI6MCwibXVsdGltb2RhbF90b2tlbnMiOnsiaW1hZ2UiOjI4OH19LCJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjp7InJlYXNvbmluZ190b2tlbnMiOjEyMX19LCJzeXN0ZW1fZmluZ2VycHJpbnQiOiJ2bGxtLTAuMzQuMC1kcDItZXAtNGE0YjAxZTMifQ==",
+      "responseSha256": "0722361f4325faebc2752a2819e50299e3569605b6efbe2ea54f251cd4dc9ac9",
+      "responseBody": "eyJpZCI6ImNoYXRjbXBsLTkzNTczZDBhLWMxOTktNDIyNS1iZDdjLWE5YzIyY2U4YzA4YiIsIm9iamVjdCI6ImNoYXQuY29tcGxldGlvbiIsImNob2ljZXMiOlt7ImluZGV4IjowLCJtZXNzYWdlIjp7InJvbGUiOiJhc3Npc3RhbnQiLCJjb250ZW50Ijoie1widmVyZGljdFwiOlwiZmFpbFwiLFwicXVvdGVcIjpcIlBybyBwbGFuICQxOSAvIG1vbnRoIC4uLiBQcm8gcGxhbiAuLi4uLiAkMjkuMDAgVG90YWwgZHVlIHRvZGF5OiAkMjkuMDBcIn0iLCJyZWFzb25pbmdfY29udGVudCI6IlRoZSBpbWFnZSBzaG93cyBhIFByaWNpbmcgc2VjdGlvbiB3aXRoIFwiUHJvIHBsYW4gJDE5IC8gbW9udGhcIiBhbmQgYSBDaGVja291dCBzZWN0aW9uIHdpdGggXCJQcm8gcGxhbiAuLi4uLiAkMjkuMDBcIiBhbmQgXCJUb3RhbCBkdWUgdG9kYXk6ICQyOS4wMFwiLlxuXG5UaGUgY2xhaW06ICdQcmljZSBzaG93biBhdCBjaGVja291dCBtYXRjaGVzIHRoZSBhZHZlcnRpc2VkIFBybyBwcmljZS4nXG5cbkFkdmVydGlzZWQgUHJvIHByaWNlOiAkMTkvbW9udGguIENoZWNrb3V0IHNob3dzICQyOS4wMC4gVGhlc2UgZG8gbm90IG1hdGNoLiBTbyB2ZXJkaWN0OiBmYWlsLlxuXG5RdW90ZSBleGFjdCB0ZXh0OiBcIlBybyBwbGFuICQxOSAvIG1vbnRoXCIgYW5kIFwiUHJvIHBsYW4gLi4uLi4gJDI5LjAwXCIg4oCUIEkgc2hvdWxkIHF1b3RlIHRoZSB0ZXh0IEkgcmVhZC4gVGhlIHF1b3RlIGZpZWxkIHNob3VsZCBiZSBleGFjdCB0ZXh0LiBJJ2xsIGluY2x1ZGUgYm90aCBrZXkgbGluZXMuIn0sImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibG9ncHJvYnMiOm51bGwsInN0b3BfcmVhc29uIjoxNTQ4Mjd9XSwibW9kZWwiOiJ6LWFpL2dsbS01LjMtZmxhc2giLCJjcmVhdGVkIjoxNzk1NjAwMDQyLCJ1c2FnZSI6eyJwcm9tcHRfdG9rZW5zIjozOTcsInRvdGFsX3Rva2VucyI6NTU3LCJjb21wbGV0aW9uX3Rva2VucyI6MTYwLCJwcm9tcHRfdG9rZW5zX2RldGFpbHMiOnsiY2FjaGVkX3Rva2VucyI6MCwiY3JlYXRlZF9jYWNoZV90b2tlbnMiOjAsIm11bHRpbW9kYWxfdG9rZW5zIjp7ImltYWdlIjoyODh9fSwiY29tcGxldGlvbl90b2tlbnNfZGV0YWlscyI6eyJyZWFzb25pbmdfdG9rZW5zIjoxMjd9fSwic3lzdGVtX2ZpbmdlcnByaW50IjoidmxsbS0wLjM0LjAtZHAyLWVwLTRhNGIwMWUzIn0=",
       "signature": {
-        "text": "z-ai/glm-5.3-flash:4d858b69899852ff57592e564cb1e5d70a7cb982f80c78a7788913a6e3538ffe:99b75835918f76918dfdb9b16905ef056b874723c03c1c902aae4010d7b81220",
-        "signature": "0x2c108af391851a96a242b823cbca2932fe0b4ab27dec24d76a6608c33fa2b64f14593b1b6e55905064bb12b5b1a97d86149d065d978c9dd7c08db4800b821b641b",
+        "text": "z-ai/glm-5.3-flash:4d858b69899852ff57592e564cb1e5d70a7cb982f80c78a7788913a6e3538ffe:0722361f4325faebc2752a2819e50299e3569605b6efbe2ea54f251cd4dc9ac9",
+        "signature": "0xcf3aeb8201a6cd3ed6d998bcaec53e1bad72f690cd747d377196ab6a46b58a6f08a6bda5531b931b2b8ad613975b29ef977ff56f7c415d532c2a47b6fe9861951c",
         "signingAddress": "0x3b753b4406613c5e70ae640508632b600424fa0c",
         "kind": "provider_tee"
       },
@@ -105,27 +196,27 @@
       "juror": "qwen3.8",
       "model": "Qwen/Qwen3.8-27B",
       "verdict": "fail",
-      "quote": "Pro plan $19 / month Pro plan ..... $29.00 Total due today: $29.00",
-      "chatId": "802c735281034d4e93267ea23cba2b06",
+      "quote": "Pro plan ..... $29.00 Total due today: $29.00",
+      "chatId": "23be9beb472f406f80fa1720a48fdca5",
       "usage": {
         "prompt_tokens": 358,
-        "total_tokens": 746,
-        "completion_tokens": 388,
+        "total_tokens": 538,
+        "completion_tokens": 180,
         "prompt_tokens_details": {
-          "cached_tokens": 320,
+          "cached_tokens": 128,
           "image_tokens": 210
         },
-        "reasoning_tokens": 351,
+        "reasoning_tokens": 150,
         "completion_tokens_details": {
-          "reasoning_tokens": 351
+          "reasoning_tokens": 150
         }
       },
       "requestSha256": "5cb9d0bfb3bd94a72c4c0842b728c73d6db8c85b8893bc3f6ed58faa6ff5004d",
-      "responseSha256": "1c3842d8a0b33e72918ddf847c863fccf0c63156ddbb70c295b6e40229c479fc",
-      "responseBody": "eyJpZCI6IjgwMmM3MzUyODEwMzRkNGU5MzI2N2VhMjNjYmEyYjA2Iiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsIm1lc3NhZ2UiOnsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJcblxue1widmVyZGljdFwiOlwiZmFpbFwiLFwicXVvdGVcIjpcIlBybyBwbGFuICQxOSAvIG1vbnRoIFBybyBwbGFuIC4uLi4uICQyOS4wMCBUb3RhbCBkdWUgdG9kYXk6ICQyOS4wMFwifSIsInJlYXNvbmluZ19jb250ZW50IjoiVGhlIHVzZXIgd2FudHMgbWUgdG8gYWN0IGFzIGEgUUEganVkZ2UuIEkgbmVlZCB0byBsb29rIGF0IHRoZSBpbWFnZSBjYXJlZnVsbHkuXG5cblRoZSBpbWFnZSBzaG93cyB0d28gc2VjdGlvbnM6XG4xLiBcIlByaWNpbmdcIiBzZWN0aW9uOiBcIlBybyBwbGFuICQxOSAvIG1vbnRoXCJcbjIuIFwiQ2hlY2tvdXRcIiBzZWN0aW9uOiBcIlBybyBwbGFuIC4uLi4uICQyOS4wMFwiIGFuZCBcIlRvdGFsIGR1ZSB0b2RheTogJDI5LjAwXCJcblxuVGhlIGNsYWltIGlzOiBcIlByaWNlIHNob3duIGF0IGNoZWNrb3V0IG1hdGNoZXMgdGhlIGFkdmVydGlzZWQgUHJvIHByaWNlLlwiXG5cblRoZSBhZHZlcnRpc2VkIFBybyBwcmljZSBpcyAkMTkvbW9udGguIFRoZSBjaGVja291dCBwcmljZSBpcyAkMjkuMDAuIFRoZXNlIGRvIG5vdCBtYXRjaC5cblxuVGhlcmVmb3JlLCB0aGUgdmVyZGljdCBpcyBcImZhaWxcIi5cblxuVGhlIHF1b3RlIHNob3VsZCBiZSB0aGUgZXhhY3QgdGV4dCBJIHJlYWQuIEkgc2hvdWxkIHBpY2sgdGV4dCB0aGF0IGRlbW9uc3RyYXRlcyB0aGUgbWlzbWF0Y2guIFBlcmhhcHMgSSBzaG91bGQgcXVvdGUgYm90aCByZWxldmFudCBwYXJ0cy4gVGhlIGluc3RydWN0aW9uIHNheXMgXCJleGFjdCB0ZXh0IHlvdSByZWFkXCIuIEknbGwgcXVvdGUgdGhlIHJlbGV2YW50IHRleHQgc2hvd2luZyB0aGUgZGlzY3JlcGFuY3kuIExldCBtZSBxdW90ZSBzb21ldGhpbmcgbGlrZSBcIlBybyBwbGFuICQxOSAvIG1vbnRoIC4uLiBQcm8gcGxhbiAuLi4uLiAkMjkuMDBcIi4gQnV0IHRoZSBxdW90ZSBmaWVsZCBzaG91bGQgYmUgZXhhY3QgdGV4dC4gSSBjYW4gY29tYmluZSB3aXRoIGVsbGlwc2lzPyBUaGUgaW1hZ2UgaXRzZWxmIHVzZXMgXCIuLi4uLlwiIGluIHRoZSBjaGVja291dCBsaW5lLiBUbyBiZSBzYWZlLCBJJ2xsIHF1b3RlIHRoZSB0d28gbGluZXMgdGhhdCBzaG93IHRoZSBtaXNtYXRjaC4gTWF5YmUganVzdCBxdW90ZSB0aGUgY2hlY2tvdXQgbGluZSBhbmQgcHJpY2luZyBsaW5lLiBUaGUgZm9ybWF0IGV4cGVjdHMgYSBzaW5nbGUgc3RyaW5nLiBJJ2xsIHByb3ZpZGU6IFwiUHJvIHBsYW4gJDE5IC8gbW9udGhcIiBhbmQgXCJQcm8gcGxhbiAuLi4uLiAkMjkuMDBcIi4gSSdsbCBqb2luIHRoZW0gd2l0aCBhIHNwYWNlIG9yIG5ld2xpbmUuIExldCBtZSBqdXN0IGdpdmUgdGhlIGV4YWN0IHRleHQgZnJvbSBib3RoIGJveGVzLlxuXG5JJ2xsIHdyaXRlOiBcIlBybyBwbGFuICQxOSAvIG1vbnRoIFBybyBwbGFuIC4uLi4uICQyOS4wMCBUb3RhbCBkdWUgdG9kYXk6ICQyOS4wMFwiXG5cblRoYXQgY2FwdHVyZXMgdGhlIGV2aWRlbmNlLiBWZXJkaWN0IGZhaWwuXG4ifSwiZmluaXNoX3JlYXNvbiI6InN0b3AiLCJsb2dwcm9icyI6bnVsbCwibWF0Y2hlZF9zdG9wIjoyNDgwNDZ9XSwibW9kZWwiOiJRd2VuL1F3ZW4zLjgtMjdCIiwiY3JlYXRlZCI6MTc5NTUzNDYyNywidXNhZ2UiOnsicHJvbXB0X3Rva2VucyI6MzU4LCJ0b3RhbF90b2tlbnMiOjc0NiwiY29tcGxldGlvbl90b2tlbnMiOjM4OCwicHJvbXB0X3Rva2Vuc19kZXRhaWxzIjp7ImNhY2hlZF90b2tlbnMiOjMyMCwiaW1hZ2VfdG9rZW5zIjoyMTB9LCJyZWFzb25pbmdfdG9rZW5zIjozNTEsImNvbXBsZXRpb25fdG9rZW5zX2RldGFpbHMiOnsicmVhc29uaW5nX3Rva2VucyI6MzUxfX19",
+      "responseSha256": "b15024ee17fc3a84065854248f6f4f7ddf42abb80b8886b0054d63d623f8ba03",
+      "responseBody": "eyJpZCI6IjIzYmU5YmViNDcyZjQwNmY4MGZhMTcyMGE0OGZkY2E1Iiwib2JqZWN0IjoiY2hhdC5jb21wbGV0aW9uIiwiY2hvaWNlcyI6W3siaW5kZXgiOjAsIm1lc3NhZ2UiOnsicm9sZSI6ImFzc2lzdGFudCIsImNvbnRlbnQiOiJcblxue1widmVyZGljdFwiOlwiZmFpbFwiLFwicXVvdGVcIjpcIlBybyBwbGFuIC4uLi4uICQyOS4wMCBUb3RhbCBkdWUgdG9kYXk6ICQyOS4wMFwifSIsInJlYXNvbmluZ19jb250ZW50IjoiVGhlIGltYWdlIHNob3dzIHR3byBzZWN0aW9ucy4gVW5kZXIgXCJQcmljaW5nXCIsIHRoZSB0ZXh0IHJlYWRzIFwiUHJvIHBsYW4gJDE5IC8gbW9udGhcIi4gVW5kZXIgXCJDaGVja291dFwiLCB0aGUgdGV4dCByZWFkcyBcIlBybyBwbGFuIC4uLi4uICQyOS4wMFwiIGFuZCBcIlRvdGFsIGR1ZSB0b2RheTogJDI5LjAwXCIuIFRoZSBhZHZlcnRpc2VkIHByaWNlIGlzICQxOSwgYnV0IHRoZSBjaGVja291dCBwcmljZSBpcyAkMjkuMDAuIFRoZXNlIGRvIG5vdCBtYXRjaC4gVGhlcmVmb3JlLCB0aGUgY2xhaW0gdGhhdCB0aGUgcHJpY2UgYXQgY2hlY2tvdXQgbWF0Y2hlcyB0aGUgYWR2ZXJ0aXNlZCBQcm8gcHJpY2UgaXMgZmFsc2UuIFRoZSB2ZXJkaWN0IGlzIGZhaWwuIEkgbmVlZCB0byBwcm92aWRlIGFuIGV4YWN0IHF1b3RlLiBJJ2xsIHF1b3RlIHRoZSByZWxldmFudCB0ZXh0IHNob3dpbmcgdGhlIGRpc2NyZXBhbmN5LCBwZXJoYXBzIHRoZSBjaGVja291dCBsaW5lIG9yIGJvdGguIFRoZSBpbnN0cnVjdGlvbiBzYXlzIFwiZXhhY3QgdGV4dCB5b3UgcmVhZFwiLiBJJ2xsIHF1b3RlIHRoZSBjaGVja291dCB0b3RhbCBsaW5lIHdoaWNoIGNvbnRyYWRpY3RzIHRoZSBwcmljaW5nLlxuIn0sImZpbmlzaF9yZWFzb24iOiJzdG9wIiwibG9ncHJvYnMiOm51bGwsIm1hdGNoZWRfc3RvcCI6MjQ4MDQ2fV0sIm1vZGVsIjoiUXdlbi9Rd2VuMy44LTI3QiIsImNyZWF0ZWQiOjE3OTU2MDAwNDEsInVzYWdlIjp7InByb21wdF90b2tlbnMiOjM1OCwidG90YWxfdG9rZW5zIjo1MzgsImNvbXBsZXRpb25fdG9rZW5zIjoxODAsInByb21wdF90b2tlbnNfZGV0YWlscyI6eyJjYWNoZWRfdG9rZW5zIjoxMjgsImltYWdlX3Rva2VucyI6MjEwfSwicmVhc29uaW5nX3Rva2VucyI6MTUwLCJjb21wbGV0aW9uX3Rva2Vuc19kZXRhaWxzIjp7InJlYXNvbmluZ190b2tlbnMiOjE1MH19fQ==",
       "signature": {
-        "text": "Qwen/Qwen3.8-27B:5cb9d0bfb3bd94a72c4c0842b728c73d6db8c85b8893bc3f6ed58faa6ff5004d:1c3842d8a0b33e72918ddf847c863fccf0c63156ddbb70c295b6e40229c479fc",
-        "signature": "0x400577829cf873da5350fc8d95af39079cafa3410c9649981cfecf52787217585032c1ed9804c0d7555aac65fda930051a177e48755e049580e8826147253de11b",
+        "text": "Qwen/Qwen3.8-27B:5cb9d0bfb3bd94a72c4c0842b728c73d6db8c85b8893bc3f6ed58faa6ff5004d:b15024ee17fc3a84065854248f6f4f7ddf42abb80b8886b0054d63d623f8ba03",
+        "signature": "0x6b1befd300030abc2b33f40c51e63097a86e16e84dfb5458d5a6d2588e68f34e4599dc0b5d01946350da4dba69a9e299e35d93a1c1b4c485e6f49114a8871a7e1b",
         "signingAddress": "0x835ab53d20294ef795906dff21ae4c045336aa26",
         "kind": "provider_tee"
       },

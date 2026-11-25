@@ -18,3 +18,21 @@ test('altering the signed text breaks the hash and the signature', async () => {
 });
 test('a different evidence file is rejected', async () => { const out = await verifyOffline(receipt(), { imageBytes: new Uint8Array([1, 2, 3]) }); assert.equal(out.ok, false); });
 test('recovering a signer needs a 65-byte signature', () => assert.throws(() => recoverSigner('x', '0x1234'), /65 bytes/));
+
+const fixtures = { true: new Uint8Array(fs.readFileSync(new URL('../fixtures/canary-true.png', import.meta.url))), false: new Uint8Array(fs.readFileSync(new URL('../fixtures/canary-false.png', import.meta.url))) };
+test('eligibility is re-derived from the signed calibration answers, rebuilt from the fixture images', async () => {
+  const out = await verifyOffline(receipt(), { imageBytes: image, fixtures }); assert.ok(out.ok, JSON.stringify(out.checks.filter((c) => !c.ok)));
+  assert.ok(out.checks.some((c) => /known-false image matches the signed request hash/.test(c.what)));
+});
+test('flipping an eligibility flag is caught', async () => {
+  const r = receipt(); r.votes[2].eligible = !r.votes[2].eligible;
+  const out = await verifyOffline(r); assert.equal(out.ok, false); assert.ok(out.checks.some((c) => !c.ok && /follows from its signed calibration answers/.test(c.what)));
+});
+test('editing a recorded calibration answer is caught', async () => {
+  const r = receipt(); const a = r.calibration.jurors[r.votes[0].juror].answers.false; a.verdict = a.verdict === 'fail' ? 'pass' : 'fail';
+  assert.equal((await verifyOffline(r)).ok, false);
+});
+test('a receipt without signed calibration answers is not trusted', async () => {
+  const r = receipt(); for (const j of Object.values(r.calibration.jurors)) delete j.answers;
+  const out = await verifyOffline(r); assert.equal(out.ok, false); assert.ok(out.checks.some((c) => !c.ok && /backed by signed calibration answers/.test(c.what)));
+});

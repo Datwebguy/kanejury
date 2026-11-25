@@ -25,7 +25,7 @@ KaneJury is an independent open-source project built on Kane CLI and NEAR AI Clo
 
 ```bash
 git clone https://github.com/Datwebguy/kanejury && cd kanejury && npm install
-npm test                                                     # 78 tests
+npm test                                                     # 82 tests
 
 node src/cli.js gate examples/packs/round1.evidence          # Kane passed -> RECHECK (exit 5): it typed b back in
 node src/cli.js gate examples/packs/round2-strict.evidence   # Kane failed -> FIX (exit 1): a real bug
@@ -98,7 +98,7 @@ Requires Node 20 or newer.
 ```bash
 git clone https://github.com/Datwebguy/kanejury && cd kanejury
 npm install
-npm test                                   # 78 tests, no network needed
+npm test                                   # 82 tests, no network needed
 
 # Decide what to do with a Kane run (no model key needed for the plain-code checks)
 node src/cli.js gate path/to/run.evidence
@@ -147,6 +147,8 @@ A receipt records, for every juror: the model, the exact request and response ha
 - the signed text names the model and contains both hashes;
 - the signature recovers to the juror's signing address (EIP-191);
 - each recorded verdict is what the signed response actually says;
+- each juror's eligibility follows from its own signed calibration answers, rebuilt from the fixture images, so an edited flag is caught;
+- no signed answer is reused under another juror's name;
 - the final result recomputes from the votes;
 - with `--image`, the request rebuilt from the claim and your evidence file matches the signed request hash;
 - with `--online`, the signing address appears in a live attestation report that echoes a fresh nonce.

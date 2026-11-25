@@ -17,6 +17,7 @@ const patch = fs.readFileSync('demo/results/run3-agent-patch.diff', 'utf8');
 fs.writeFileSync('docs/assets/data.js', `export const RUNS = ${JSON.stringify(runs)};\nexport const LOOP = ${JSON.stringify(loop)};\nexport const PATCH = ${JSON.stringify(patch)};\n`);
 fs.copyFileSync('examples/receipt-fail.json', 'docs/assets/receipt-fail.json');
 fs.copyFileSync('examples/evidence-fail.png', 'docs/assets/evidence-fail.png');
+for (const k of ['true', 'false']) fs.copyFileSync(`fixtures/canary-${k}.png`, `docs/assets/canary-${k}.png`);
 fs.mkdirSync('docs/assets/packs', { recursive: true });
 for (const f of fs.readdirSync('examples/packs')) if (f.endsWith('.evidence')) fs.copyFileSync(`examples/packs/${f}`, `docs/assets/packs/${f}`);
 fs.writeFileSync('docs/.nojekyll', '');

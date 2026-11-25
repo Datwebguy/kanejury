@@ -619,7 +619,7 @@ Press "Take fingerprint" to start.</div>
     <div class="wrap">
       <span class="kicker rv">Verifiable receipts</span>
       <h2 class="rv">Don't trust us. Check the receipt yourself.</h2>
-      <p class="sub rv">This receipt is real: three attested models judged the screenshot below. Your browser recomputes every hash, recovers each signer from its signature and re-reads each verdict from the signed response. Nothing leaves this page.</p>
+      <p class="sub rv">This receipt is real: three attested models judged the screenshot below. Your browser recomputes every hash, recovers each signer from its signature, re-reads each verdict from the signed response, and re-derives which jurors were eligible from their own signed calibration answers. Nothing leaves this page.</p>
       <div class="verify">
         <div class="panel-card rv">
           <div class="ph"><span>receipt-fail.json</span><span id="rsize"></span></div>
@@ -848,7 +848,9 @@ async function runVerify(text, tamper) {
   try {
     const r = JSON.parse(text);
     if (tamper) { for (const v of r.votes) v.verdict = 'pass'; r.result.verdict = 'pass'; ta.value = JSON.stringify(r, null, 2); }
-    const out = await verifyOffline(r);
+    const bytes = async (u) => new Uint8Array(await (await fetch(u)).arrayBuffer());
+    const [imageBytes, t, f] = await Promise.all([bytes('./assets/evidence-fail.png'), bytes('./assets/canary-true.png'), bytes('./assets/canary-false.png')]);
+    const out = await verifyOffline(r, { imageBytes, fixtures: { true: t, false: f } });
     list.innerHTML = out.checks.map((c, i) => `<li class="${c.ok ? 'ok' : 'no'}" style="animation-delay:${reduce ? 0 : i * 45}ms"><span class="m" aria-hidden="true">${c.ok ? '✓' : '✗'}</span><span>${esc(c.what)}</span></li>`).join('');
     const failed = out.checks.filter((c) => !c.ok).length;
     if (out.ok) setResult('ok', 'Receipt verified', `All ${out.checks.length} checks passed. The verdicts are exactly what the signed models said.`);

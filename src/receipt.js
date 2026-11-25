@@ -2,6 +2,7 @@ import fs from 'node:fs';
 import { attestation } from './near.js';
 import { MAX_TOKENS } from './request.js';
 import { verifyOffline, recoverSigner } from './verify-core.js';
+import { FIXTURES } from './calibrate.js';
 export { recoverSigner };
 
 export const LIMITS = [
@@ -16,7 +17,8 @@ export function buildReceipt({ claim, evidence, policy, calibration, votes, resu
 
 // Offline checks (shared with the browser verifier) plus an optional live attestation lookup.
 export async function verifyReceipt(r, { imagePath, online = false } = {}) {
-  const res = await verifyOffline(r, { imageBytes: imagePath ? new Uint8Array(fs.readFileSync(imagePath)) : undefined });
+  const fixtures = { true: new Uint8Array(fs.readFileSync(FIXTURES.true)), false: new Uint8Array(fs.readFileSync(FIXTURES.false)) };
+  const res = await verifyOffline(r, { imageBytes: imagePath ? new Uint8Array(fs.readFileSync(imagePath)) : undefined, fixtures });
   const checks = res.checks; const add = (ok, what) => checks.push({ ok: !!ok, what });
   if (online) for (const v of r.votes) {
     if (!v.signature) continue; const tag = `[${v.juror}]`;
