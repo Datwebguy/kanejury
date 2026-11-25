@@ -16,7 +16,8 @@ mk('good.evidence', 'passed', { kind: 'assert', status: 'passed', summary: 'ok' 
 mk('crash.evidence', 'failed', { kind: 'agent_info', status: 'failed', summary: 'Screenshot failed: TargetClosedError: Target page, context or browser has been closed' });
 const env = (extra) => ({ INPUT_PACK: dir, GITHUB_OUTPUT: path.join(dir, 'out.txt'), GITHUB_STEP_SUMMARY: path.join(dir, 'sum.md'), ...extra });
 
-test('finds packs in a folder or by direct path', () => { assert.equal(findPacks(dir).length, 2); assert.deepEqual(findPacks('x/y.evidence'), ['x/y.evidence']); });
+test('finds packs in a folder or by direct path', () => { const all = findPacks(dir); assert.equal(all.length, 2); assert.deepEqual(findPacks(all[0]), [all[0]]); assert.deepEqual(findPacks('x/y.evidence'), []); });
+test('a path with no packs means the action could not run (exit 2)', async () => { assert.equal(await run({ INPUT_PACK: path.join(dir, 'missing') }), 2); });
 test('writes outputs and a job summary, and reports the most serious decision', async () => {
   fs.writeFileSync(path.join(dir, 'out.txt'), ''); const code = await run(env({ INPUT_FAIL_ON: 'fix' }));
   assert.equal(code, 0); const out = fs.readFileSync(path.join(dir, 'out.txt'), 'utf8'); assert.match(out, /^action=rerun/m); assert.match(fs.readFileSync(path.join(dir, 'sum.md'), 'utf8'), /\*\*rerun\*\*/);

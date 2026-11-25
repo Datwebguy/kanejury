@@ -8,7 +8,7 @@ import { runJury } from './judge.js';
 import { verifyReceipt } from './receipt.js';
 import { snapshotTests, compareSnapshots, tamperReasons, protectList, saveSnapshot, loadSnapshot } from './guard.js';
 
-const VERSION = '0.1.0';
+const VERSION = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version;
 const str = (d) => ({ type: 'string', description: d });
 export const TOOLS = [
   { name: 'kanejury_inspect_pack', description: 'Read a Kane CLI evidence pack (.evidence) and summarise it: Kane\'s status, each step, whether a failure is infrastructure or a real assertion, requested clicks missing from the steps, and typing after the last requested click. No model is called.', inputSchema: { type: 'object', properties: { pack: str('Path to the .evidence file') }, required: ['pack'] } },
@@ -23,6 +23,7 @@ const ok = (o) => ({ content: [{ type: 'text', text: JSON.stringify(o, null, 2) 
 const bad = (m) => ({ isError: true, content: [{ type: 'text', text: String(m) }] });
 
 export async function callTool(name, a = {}) {
+  if (!TOOLS.some((t) => t.name === name)) return bad(`unknown tool: ${name}. Available: ${TOOLS.map((t) => t.name).join(', ')}`);
   try {
     if (name === 'kanejury_verify_receipt') {
       const r = JSON.parse(fs.readFileSync(a.receipt, 'utf8'));
@@ -47,7 +48,7 @@ export async function callTool(name, a = {}) {
       return ok({ verdict: j.result.verdict, reason: j.result.reason, agree: `${j.result.agree}/${j.result.of}`, dissent: j.result.dissent, excluded: j.result.excluded, receipt: out });
     }
     return bad(`unknown tool ${name}`);
-  } catch (e) { return bad(e.message); }
+  } catch (e) { return bad(e.code === 'ENOENT' ? `file not found: ${e.path}` : e.message); }
 }
 
 export async function handle(msg) {

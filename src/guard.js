@@ -15,7 +15,8 @@ export function protectList(extra = process.env.KANEJURY_PROTECT) {
 }
 
 function walk(abs, rel, out) {
-  let st; try { st = fs.statSync(abs); } catch { return; }
+  let st; try { st = fs.lstatSync(abs); } catch { return; }
+  if (st.isSymbolicLink()) { try { st = fs.statSync(abs); } catch { return; } if (st.isDirectory()) return; } // never follow linked folders (no loops)
   if (st.isDirectory()) {
     for (const name of fs.readdirSync(abs).sort()) if (!SKIP.has(name)) walk(path.join(abs, name), path.posix.join(rel, name), out);
   } else if (st.isFile()) out[rel] = createHash('sha256').update(fs.readFileSync(abs)).digest('hex');

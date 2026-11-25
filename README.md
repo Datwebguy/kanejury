@@ -25,7 +25,7 @@ KaneJury is an independent open-source project built on Kane CLI and NEAR AI Clo
 
 ```bash
 git clone https://github.com/Datwebguy/kanejury && cd kanejury && npm install
-npm test                                                     # 74 tests
+npm test                                                     # 76 tests
 
 node src/cli.js gate examples/packs/round1.evidence          # Kane passed -> RECHECK (exit 5): it typed b back in
 node src/cli.js gate examples/packs/round2-strict.evidence   # Kane failed -> FIX (exit 1): a real bug
@@ -98,7 +98,7 @@ Requires Node 20 or newer.
 ```bash
 git clone https://github.com/Datwebguy/kanejury && cd kanejury
 npm install
-npm test                                   # 74 tests, no network needed
+npm test                                   # 76 tests, no network needed
 
 # Decide what to do with a Kane run (no model key needed for the plain-code checks)
 node src/cli.js gate path/to/run.evidence

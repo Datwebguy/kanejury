@@ -16,15 +16,23 @@ const argv = process.argv.slice(2);
 const cmd = argv.shift();
 const flag = (n, d) => { const i = argv.indexOf('--' + n); return i < 0 ? d : (argv[i + 1]?.startsWith('--') || argv[i + 1] === undefined ? true : argv[i + 1]); };
 const log = (...a) => console.error(...a);
-const usage = () => { log(`kanejury judge --claim "<text>" --image <png> [--policy cautious|majority] [--out receipt.json] [--json]
-kanejury judge-pack <run.evidence> --claim "<text>" [--step last|<n>] [--policy ...] [--out receipt.json]
-kanejury gate <run.evidence> [--claim "<text>"]   # allow | fix | rerun | review (exit 0, 1, 4, 5)
-kanejury loop --objective "<what Kane does>" --url <start url> --agent "<command>" [--claim "<text>"] [--max-fixes 3] [--out loop.json]
-kanejury guard snapshot [--protect <paths>] [--baseline <file>]   # fingerprint the tests before the agent works
-kanejury guard check [--baseline <file>]   # exit 0 if unchanged, 5 if a protected test was edited or deleted
-kanejury calibrate [--force]
-kanejury verify <receipt.json> [--image <png>] [--online]
-Exit codes: 0 pass, 1 fail, 4 inconclusive or no quorum, 2 could not run. Needs NEAR_AI_API_KEY.`); process.exit(2); };
+const usage = (why) => { log(`${why ? why + '\n\n' : ''}KaneJury: know when to trust a Kane CLI result.
+
+No key needed:
+  kanejury gate <run.evidence>                 decide: allow (0) | fix (1) | rerun (4) | recheck or review (5)
+  kanejury guard snapshot [--protect <paths>]  fingerprint the tests before a coding agent works
+  kanejury guard check                         0 if unchanged, 5 if a protected test was edited or deleted
+  kanejury verify <receipt.json> [--image <png>] [--online]   0 verified, 1 not verified
+  kanejury loop --objective "<what Kane does>" --url <start url> --agent "<command>"   (needs kane-cli)
+
+With NEAR_AI_API_KEY (vision jury and signed receipts):
+  kanejury gate <run.evidence> --claim "<text>"
+  kanejury judge-pack <run.evidence> --claim "<text>" [--step last|<n>] [--out receipt.json]
+  kanejury judge --claim "<text>" --image <png> [--out receipt.json]
+  kanejury calibrate [--force]
+  judge exit codes: 0 pass, 1 fail, 4 inconclusive or no quorum
+
+Any command: 2 means it could not run.`); process.exit(2); };
 
 async function main() {
   if (cmd === 'calibrate') {
@@ -36,7 +44,7 @@ async function main() {
     const claim = flag('claim');
     let imagePath, image, mime, evName;
     if (cmd === 'judge-pack') {
-      const packFile = argv.find((a) => a.endsWith('.evidence')); if (!claim || claim === true || !packFile) usage();
+      const packFile = argv.find((a) => a.endsWith('.evidence')); if (!packFile) usage('judge-pack needs a .evidence file.'); if (!claim || claim === true) usage('judge-pack needs --claim "<what should be true on screen>".');
       const pack = loadPack(packFile);
       const cf = classifyFailure(pack);
       if (cf.kind === 'infrastructure') { log(`KANE FAILURE IS INFRASTRUCTURE, NOT A VERDICT ON THE CLAIM: ${cf.why}\nNo model was called. Re-run Kane; do not send this to the coding agent.`); if (flag('json', false)) console.log(JSON.stringify({ verdict: 'no_evidence', reason: cf.why })); process.exit(4); }
@@ -70,7 +78,7 @@ async function main() {
     log(res.ok ? 'RECEIPT OK' : 'RECEIPT NOT VERIFIED'); process.exit(res.ok ? 0 : 1);
   }
   if (cmd === 'gate') {
-    const packFile = argv.find((a) => a.endsWith('.evidence')); if (!packFile) usage();
+    const packFile = argv.find((a) => a.endsWith('.evidence')); if (!packFile) usage('gate needs a .evidence file, for example: kanejury gate examples/packs/round1.evidence');
     const claim = flag('claim');
     const g = await gatePack(packFile, { claim: typeof claim === 'string' ? claim : undefined, cacheFile: '.kanejury/calibration.json' });
     if (flag('json', false)) console.log(JSON.stringify(g));
@@ -102,4 +110,4 @@ async function main() {
   }
   usage();
 }
-main().catch((e) => { log('error:', e.message); process.exit(2); });
+main().catch((e) => { log('error:', e.code === 'ENOENT' ? `file not found: ${e.path}` : e.message); process.exit(2); });

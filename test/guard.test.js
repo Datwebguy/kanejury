@@ -64,3 +64,8 @@ test('the stop hook blocks and asks for the tests back, then hands over to a per
   const h = hookResponse(d, { attempt: 1 }); assert.equal(h.block, true); assert.match(h.reason, /Restore the protected test files/);
   assert.equal(hookResponse(d, { attempt: 4 }).block, false);
 });
+
+test('a symlinked folder loop does not hang the guard', () => {
+  const d = repo(); fs.symlinkSync(path.join(d, '.testmuai'), path.join(d, '.testmuai/tests/loop'));
+  const snap = snapshotTests(d); assert.equal(Object.keys(snap.files).length, 2);
+});
