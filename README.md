@@ -6,7 +6,7 @@
 
 KaneJury reads the evidence behind a [Kane CLI](https://www.testmuai.com/kane-cli/) run and tells your pipeline what to do next: **ship it, fix it, run it again, or look closer.** Every decision can come with a signed receipt that anyone can verify, in a terminal or in a browser tab.
 
-[Proof page and live receipt verifier](https://kanejury.vercel.app) · [Evaluation](docs/evaluation.md) · [Integrations](docs/integrations.md) · [Receipts](docs/receipts.md)
+[Watch the demo (3 min)](https://youtu.be/7qMpgVKiuso) · [Proof page and live receipt verifier](https://kanejury.vercel.app) · [Evaluation](docs/evaluation.md) · [Integrations](docs/integrations.md) · [Receipts](docs/receipts.md)
 
 KaneJury is an independent open-source project built on Kane CLI and NEAR AI Cloud. It is not an official TestMu AI product.
 
