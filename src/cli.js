@@ -7,7 +7,7 @@ import { aggregate, EXIT } from './aggregate.js';
 import { buildReceipt, verifyReceipt } from './receipt.js';
 import { sha256 } from './near.js';
 import { loadPack, pickScreenshot, classifyFailure, coverageGaps } from './evidence.js';
-import { snapshotTests, compareSnapshots, tamperReasons, protectList, saveSnapshot, loadSnapshot } from './guard.js';
+import { snapshotTests, diffFromBaseline, tamperReasons, protectList, saveSnapshot, loadSnapshot } from './guard.js';
 import { gatePack, EXIT as GATE_EXIT } from './gate-pack.js';
 import { loop } from './loop.js';
 import { runJury } from './judge.js';
@@ -91,7 +91,7 @@ async function main() {
     if (sub === 'snapshot') { const snap = snapshotTests(process.cwd(), protect); saveSnapshot(file, snap); log(`fingerprinted ${Object.keys(snap.files).length} test file(s) under ${protect.join(', ')} -> ${file}`); process.exit(0); }
     if (sub === 'check') {
       if (!fs.existsSync(file)) { log(`no baseline at ${file}; run: kanejury guard snapshot`); process.exit(2); }
-      const base = loadSnapshot(file); const diff = compareSnapshots(base, snapshotTests(process.cwd(), base.protect || protect));
+      const diff = diffFromBaseline(loadSnapshot(file));
       if (flag('json', false)) console.log(JSON.stringify(diff));
       if (!diff.tampered) { log(`TESTS UNCHANGED${diff.added.length ? ` (${diff.added.length} new test file(s) added)` : ''}`); process.exit(0); }
       log(`TESTS CHANGED -> REVIEW\n  ${tamperReasons(diff).join('\n  ')}`); process.exit(GATE_EXIT.review);

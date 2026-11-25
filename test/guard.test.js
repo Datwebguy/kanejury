@@ -69,3 +69,16 @@ test('a symlinked folder loop does not hang the guard', () => {
   const d = repo(); fs.symlinkSync(path.join(d, '.testmuai'), path.join(d, '.testmuai/tests/loop'));
   const snap = snapshotTests(d); assert.equal(Object.keys(snap.files).length, 2);
 });
+
+test('the hooks keep the fingerprint outside the project', async () => {
+  const { hookBaselinePath } = await import('../src/guard.js');
+  const d = repo(); process.env.KANEJURY_STATE_DIR = path.join(d, '..', 'kj-state');
+  const p = hookBaselinePath(d); delete process.env.KANEJURY_STATE_DIR;
+  assert.ok(!p.startsWith(fs.realpathSync(d)), p); assert.match(p, /baselines\/[0-9a-f]{16}\.json$/);
+});
+
+test('a missing fingerprint fails closed', async () => {
+  const { MISSING_BASELINE } = await import('../src/guard.js');
+  const g = decide({ kaneStatus: 'passed', failure: null, gaps: { missing: [] }, post: { steps: [] }, tamper: MISSING_BASELINE });
+  assert.equal(g.action, 'review'); assert.match(g.reasons[0], /fingerprint .* is missing/);
+});

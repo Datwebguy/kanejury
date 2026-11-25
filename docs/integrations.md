@@ -36,7 +36,7 @@ Outputs `action` and `reasons`, and writes a job summary. See `examples/github-w
 
 Two hooks close the loop for a coding agent:
 
-- `hooks/claude-code-prompt.mjs` (UserPromptSubmit) fingerprints the protected tests when you give the agent a task.
+- `hooks/claude-code-prompt.mjs` (UserPromptSubmit) fingerprints the protected tests when you give the agent a task. The fingerprint is kept outside the project, in `~/.kanejury/baselines/` (or `KANEJURY_STATE_DIR`), so the agent cannot delete it along with a test. If it is missing when the agent stops, the guard fails closed.
 - `hooks/claude-code-stop.mjs` (Stop) runs Kane when the agent says it is done, gates the result, and returns the reasons to the agent. If a protected test was edited or deleted, it blocks the finish and asks the agent to restore the tests, even when Kane passed. After three attempts it hands over to a person.
 
 ```json

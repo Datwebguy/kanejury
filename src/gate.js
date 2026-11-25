@@ -7,6 +7,7 @@
 export function decide({ kaneStatus, failure, gaps, jury, post, strict = false, tamper = null }) {
   // The test guard comes first: a result against edited or deleted tests is never allowed through.
   if (tamper && tamper.length) return { action: 'review', reasons: tamper, guard: true };
+  if (!kaneStatus) return { action: 'review', reasons: ['the evidence pack has no test result; a person should look'] };
   const reasons = [];
   const juryFail = jury && jury.verdict === 'fail', juryPass = jury && jury.verdict === 'pass';
   if (kaneStatus === 'passed') {

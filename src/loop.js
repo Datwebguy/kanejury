@@ -6,7 +6,7 @@ import path from 'node:path';
 import { loadPack, classifyFailure, coverageGaps, postActionInputs, pickScreenshot } from './evidence.js';
 import { decide } from './gate.js';
 import { runJury } from './judge.js';
-import { snapshotTests, compareSnapshots, tamperReasons, protectList } from './guard.js';
+import { snapshotTests, diffFromBaseline, tamperReasons, protectList } from './guard.js';
 
 export function runKane({ kane = process.env.KANE_CLI || 'kane-cli', objective, url, timeoutSec = 170, maxSteps = 25, cwd = process.cwd(), mode }) {
   return new Promise((resolve) => {
@@ -53,7 +53,7 @@ export async function loop({ objective, url, agent, claim, maxFixes = 3, maxReru
     const briefPath = path.join(cwd, `.kanejury-brief-${n}.json`);
     fs.writeFileSync(briefPath, JSON.stringify({ objective, url, kane_said: row.kaneSummary, reason: kr.end.reason, decision: d, attempt: fixes }, null, 2));
     const a = await runAgent(agent, briefPath, cwd); row.agent = { code: a.code, tail: a.output.slice(-300) }; log(`  agent ran (exit ${a.code})`);
-    const diff = compareSnapshots(baseline, snapshotTests(cwd, protect));
+    const diff = diffFromBaseline(baseline, cwd);
     if (diff.tampered) { tamper = tamperReasons(diff); row.guard = diff; log(`  test guard: ${tamper[0]}`); }
   }
 }

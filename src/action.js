@@ -2,6 +2,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import { gatePack } from './gate-pack.js';
+import { isMain } from './main.js';
 
 export function findPacks(spec) {
   if (!fs.existsSync(spec)) return [];
@@ -22,4 +23,4 @@ export async function run(env = process.env) {
   for (const r of rows) console.log(`${path.basename(r.pack)}: ${r.action.toUpperCase()} (${r.reasons[0]})`);
   return rows.some((r) => failOn.includes(r.action)) ? 1 : 0;
 }
-if (process.argv[1] && import.meta.url.endsWith(process.argv[1].split('/').pop())) run().then((c) => process.exit(c), (e) => { console.error(`KaneJury could not run: ${e.message}`); process.exit(2); });
+if (isMain(import.meta.url)) run().then((c) => process.exit(c), (e) => { console.error(`KaneJury could not run: ${e.message}`); process.exit(2); });

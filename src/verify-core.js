@@ -43,6 +43,8 @@ export async function verifyOffline(r, { imageBytes } = {}) {
       add((await sha256Hex(requestBytes(v.model, buildContent(r.claim, imageBytes, mime), r.maxTokens))) === v.requestSha256, `${tag} the request rebuilt from the claim and the evidence matches the signed request hash`);
     }
   }
+  const ids = r.votes.map((v) => v.juror), signed = r.votes.map((v) => v.signature?.text).filter(Boolean);
+  add(new Set(ids).size === ids.length && new Set(signed).size === signed.length, 'every vote is a different juror with its own signed response');
   const elig = Object.fromEntries(r.votes.map((v) => [v.juror, v.eligible]));
   const again = aggregate(r.votes.map((v) => ({ juror: v.juror, verdict: v.verdict, eligible: elig[v.juror] })), { policy: r.policy });
   add(again.verdict === r.result.verdict, `the final verdict recomputes from the votes (${again.verdict})`);

@@ -4,9 +4,10 @@ import fs from 'node:fs';
 import readline from 'node:readline';
 import { loadPack, pickScreenshot, classifyFailure, coverageGaps, postActionInputs } from './evidence.js';
 import { gatePack } from './gate-pack.js';
+import { isMain } from './main.js';
 import { runJury } from './judge.js';
 import { verifyReceipt } from './receipt.js';
-import { snapshotTests, compareSnapshots, tamperReasons, protectList, saveSnapshot, loadSnapshot } from './guard.js';
+import { snapshotTests, diffFromBaseline, tamperReasons, protectList, saveSnapshot, loadSnapshot } from './guard.js';
 
 const VERSION = JSON.parse(fs.readFileSync(new URL('../package.json', import.meta.url), 'utf8')).version;
 const str = (d) => ({ type: 'string', description: d });
@@ -33,7 +34,7 @@ export async function callTool(name, a = {}) {
     if (name === 'kanejury_guard_snapshot' || name === 'kanejury_guard_check') {
       const root = a.root || process.cwd(), file = a.baseline || `${root}/.kanejury-baseline.json`;
       if (name === 'kanejury_guard_snapshot') { const snap = snapshotTests(root, protectList(a.protect)); saveSnapshot(file, snap); return ok({ baseline: file, protect: snap.protect, files: Object.keys(snap.files).length }); }
-      const base = loadSnapshot(file); const diff = compareSnapshots(base, snapshotTests(root, base.protect || protectList()));
+      const diff = diffFromBaseline(loadSnapshot(file), root);
       return ok({ action: diff.tampered ? 'review' : 'allow', reasons: diff.tampered ? tamperReasons(diff) : ['protected tests unchanged'], ...diff });
     }
     const pack = loadPack(a.pack); const t = pack.tests[0];
@@ -62,7 +63,7 @@ export async function handle(msg) {
   return { jsonrpc: '2.0', id, error: { code: -32601, message: `method not found: ${method}` } };
 }
 
-if (process.argv[1] && import.meta.url.endsWith(process.argv[1].split('/').pop())) {
+if (isMain(import.meta.url)) {
   const rl = readline.createInterface({ input: process.stdin });
   rl.on('line', async (line) => {
     if (!line.trim()) return;

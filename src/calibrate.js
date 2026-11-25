@@ -2,9 +2,10 @@
 // before its vote counts. The fixtures are labelled test images (fixtures/README.md), not Kane output.
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { ask } from './jurors.js';
 import { sha256 } from './near.js';
-const here = path.dirname(new URL(import.meta.url).pathname);
+const here = path.dirname(fileURLToPath(import.meta.url));
 export const CAL_CLAIM = 'Price shown at checkout matches the advertised Pro price.';
 export const FIXTURES = { true: path.join(here, '../fixtures/canary-true.png'), false: path.join(here, '../fixtures/canary-false.png') };
 
@@ -22,7 +23,10 @@ export async function calibrate(jurors, { cacheFile = '.kanejury/calibration.jso
       out.jurors[j.id] = { model: j.model, eligible: t.verdict === 'pass' && f.verdict === 'fail', onTrue: t.verdict, onFalse: f.verdict };
     } catch (e) { out.jurors[j.id] = { model: j.model, eligible: false, error: e.message }; }
   }));
-  fs.mkdirSync(path.dirname(cacheFile), { recursive: true });
-  fs.writeFileSync(cacheFile, JSON.stringify(out, null, 2));
+  // Only cache real answers: a juror that errored (no key, network down) must be asked again next time.
+  if (!Object.values(out.jurors).some((j) => j.error)) {
+    fs.mkdirSync(path.dirname(cacheFile), { recursive: true });
+    fs.writeFileSync(cacheFile, JSON.stringify(out, null, 2));
+  }
   return { ...out, cached: false };
 }
